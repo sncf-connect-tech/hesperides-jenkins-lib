@@ -1,0 +1,127 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.avast.gradle:docker-compose-gradle-plugin:0.3.20"
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'codenarc'
+apply plugin: 'maven'
+apply plugin: 'docker-compose' // https://github.com/avast/docker-compose-gradle-plugin
+
+codenarc {
+    configFile = file('codenarc_rules.groovy')
+}
+
+configurations {
+    ivy
+}
+
+dependencies {
+    ivy "org.apache.ivy:ivy:2.4.0"
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile 'com.cloudbees:groovy-cps:1.12'
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.2'
+    testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDirs = ['bin', 'src', 'vars']
+        }
+    }
+    test {
+        groovy {
+            srcDirs = ['test']
+        }
+    }
+}
+
+test {
+    testLogging {
+        showStandardStreams = true
+    }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+jar {
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it).matching{exclude{it.path.contains('META-INF')}} }
+    }
+}
+
+def env = System.env
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.version = '1.0.3'
+            pom.artifactId = 'hesperides-jenkins-lib'
+            pom.groupId = 'com.vsct.dt.hesperides'
+
+            def nexusUrl = env.get('NEXUS_URL')
+            if (nexusUrl && nexusUrl[0] == '"') {
+                nexusUrl = nexusUrl[1..-2] // in case Windows
+            }
+            def nexusUser = env.get('NEXUS_USER')
+            if (nexusUser && nexusUser[0] == '"') {
+                nexusUser = nexusUser[1..-2] // in case Windows
+            }
+            def nexusPassword = env.get('NEXUS_PASSWORD')
+            if (nexusPassword && nexusPassword[0] == '"') {
+                nexusPassword = nexusPassword[1..-2] // in case Windows
+            }
+            repository(url: nexusUrl) {
+                authentication(userName: nexusUser, password: nexusPassword)
+            }
+        }
+    }
+}
+
+if (project.hasProperty('host') && project.hasProperty('port')) {
+    test.doFirst {
+        systemProperty 'HESPERIDES_HOST', host
+        systemProperty 'HESPERIDES_PORT', port
+        systemProperty 'HESPERIDES_AUTH', env.HESPERIDES_AUTH
+    }
+} else {
+    dockerCompose.isRequiredBy(test) // hooks 'dependsOn composeUp' and 'finalizedBy composeDown'
+
+    dockerCompose {
+        useComposeFiles = ['docker-compose-hesperides.yml'] // like 'docker-compose -f <file>'
+        captureContainersOutput = true // prints output of all containers to Gradle output - very useful for debugging
+    }
+
+    test.doFirst {
+        // exposes "${serviceName}_HOST" and "${serviceName}_TCP_${exposedPort}" environment variables
+        // for example exposes "WEB_HOST" and "WEB_TCP_80" environment variables for service named `web` with exposed port `80`
+        dockerCompose.exposeAsEnvironment(test)
+        // exposes "${serviceName}.host" and "${serviceName}.tcp.${exposedPort}" system properties
+        // for example exposes "web.host" and "web.tcp.80" system properties for service named `web` with exposed port `80`
+        dockerCompose.exposeAsSystemProperties(test)
+        // get information about container of service `hesperides` (declared in docker-compose.yml)
+        def webInfo = dockerCompose.servicesInfos.hesperides
+
+        def hesperidesHost = "http://${webInfo.host}"
+        def hesperidesPort = webInfo.ports[8080]
+
+        // pass host and exposed TCP port 80 as custom-named Java System properties
+        systemProperty 'HESPERIDES_HOST', hesperidesHost
+        systemProperty 'HESPERIDES_PORT', hesperidesPort
+        systemProperty 'HESPERIDES_AUTH', env.HESPERIDES_AUTH
+    }
+}
+
+tasks.withType(GroovyCompile) {
+    groovyClasspath += configurations.ivy
+}
