@@ -32,7 +32,7 @@ cf. [Jenkinsfile](Jenkinsfile) & `vars/*.txt` documentation files for examples.
 
 Note: to check your Jenkinsfiles syntax, use a linter ! cf. https://github.com/Lucas-C/pre-commit-hooks#other-useful-local-hooks
 
-## CLI script dor standard groovy interpreter
+## CLI script for the standard Groovy interpreter
 
     @GrabResolver(name='nexus', root='http://nexus.mycompany.com/content/repositories/jenkins-ci/repo.jenkins-ci.org/public')
     @Grab(group='com.cloudbees', module='groovy-cps', version='1.12')
