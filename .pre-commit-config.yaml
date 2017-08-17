@@ -22,13 +22,6 @@
         - //
 -   repo: local
     hooks:
-    -   id: gradle-test
-        name: Test unitaires Groovy
-        language: system
-        entry: sh -c 'gradle test'
-        files: \.groovy$
--   repo: local
-    hooks:
     -   id: forbid-abstract-classes-and-traits
         name: Ensure neither abstract classes nor traits are used
         language: pcre

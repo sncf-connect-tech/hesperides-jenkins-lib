@@ -1,3 +1,5 @@
+[![](https://travis-ci.org/voyages-sncf-technologies/hesperides-jenkins-lib.svg?branch=master)](https://travis-ci.org/voyages-sncf-technologies/hesperides-jenkins-lib)
+
 ![](jenkins-hesperides-apple.png)
 
 This is a [Groovy shared lib](https://jenkins.io/doc/book/pipeline/shared-libraries/) for Jenkins 2 pipelines, but also useable as a Groovy command-line script.
