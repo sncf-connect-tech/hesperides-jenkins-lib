@@ -7,12 +7,19 @@
         args:
         - --no-markdown-linebreak-ext
 -   repo: https://github.com/Lucas-C/pre-commit-hooks
-    sha: v1.0.1
+    sha: v1.1.0
     hooks:
     -   id: remove-crlf
         files: \.(groovy|md|yaml)$
     -   id: remove-tabs
         files: \.(groovy|md|yaml)$
+    -   id: insert-license
+        files: \.groovy$
+        args:
+        - --license-filepath
+        - src/LICENSE-short.txt
+        - --comment-prefix
+        - //
 -   repo: local
     hooks:
     -   id: gradle-test
