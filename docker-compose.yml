@@ -12,3 +12,11 @@ services:
     depends_on:
       - elasticsearch
       - redis
+  gradle-test:
+    build:
+      context: .
+    depends_on:
+      - hesperides
+    environment:
+      - HESPERIDES_HOST=hesperides
+      - HESPERIDES_PORT=8080

@@ -2,9 +2,6 @@ buildscript {
     repositories {
         jcenter()
     }
-    dependencies {
-        classpath "com.avast.gradle:docker-compose-gradle-plugin:0.3.20"
-    }
 }
 
 repositories {
@@ -15,7 +12,6 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'codenarc'
 apply plugin: 'maven'
-apply plugin: 'docker-compose' // https://github.com/avast/docker-compose-gradle-plugin
 
 codenarc {
     configFile = file('codenarc_rules.groovy')
@@ -88,38 +84,13 @@ uploadArchives {
     }
 }
 
-if (project.hasProperty('host') && project.hasProperty('port')) {
-    test.doFirst {
-        systemProperty 'HESPERIDES_HOST', host
-        systemProperty 'HESPERIDES_PORT', port
-        systemProperty 'HESPERIDES_AUTH', env.HESPERIDES_AUTH
+test.doFirst {
+    if (!env.HESPERIDES_HOST) {
+        throw new GradleException('The environment variables $HESPERIDES_HOST is required')
     }
-} else {
-    dockerCompose.isRequiredBy(test) // hooks 'dependsOn composeUp' and 'finalizedBy composeDown'
-
-    dockerCompose {
-        useComposeFiles = ['docker-compose-hesperides.yml'] // like 'docker-compose -f <file>'
-        captureContainersOutput = true // prints output of all containers to Gradle output - very useful for debugging
-    }
-
-    test.doFirst {
-        // exposes "${serviceName}_HOST" and "${serviceName}_TCP_${exposedPort}" environment variables
-        // for example exposes "WEB_HOST" and "WEB_TCP_80" environment variables for service named `web` with exposed port `80`
-        dockerCompose.exposeAsEnvironment(test)
-        // exposes "${serviceName}.host" and "${serviceName}.tcp.${exposedPort}" system properties
-        // for example exposes "web.host" and "web.tcp.80" system properties for service named `web` with exposed port `80`
-        dockerCompose.exposeAsSystemProperties(test)
-        // get information about container of service `hesperides` (declared in docker-compose.yml)
-        def webInfo = dockerCompose.servicesInfos.hesperides
-
-        def hesperidesHost = "http://${webInfo.host}"
-        def hesperidesPort = webInfo.ports[8080]
-
-        // pass host and exposed TCP port 80 as custom-named Java System properties
-        systemProperty 'HESPERIDES_HOST', hesperidesHost
-        systemProperty 'HESPERIDES_PORT', hesperidesPort
-        systemProperty 'HESPERIDES_AUTH', env.HESPERIDES_AUTH
-    }
+    systemProperty 'HESPERIDES_HOST', env.HESPERIDES_HOST
+    systemProperty 'HESPERIDES_PORT', env.HESPERIDES_PORT ?: '80'
+    systemProperty 'HESPERIDES_AUTH', env.HESPERIDES_AUTH
 }
 
 tasks.withType(GroovyCompile) {

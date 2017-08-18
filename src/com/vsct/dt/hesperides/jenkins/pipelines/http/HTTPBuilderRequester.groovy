@@ -49,7 +49,9 @@ class HTTPBuilderRequester implements Serializable {
             uri.path = args.uri.path
             uri.query = queryStringAsMap(args.uri.query)
             headers.Accept = ContentType[args.accept]
-            headers.Authorization = args.authHeader
+            if (args.authHeader) {
+                headers.Authorization = args.authHeader
+            }
             body = args.body
             response.success = { resp, content ->
                 if (content != null && args.accept != 'JSON') {

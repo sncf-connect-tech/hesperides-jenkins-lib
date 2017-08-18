@@ -59,8 +59,9 @@ Note: to check your Jenkinsfiles syntax, use a linter ! cf. https://github.com/L
 
 # Tests
 
-Intégration tests use a dockerized Hesperides instance.
-They required the `$HESPERIDES_AUTH` environment variable to be set as "<USERNAME>:<PASSWORD>".
+The tests require the `$HESPERIDES_HOST` environment variable to be set.
+An optional `$HESPERIDES_PORT` can also be specified,
+along with `$HESPERIDES_AUTH` as "<USERNAME>:<PASSWORD>".
 
     gradle test
 
@@ -68,13 +69,16 @@ To run a single test:
 
     gradle -Dtest.single=HesperidesIntegrationSpec test
 
-To run the tests with a given Hesperides instance:
-
-    gradle test -Phost=https://hesperides-dev -Pport=56789
-
 **!WARNING!** -> Integration tests perform modifications on the target Hesperides instance
 
 The test report is generated in `build/reports/tests/test/index.html`.
+
+## With docker-compose
+
+Integration tests use a dockerized Hesperides instance.
+
+    docker-compose -f docker-compose-hesperides.yml build
+    docker-compose -f docker-compose-hesperides.yml run gradle-test
 
 
 # Development

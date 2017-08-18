@@ -41,15 +41,17 @@ class Hesperides implements Serializable {
     Object steps
     Object httpRequester
 
-    Hesperides(Map args = [:]) { required(args, ['httpRequester', 'auth']) // optional: apiRootUrl, steps -> indicate a Jenkins pipeline context
+    Hesperides(Map args = [:]) { required(args, ['httpRequester']) // optional: apiRootUrl, auth, steps -> indicates a Jenkins pipeline context
+        this.httpRequester = args.httpRequester
         if (!(args.auth instanceof CharSequence)) {
             if (!args.auth.username || !args.auth.password) {
                 throw new IllegalArgumentException('auth.username & auth.password are required')
             }
             args.auth = "${args.auth.username}:${args.auth.password}"
         }
-        this.httpRequester = args.httpRequester
-        this.authHeader = 'Basic ' + args.auth.bytes.encodeBase64()
+        if (args.auth) {
+            this.authHeader = 'Basic ' + args.auth.bytes.encodeBase64()
+        }
         this.apiRootUrl = args.apiRootUrl ?: DEFAULT_API_ROOT_URL
         if (this.apiRootUrl[-1] == '/') {
             this.apiRootUrl = this.apiRootUrl[0..-2]
@@ -512,7 +514,9 @@ class Hesperides implements Serializable {
         log "Content-Type: $args.contentType"
         args.accept = args.accept ?: (args.method == 'DELETE' ? 'ANY' : 'JSON')
         log "Accept: $args.accept"
-        args.authHeader = authHeader
+        if (!args.authHeader) {
+            args.authHeader = authHeader
+        }
         httpRequester.performRequest(args)
     }
 
