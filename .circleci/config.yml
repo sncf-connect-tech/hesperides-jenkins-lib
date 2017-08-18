@@ -1,23 +1,24 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/repo
+    docker:
+      - image: buildpack-deps:trusty
 
     steps:
       - checkout
 
+      - setup_remote_docker:
+          version: 17.06.0-ce
+
       - run:
-          name: Install Docker Compose
+          name: Install docker-compose
           command: |
             set -x
             curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
             chmod +x /usr/local/bin/docker-compose
 
-      - setup_remote_docker
-
       - run:
-          name: Run the Gradle tests
+          name: Running gradle test in Docker image
           command: |
-            set -x
             docker-compose build
             docker-compose run gradle-test
