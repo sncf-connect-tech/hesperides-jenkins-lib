@@ -59,7 +59,7 @@ Note: to check your Jenkinsfiles syntax, use a linter ! cf. https://github.com/L
 
 # Tests
 
-The tests require the `$HESPERIDES_HOST` environment variable to be set.
+The tests require the `$HESPERIDES_HOST` environment variable to be set, including the protocol.
 An optional `$HESPERIDES_PORT` can also be specified,
 along with `$HESPERIDES_AUTH` as "<USERNAME>:<PASSWORD>".
 

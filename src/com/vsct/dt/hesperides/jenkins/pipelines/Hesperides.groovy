@@ -463,7 +463,11 @@ class Hesperides implements Serializable {
     def deleteInstance(Map args) { required(args, ['app', 'platform', 'moduleName', 'instance'])
         def platformInfo = getPlatformInfo(args)
         def module = selectModule(modules: platformInfo.modules, moduleName: args.moduleName)
-        listRemove(list: module.instances, key: 'name', value: args.instance)
+        if (args.instance == '*') {
+            module.instances = []
+        } else {
+            listRemove(list: module.instances, key: 'name', value: args.instance)
+        }
         updatePlatform(platformInfo: platformInfo)
     }
 

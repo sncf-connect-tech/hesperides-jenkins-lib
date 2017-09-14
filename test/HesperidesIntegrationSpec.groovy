@@ -285,6 +285,27 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
             ]
     }
 
+    def "Can delete an instance"() {
+        setup:
+            hesperides.createInstance(app: applicationName, platform: platformName, moduleName: moduleName, instance: 'TOTO')
+            hesperides.getInstanceProperties(app: applicationName, platform: platformName, moduleName: moduleName, instance: 'TOTO') == []
+        when:
+            hesperides.deleteInstance(app: applicationName, platform: platformName, moduleName: moduleName, instance: 'TOTO')
+        then:
+            hesperides.getInstanceProperties(app: applicationName, platform: platformName, moduleName: moduleName, instance: 'TOTO') == null
+    }
+
+    def "Can delete all instances"() {
+        setup:
+            hesperides.createInstance(app: applicationName, platform: platformName, moduleName: moduleName, instance: 'TOTO')
+            hesperides.getInstanceProperties(app: applicationName, platform: platformName, moduleName: moduleName, instance: 'TOTO') == []
+        when:
+            hesperides.deleteInstance(app: applicationName, platform: platformName, moduleName: moduleName, instance: '*')
+        then:
+            hesperides.getInstanceProperties(app: applicationName, platform: platformName, moduleName: moduleName, instance: instanceName) == null
+            hesperides.getInstanceProperties(app: applicationName, platform: platformName, moduleName: moduleName, instance: 'TOTO') == null
+    }
+
     def log(msg) {
         System.out.println msg
     }
