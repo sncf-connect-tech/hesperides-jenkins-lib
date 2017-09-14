@@ -110,7 +110,7 @@ java -jar plantuml.jar -tpng HTTPRequester.txt
 ## Release & upload to Nexus
 
 1. `git tag` & `git push --tags`
-2. modifify the `pom.version` in `build.gradle` according to this tag
+2. modifify the `build.gradle` according to this tag
 3. set the `NEXUS_URL` / `NEXUS_USER` / `NEXUS_PASSWORD` environment variables
 4. `gradle upload`
 
