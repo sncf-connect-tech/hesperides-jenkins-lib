@@ -129,7 +129,7 @@ Use the CodeNarc Groovy linter:
 :bangbang: ⚠️ :bangbang:
 ```
 +-----------------------------------------------------------------------------------------------------------+
-| Use of `.each`, `.find`, `.collect`, etc. builtin Groovy methods is prohibited OUTSIDE @NonCPS functions    |
+| Use of `.each`, `.find`, `.collect`, etc. builtin Groovy methods is prohibited OUTSIDE @NonCPS functions  |
 | cf. https://github.com/cloudbees/groovy-cps/issues/9 & https://issues.jenkins-ci.org/browse/JENKINS-26481 |
 |                                                                                                           |
 | Moreover, while UnsupportedOperationExceptions will be raised if used directly in Jenkinsfiles,           |
