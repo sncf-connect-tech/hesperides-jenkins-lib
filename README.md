@@ -32,7 +32,7 @@ You will also need to install the [http_request Jenkins plugin](https://wiki.jen
 
 cf. [Jenkinsfile](Jenkinsfile) & `vars/*.txt` documentation files for examples.
 
-Note: to check your Jenkinsfiles syntax, use a linter ! cf. https://github.com/Lucas-C/pre-commit-hooks#other-useful-local-hooks
+**Note:** to check your Jenkinsfiles syntax, use a linter ! _cf._ https://github.com/Lucas-C/pre-commit-hooks#other-useful-local-hooks
 
 ## CLI script for the standard Groovy interpreter
 
