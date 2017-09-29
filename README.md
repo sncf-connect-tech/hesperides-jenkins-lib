@@ -69,7 +69,7 @@ To run a single test:
 
     gradle -Dtest.single=HesperidesIntegrationSpec test
 
-**!WARNING!** -> Integration tests perform modifications on the target Hesperides instance
+⚠️ **WARNING**: Integration tests perform modifications on the target Hesperides instance
 
 The test report is generated in `build/reports/tests/test/index.html`.
 
@@ -126,7 +126,7 @@ Use the CodeNarc Groovy linter:
 
 ## Known issues with Jenkins Pipeline
 
-:bangbang: :bangbang: :bangbang:
+:bangbang: ⚠️ :bangbang:
 ```
 +-----------------------------------------------------------------------------------------------------------+
 | Use of `.each`, `.find`, `.collect`, etc. builtin Groovy methods is prohibited OUTSIDE @NonCPS functions    |
@@ -137,7 +137,7 @@ Use the CodeNarc Groovy linter:
 | cf. https://issues.jenkins-ci.org/browse/JENKINS-42024                                                    |
 +-----------------------------------------------------------------------------------------------------------+
 ```
-:bangbang: :bangbang: :bangbang:
+:bangbang: ⚠️ :bangbang:
 
 - it does not support tuples : https://issues.jenkins-ci.org/browse/JENKINS-38846
 - iterators are not supported : https://issues.jenkins-ci.org/browse/JENKINS-27421
