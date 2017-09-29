@@ -127,17 +127,6 @@ Use the CodeNarc Groovy linter:
 ## Known issues with Jenkins Pipeline
 
 :bangbang: ⚠️ :bangbang:
-```
-+-----------------------------------------------------------------------------------------------------------+
-| Use of `.each`, `.find`, `.collect`, etc. builtin Groovy methods is prohibited OUTSIDE @NonCPS functions  |
-| cf. https://github.com/cloudbees/groovy-cps/issues/9 & https://issues.jenkins-ci.org/browse/JENKINS-26481 |
-|                                                                                                           |
-| Moreover, while UnsupportedOperationExceptions will be raised if used directly in Jenkinsfiles,           |
-| it will fail silently if used inside a shared library.                                                    |
-| cf. https://issues.jenkins-ci.org/browse/JENKINS-42024                                                    |
-+-----------------------------------------------------------------------------------------------------------+
-```
-:bangbang: ⚠️ :bangbang:
 
 - it does not support tuples : https://issues.jenkins-ci.org/browse/JENKINS-38846
 - iterators are not supported : https://issues.jenkins-ci.org/browse/JENKINS-27421
