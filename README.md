@@ -61,7 +61,7 @@ cf. [Jenkinsfile](Jenkinsfile) & `vars/*.txt` documentation files for examples.
 
 The tests require the `$HESPERIDES_HOST` environment variable to be set, including the protocol.
 An optional `$HESPERIDES_PORT` can also be specified,
-along with `$HESPERIDES_AUTH` as "<USERNAME>:<PASSWORD>".
+along with `$HESPERIDES_AUTH` as `<USERNAME>:<PASSWORD>`.
 
     gradle test
 
