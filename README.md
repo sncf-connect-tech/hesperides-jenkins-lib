@@ -51,8 +51,8 @@ cf. [Jenkinsfile](Jenkinsfile) & `vars/*.txt` documentation files for examples.
     cli.platform(args:1, required:true, argName:'instance', '')
     def options = cli.parse(args)
     if (options) {
-        def hesperides = new Hesperides(apiRootUrl: options.apiRootUrl, httpRequester: new HTTPBuilderRequester())
-        def platformInfo = hesperides.getPlatformInfo(auth: options.auth, app: options.app, platform: options.platform)
+        def hesperides = new Hesperides(apiRootUrl: options.apiRootUrl, auth: options.auth, httpRequester: new HTTPBuilderRequester())
+        def platformInfo = hesperides.getPlatformInfo(app: options.app, platform: options.platform)
         System.out.println prettyPrint(toJson(platformInfo))
     }
 

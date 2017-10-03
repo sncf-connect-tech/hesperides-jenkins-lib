@@ -43,13 +43,13 @@ class Hesperides implements Serializable {
 
     Hesperides(Map args = [:]) { required(args, ['httpRequester']) // optional: apiRootUrl, auth, steps -> indicates a Jenkins pipeline context
         this.httpRequester = args.httpRequester
-        if (!(args.auth instanceof CharSequence)) {
-            if (!args.auth.username || !args.auth.password) {
-                throw new IllegalArgumentException('auth.username & auth.password are required')
-            }
-            args.auth = "${args.auth.username}:${args.auth.password}"
-        }
         if (args.auth) {
+            if (!(args.auth instanceof CharSequence)) {
+                if (!args.auth.username || !args.auth.password) {
+                    throw new IllegalArgumentException('auth.username & auth.password are required')
+                }
+                args.auth = "${args.auth.username}:${args.auth.password}"
+            }
             this.authHeader = 'Basic ' + args.auth.bytes.encodeBase64()
         }
         this.apiRootUrl = args.apiRootUrl ?: DEFAULT_API_ROOT_URL
