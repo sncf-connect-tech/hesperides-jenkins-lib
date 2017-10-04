@@ -103,7 +103,7 @@
     <section>
         <h1>hesperides.updateProperties</h1>
         Change instance/module/global properties on a given Hesperides platform, from a JSON file listing deltas.
-        Existing properties are not altered.
+        Existing properties are not altered. The properties can also be defined by their path.
 
         <br>
         Example JSON deltas file:
@@ -122,6 +122,12 @@
             }
           },
           "another-module#INSTANCE_NAME": {},
+          "path:#logicGroup#another-third-module": {
+            "polymorphistic_property": "a value"
+          },
+          "path:#anotherLogicGroup#another-third-module": {
+            "polymorphistic_property": "another value"
+          },
           "GLOBAL": {}
         }
         </code></pre>
