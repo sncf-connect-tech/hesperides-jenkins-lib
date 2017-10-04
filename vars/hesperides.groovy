@@ -113,6 +113,20 @@ def setPlatformModulesVersion(Map args) {
                    steps: this.steps).setPlatformModulesVersion(args)
 }
 
+def doesWorkingcopyExistForModuleVersion(Map args) {
+    new Hesperides(apiRootUrl: args.apiRootUrl,
+                   auth: args.auth,
+                   httpRequester: new JenkinsHTTRequester(this.steps),
+                   steps: this.steps).doesWorkingcopyExistForModuleVersion(args)
+}
+
+def doesReleaseExistForModuleVersion(Map args) {
+    new Hesperides(apiRootUrl: args.apiRootUrl,
+                   auth: args.auth,
+                   httpRequester: new JenkinsHTTRequester(this.steps),
+                   steps: this.steps).doesReleaseExistForModuleVersion(args)
+}
+
 
 /******************************************************************************
 
