@@ -43,7 +43,8 @@ class JenkinsHTTRequester implements Serializable {
                                               acceptType: args.accept == 'JSON' ? 'APPLICATION_JSON' : 'NOT_SET',
                                               contentType: args.contentType == 'JSON' ? 'APPLICATION_JSON' : 'NOT_SET',
                                               customHeaders: headers,
-                                              ignoreSslErrors: true
+                                              ignoreSslErrors: true,
+                                              validResponseCodes: '100:600'
 
         if (!(response.status in [200, 201])) {
             log COLOR_RED + tryPrettyPrintJSON(tryParseJSON(response.content)) + COLOR_END
