@@ -47,7 +47,7 @@ class JenkinsHTTRequester implements Serializable {
                                               validResponseCodes: '100:600'
 
         if (!(response.status in [200, 201])) {
-            log COLOR_RED + tryPrettyPrintJSON(tryParseJSON(response.content)) + COLOR_END
+            this.steps.echo COLOR_RED + tryPrettyPrintJSON(tryParseJSON(response.content)) + COLOR_END
             throw new HttpException(response.status, 'HTTP error')
         }
 
