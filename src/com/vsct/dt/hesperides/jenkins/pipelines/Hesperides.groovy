@@ -155,9 +155,6 @@ class Hesperides implements Serializable {
 
     def putModuleOnPlatform(Map args) { required(args, ['app', 'platform', 'moduleName', 'moduleVersion', 'isWorkingCopy', 'logicGroupPath'])
         def platformInfo = getPlatformInfo(args)
-        if (listSelect(list: platformInfo.modules, key: 'name', value: args.moduleName)) {
-            throw new ExpectedEnvironmentException("A module $args.moduleName already exist on platform $args.platform for application $args.app")
-        }
         def modulePropertiesPath = "#${args.logicGroupPath}#${args.moduleName}#${args.moduleVersion}#${args.isWorkingCopy ? 'WORKINGCOPY' : 'RELEASE'}"
         platformInfo.modules << [
             name: args.moduleName,
@@ -296,64 +293,79 @@ class Hesperides implements Serializable {
             def modulePropertyChanges = propertyUpdates[moduleName]
             log "---------\n# Module: $moduleName\n---------"
             log "---------${platformInfo.modules}---------"
-            if (moduleName.contains('#')) {  // il s'agit de properties d'instance
+            if (moduleName.startsWith("path:")) {
+                // changes to apply on a module to a specific path on all instances
+                def moduleNameFromPath = moduleName.split("#").last()
+                def path = moduleName.minus("path:").minus("#"+moduleNameFromPath)
+                def moduleFoundFromPath = selectModule(modules: platformInfo.modules, path: path, moduleName: moduleNameFromPath)
+                log "-> properties_path: $moduleFoundFromPath.properties_path"
+                for (def y = 0; y < moduleFoundFromPath.instances.size(); y++){
+                    def instance = moduleFoundFromPath.instances[y].name
+                    def instanceInfo = extractInstanceInfo(modules: platformInfo.modules,
+                            module: moduleFoundFromPath,
+                            instance: instance)
+                    applyChanges(modulePropertyChanges, instanceInfo.key_values, "[instance=$instance] ")
+                }
+                updatePlatform(platformInfo: platformInfo)
+            } else if (moduleName.contains('#')) { // il s'agit de properties d'instance
                 def splittedMod = moduleName.split('#')  // DAMN Jenkins pipelines that does not support tuples
                 moduleName = splittedMod[0]
                 def instance = splittedMod[1]
                 def instanceInfo = extractInstanceInfo(modules: platformInfo.modules,
-                                                        moduleName: moduleName,
-                                                        instance: instance)
+                        moduleName: moduleName,
+                        instance: instance)
                 applyChanges(modulePropertyChanges, instanceInfo.key_values, "[instance=$instance] ")
                 updatePlatform(platformInfo: platformInfo)
             } else {  // il s'agit de properties globales ou de modules
-                def modulePropertiesPath = '#'
+                def modulePropertiesPath = ['#']
                 if (moduleName != 'GLOBAL') {
                     modulePropertiesPath = findModulePropertiesPath(moduleName: moduleName, modules: platformInfo.modules)
                 }
-                log "-> properties_path: $modulePropertiesPath"
-                def modulePlatformProperties = getModulePropertiesForPlatform(app: args.app,
-                                                                              platform: args.platform,
-                                                                              modulePropertiesPath: modulePropertiesPath)
-                def newIterableProperties = modulePropertyChanges.remove('iterable_properties')
+                for (int p = 0; p < modulePropertiesPath.size(); p++){
+                    log("-> properties_path: "+modulePropertiesPath[p])
+                    def modulePlatformProperties = getModulePropertiesForPlatform(app: args.app,
+                            platform: args.platform,
+                            modulePropertiesPath: modulePropertiesPath[p])
+                    def newIterableProperties = modulePropertyChanges.remove('iterable_properties')
+                    applyChanges(modulePropertyChanges, modulePlatformProperties.key_value_properties)
 
-                applyChanges(modulePropertyChanges, modulePlatformProperties.key_value_properties)
+                    // For iterable properties, we do not "apply" changes, we simply use the values provided
+                    def iterableProperties = []
+                    def iterableNames = newIterableProperties ? newIterableProperties.keySet() as List : []
+                    for (def j = 0; j < iterableNames.size(); j++) {  // DAMN Jenkins pipelines that does not support .each
+                        def iterableName = iterableNames[j]
+                        def newIterableItemProperties = newIterableProperties[iterableName]
+                        def actualIterableProperties = listSelect(list: modulePlatformProperties.iterable_properties,
+                                                                  key: 'name',
+                                                                  value: iterableName)
+                        if (actualIterableProperties && newIterableItemProperties.size() < actualIterableProperties.iterable_valorisation_items.size()) {
+                            def diffSize = actualIterableProperties.iterable_valorisation_items.size() - newIterableItemProperties.size()
+                            log COLOR_RED + "$diffSize iterable properties where DELETED for iterable $iterableName" + COLOR_END
+                        }
+                        def iterableValorisationItems = []
+                        for (def k = 0; k < newIterableItemProperties.size(); k++) { // DAMN Jenkins pipelines that does not support .eachWithIndex
+                            iterableValorisationItems << [title: 'not used', values: map2list(newIterableItemProperties[k], 'name', 'value')]
+                            // Displaying props changes:
+                            if (!actualIterableProperties) {
+                                continue
+                            }
+                            def actualIterableItemProperties = actualIterableProperties.iterable_valorisation_items[k]
+                            if (!actualIterableItemProperties) {
+                                continue
+                            }
+                            displayChanges(list2map(actualIterableItemProperties.values, 'name', 'value'),
+                                           newIterableItemProperties[k],
+                                           "[iterable=$iterableName.$k] ")
+                        }
+                        iterableProperties << [name: iterableName, iterable_valorisation_items: iterableValorisationItems]
+                    }
+                    modulePlatformProperties.iterable_properties = iterableProperties
 
-                // For iterable properties, we do not "apply" changes, we simply use the values provided
-                def iterableProperties = []
-                def iterableNames = newIterableProperties ? newIterableProperties.keySet() as List : []
-                for (def j = 0; j < iterableNames.size(); j++) {  // DAMN Jenkins pipelines that does not support .each
-                    def iterableName = iterableNames[j]
-                    def newIterableItemProperties = newIterableProperties[iterableName]
-                    def actualIterableProperties = listSelect(list: modulePlatformProperties.iterable_properties,
-                                                              key: 'name',
-                                                              value: iterableName)
-                    if (actualIterableProperties && newIterableItemProperties.size() < actualIterableProperties.iterable_valorisation_items.size()) {
-                        def diffSize = actualIterableProperties.iterable_valorisation_items.size() - newIterableItemProperties.size()
-                        log COLOR_RED + "$diffSize iterable properties where DELETED for iterable $iterableName" + COLOR_END
-                    }
-                    def iterableValorisationItems = []
-                    for (def k = 0; k < newIterableItemProperties.size(); k++) { // DAMN Jenkins pipelines that does not support .eachWithIndex
-                        iterableValorisationItems << [title: 'not used', values: map2list(newIterableItemProperties[k], 'name', 'value')]
-                        // Displaying props changes:
-                        if (!actualIterableProperties) {
-                            continue
-                        }
-                        def actualIterableItemProperties = actualIterableProperties.iterable_valorisation_items[k]
-                        if (!actualIterableItemProperties) {
-                            continue
-                        }
-                        displayChanges(list2map(actualIterableItemProperties.values, 'name', 'value'),
-                                       newIterableItemProperties[k],
-                                       "[iterable=$iterableName.$k] ")
-                    }
-                    iterableProperties << [name: iterableName, iterable_valorisation_items: iterableValorisationItems]
+                    setPlatformProperties(platformInfo: platformInfo,
+                                          modulePropertiesPath: modulePropertiesPath[p],
+                                          properties: modulePlatformProperties,
+                                          commitMsg: args.commitMsg)
                 }
-                modulePlatformProperties.iterable_properties = iterableProperties
-
-                setPlatformProperties(platformInfo: platformInfo,
-                                      modulePropertiesPath: modulePropertiesPath,
-                                      properties: modulePlatformProperties,
-                                      commitMsg: args.commitMsg)
             }
         }
     }
@@ -401,8 +413,8 @@ class Hesperides implements Serializable {
     }
 
     @NonCPS
-    private extractInstanceInfo(Map args) { required(args, ['modules', 'moduleName', 'instance'])
-        def module = selectModule(args)
+    private extractInstanceInfo(Map args) { required(args, ['modules', 'instance'])
+        def module = args.module ?: selectModule(args)
         def instanceInfo = module.instances.find { it.name == args.instance }
         if (!instanceInfo) {
             throw new ExpectedEnvironmentException("No instance ${args.instance} found, in module named ${args.moduleName}")
@@ -417,15 +429,19 @@ class Hesperides implements Serializable {
 
     @NonCPS
     private findModulePropertiesPath(Map args) { required(args, ['modules', 'moduleName']) // optional: instance
-        def module = args.modules.find { mod ->
+        def modulesWithPropertiesPath = []
+        def modulesFound = args.modules.findAll { mod ->
             mod.name == args.moduleName && (!args.instance || mod.instances.find {
                 it.name == args.instance
             })
         }
-        if (!module) {
+        if (!modulesFound) {
             throw new ExpectedEnvironmentException("No module ${args.moduleName} found in platform" + (args.instance ? " on instance ${args.instance}" : ''))
         }
-        module.properties_path
+        for (int i = 0; i < modulesFound.size()  ;i++){
+            modulesWithPropertiesPath << modulesFound[i].properties_path
+        }
+        modulesWithPropertiesPath
     }
 
     private setPlatformProperties(Map args) { required(args, ['platformInfo', 'modulePropertiesPath', 'commitMsg', 'properties'])
@@ -447,15 +463,15 @@ class Hesperides implements Serializable {
 
     ******************************************************************************/
 
-    def getInstanceProperties(Map args) { required(args, ['app', 'platform', 'moduleName', 'instance'])
+    def getInstanceProperties(Map args) { required(args, ['app', 'platform', 'instance'])
         def platformInfo = getPlatformInfo(args)
-        def module = listSelect(list: platformInfo['modules'], key: 'name', value: args.moduleName)
+        def module = selectModule(modules: platformInfo.modules, moduleName: args.moduleName, path: args.path)
         listSelect(list: module['instances'], key: 'name', value: args.instance)
     }
 
     def createInstance(Map args) { required(args, ['app', 'platform', 'moduleName', 'instance'])
         def platformInfo = getPlatformInfo(args)
-        def module = selectModule(modules: platformInfo.modules, moduleName: args.moduleName)
+        def module = selectModule(modules: platformInfo.modules, moduleName: args.moduleName, path: args.path)
         module.instances.add([name: args.instance, key_values: []])
         updatePlatform(platformInfo: platformInfo)
     }
@@ -548,13 +564,21 @@ class Hesperides implements Serializable {
     }
 
     @NonCPS
-    protected selectModule(Map args) { required(args, ['modules', 'moduleName'])
-        def module = args.modules.find { it.name == args.moduleName }
+    protected selectModule(Map args) { required(args, ['modules'])
+        def module
+        if (args.path && args.moduleName){
+            module = args.modules.find { it.name == args.moduleName && it.path == args.path}
+            log ("module found : "+module.name)
+        } else if (args.moduleName) {
+            module = args.modules.find { it.name == args.moduleName }
+            log("module found : " + module.name)
+        }
         if (!module) {
             throw new ExpectedEnvironmentException("No module found in platform for name ${args.moduleName}" + (args.propsPath ? "and properties_path ${args.propsPath}" : ''))
         }
         module
     }
+
 
     @NonCPS
     protected listSelect(Map args) { required(args, ['list', 'key', 'value'])
