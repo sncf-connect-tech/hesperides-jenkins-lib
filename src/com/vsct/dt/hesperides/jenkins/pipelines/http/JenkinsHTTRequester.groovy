@@ -41,7 +41,7 @@ class JenkinsHTTRequester implements Serializable {
                                               httpMode: args.method,
                                               requestBody:args.body,
                                               acceptType: args.accept == 'JSON' ? 'APPLICATION_JSON' : 'NOT_SET',
-                                              contentType: args.contentType == 'JSON' ? 'APPLICATION_JSON' : 'NOT_SET',
+                                              contentType: 'APPLICATION_JSON',  // Beware ! Default is "application/x-www-form-urlencoded", cf. https://issues.jenkins-ci.org/browse/JENKINS-47356
                                               customHeaders: headers,
                                               ignoreSslErrors: true,
                                               validResponseCodes: '100:600'

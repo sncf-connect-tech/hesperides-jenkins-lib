@@ -530,7 +530,6 @@ class Hesperides implements Serializable {
         if (args.body) {
             log prettyPrint(args.body)
         }
-        args.contentType = args.contentType ?: (args.method == 'DELETE' ? 'TEXT' : 'JSON')
         log "Content-Type: $args.contentType"
         args.accept = args.accept ?: (args.method == 'DELETE' ? 'ANY' : 'JSON')
         log "Accept: $args.accept"
