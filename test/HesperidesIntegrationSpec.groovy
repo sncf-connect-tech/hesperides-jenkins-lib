@@ -241,6 +241,29 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
                     newVersion: currentVersion)
     }
 
+    def "Can upgrade module version on a platform"() {
+        when:
+        def platformInfo = hesperides.getPlatformInfo(app: applicationName, platform: platformName)
+        def currentVersion = platformInfo['modules'][0]['version']
+        def moduleName = platformInfo['modules'][0]['name']
+        def newVersion = nextVersion(currentVersion)
+        hesperides.setPlatformModuleVersion(app: applicationName,
+                platform: platformName,
+                newVersion: newVersion,
+                moduleName:moduleName)
+        def platformInfoUpdated = hesperides.getPlatformInfo(app: applicationName, platform: platformName)
+
+        then:
+        platformInfoUpdated['modules'].find { it['name'] == moduleName && it['version'] == newVersion }
+
+        cleanup:
+        hesperides.setPlatformModuleVersion(app: applicationName,
+                platform: platformName,
+                currentVersion: newVersion,
+                newVersion: currentVersion,
+                moduleName:moduleName)
+    }
+
     def "Can create a new module in workingcopy from scratch"() {
         when:
             hesperides.createModule(moduleName: 'toto', version: '0.0')
