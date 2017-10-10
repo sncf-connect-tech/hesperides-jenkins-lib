@@ -103,10 +103,10 @@ class Hesperides implements Serializable {
 
     def setPlatformVersion(Map args) { required(args, ['app', 'platform', 'newVersion']) // optional: checkCurrentVersion
         def platformInfo = getPlatformInfo(args)
-        if (args.checkCurrentVersion && platformInfo['application_version'] != args.checkCurrentVersion) {
-            throw new ExpectedEnvironmentException("Actual app version ${platformInfo['application_version']} does not match expect version $args.currentVersion")
+        if (args.checkCurrentVersion && platformInfo.application_version != args.checkCurrentVersion) {
+            throw new ExpectedEnvironmentException("Actual app version ${platformInfo.application_version} does not match expect version $args.currentVersion")
         }
-        platformInfo['application_version'] = args.newVersion
+        platformInfo.application_version = args.newVersion
         updatePlatform(platformInfo: platformInfo, copyPropertiesForUpgradedModules: true)
     }
 
@@ -177,13 +177,13 @@ class Hesperides implements Serializable {
         def platformInfo = getPlatformInfo(args)
         def module = selectModule(modules: platformInfo.modules, moduleName: args.moduleName)
         if (args.checkCurrentVersion) {
-            if (module['version'] != args.checkCurrentVersion) {
-                throw new ExpectedEnvironmentException("Actual module $module.name version ${module['version']} does not match expect version $args.currentVersion")
+            if (module.version != args.checkCurrentVersion) {
+                throw new ExpectedEnvironmentException("Actual module $module.name version ${module.version} does not match expect version $args.currentVersion")
             }
         }
-        module['version'] = args.newVersion
+        module.version = args.newVersion
         if (args.isWorkingcopy != null) {
-            module['working_copy'] = args.isWorkingcopy
+            module.working_copy = args.isWorkingcopy
         }
         updatePlatform(platformInfo: platformInfo, copyPropertiesForUpgradedModules: true)
     }
@@ -191,17 +191,17 @@ class Hesperides implements Serializable {
     def setPlatformModulesVersion(Map args) { required(args, ['app', 'platform', 'newVersion']) // optional: checkCurrentVersion, isWorkingcopy
         def platformInfo = getPlatformInfo(args)
         if (args.checkCurrentVersion) {
-            for (def i = 0; i < platformInfo['modules'].size(); i++) {
-                def module = platformInfo['modules'][i]
-                if (module['version'] != args.checkCurrentVersion) {
-                    throw new ExpectedEnvironmentException("Actual module $module.name version ${module['version']} does not match expect version $args.currentVersion")
+            for (def i = 0; i < platformInfo.modules.size(); i++) {
+                def module = platformInfo.modules[i]
+                if (module.version != args.checkCurrentVersion) {
+                    throw new ExpectedEnvironmentException("Actual module $module.name version ${module.version} does not match expect version $args.currentVersion")
                 }
             }
         }
-        for (def i = 0; i < platformInfo['modules'].size(); i++) {
-            platformInfo['modules'][i]['version'] = args.newVersion
+        for (def i = 0; i < platformInfo.modules.size(); i++) {
+            platformInfo.modules[i].version = args.newVersion
             if (args.isWorkingcopy != null) {
-                platformInfo['modules'][i]['working_copy'] = args.isWorkingcopy
+                platformInfo.modules[i].working_copy = args.isWorkingcopy
             }
         }
         updatePlatform(platformInfo: platformInfo, copyPropertiesForUpgradedModules: true)
@@ -469,7 +469,7 @@ class Hesperides implements Serializable {
     def getInstanceProperties(Map args) { required(args, ['app', 'platform', 'instance'])
         def platformInfo = getPlatformInfo(args)
         def module = selectModule(modules: platformInfo.modules, moduleName: args.moduleName, path: args.path)
-        listSelect(list: module['instances'], key: 'name', value: args.instance)
+        listSelect(list: module.instances, key: 'name', value: args.instance)
     }
 
     def createInstance(Map args) { required(args, ['app', 'platform', 'moduleName', 'instance'])
@@ -577,7 +577,8 @@ class Hesperides implements Serializable {
             }
         }
         if (matchingModules.size() > 1) {
-            throw new ExpectedEnvironmentException("Multiple matching modules found in platform for name ${args.moduleName}" + (args.path ? "and properties_path ${args.path}" : ''))
+            def modulesString = matchingModules.inject([]) { moduleNames, module -> moduleNames << module.name }.join(', ')
+            throw new ExpectedEnvironmentException("Multiple matching modules found in platform for name ${args.moduleName}" + (args.path ? "and properties_path ${args.path}" : '') + " : ${modulesString}")
         }
         matchingModules[0]
     }
