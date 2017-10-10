@@ -302,8 +302,8 @@ class Hesperides implements Serializable {
                 for (def y = 0; y < moduleFoundFromPath.instances.size(); y++){
                     def instance = moduleFoundFromPath.instances[y].name
                     def instanceInfo = extractInstanceInfo(modules: platformInfo.modules,
-                            module: moduleFoundFromPath,
-                            instance: instance)
+                                                           moduleName: moduleFoundFromPath,
+                                                           instance: instance)
                     applyChanges(modulePropertyChanges, instanceInfo.key_values, "[instance=$instance] ")
                 }
                 updatePlatform(platformInfo: platformInfo)
@@ -312,8 +312,8 @@ class Hesperides implements Serializable {
                 moduleName = splittedMod[0]
                 def instance = splittedMod[1]
                 def instanceInfo = extractInstanceInfo(modules: platformInfo.modules,
-                        moduleName: moduleName,
-                        instance: instance)
+                                                       moduleName: moduleName,
+                                                       instance: instance)
                 applyChanges(modulePropertyChanges, instanceInfo.key_values, "[instance=$instance] ")
                 updatePlatform(platformInfo: platformInfo)
             } else {  // il s'agit de properties globales ou de modules
@@ -416,12 +416,13 @@ class Hesperides implements Serializable {
     }
 
     @NonCPS
-    private extractInstanceInfo(Map args) { required(args, ['modules', 'instance'])
-        def module = args.module ?: selectModule(args)
-        def instanceInfo = module.instances.find { it.name == args.instance }
-        if (!instanceInfo) {
+    private extractInstanceInfo(Map args) { required(args, ['modules', 'moduleName', 'instance'])
+        def matchingModules = selectModules(args)
+        def moduleWithInstance = matchingModules.find { it.instances.find { it.name == args.instance } }
+        if (!moduleWithInstance) {
             throw new ExpectedEnvironmentException("No instance ${args.instance} found, in module named ${args.moduleName}")
         }
+        def instanceInfo = moduleWithInstance.instances.find { it.name == args.instance }
         if (instanceInfo.key_values.empty) {
             // empty lists from JSON data are immutable by defaut (adding new entries is going to be refused as unsupported operation)
             // -> we change it into a dynamic list
@@ -472,7 +473,7 @@ class Hesperides implements Serializable {
         listSelect(list: module.instances, key: 'name', value: args.instance)
     }
 
-    def createInstance(Map args) { required(args, ['app', 'platform', 'moduleName', 'instance'])
+    def createInstance(Map args) { required(args, ['app', 'platform', 'moduleName', 'instance']) // optional: path
         def platformInfo = getPlatformInfo(args)
         def module = selectModule(modules: platformInfo.modules, moduleName: args.moduleName, path: args.path)
         module.instances.add([name: args.instance, key_values: []])
