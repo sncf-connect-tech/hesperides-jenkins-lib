@@ -481,11 +481,16 @@ class Hesperides implements Serializable {
 
     def deleteInstance(Map args) { required(args, ['app', 'platform', 'moduleName', 'instance'])
         def platformInfo = getPlatformInfo(args)
-        def module = selectModule(modules: platformInfo.modules, moduleName: args.moduleName)
-        if (args.instance == '*') {
-            module.instances = []
-        } else {
-            listRemove(list: module.instances, key: 'name', value: args.instance)
+        def modules = selectModules(modules: platformInfo.modules, moduleName: args.moduleName)
+        for (def i = 0; i < modules.size(); i++) {
+            def module = modules[i]
+            if (args.instance == '*') {
+                module.instances = []
+            } else {
+                // Note: there may be ZERO matching instance in this module
+                // In that case, this simply won't do anything
+                listRemove(list: module.instances, key: 'name', value: args.instance)
+            }
         }
         updatePlatform(platformInfo: platformInfo)
     }
@@ -565,7 +570,7 @@ class Hesperides implements Serializable {
         args.platformInfo.version_id++
     }
 
-    protected selectModule(Map args) { required(args, ['modules', 'moduleName']) // optional: path
+    protected selectModules(Map args) { required(args, ['modules', 'moduleName']) // optional: path
         def matchingModules = listSelectAll(list: args.modules, key: 'name', value: args.moduleName)
         if (!matchingModules) {
             throw new ExpectedEnvironmentException("No module found in platform for name ${args.moduleName}")
@@ -576,6 +581,11 @@ class Hesperides implements Serializable {
                 throw new ExpectedEnvironmentException("No module found in platform for properties_path ${args.path}")
             }
         }
+        matchingModules
+    }
+
+    protected selectModule(Map args) { required(args, ['modules', 'moduleName']) // optional: path
+        def matchingModules = selectModules(args)
         if (matchingModules.size() > 1) {
             def modulesString = matchingModules.inject([]) { moduleDescs, module -> moduleDescs << "${module.name}#${module.path}" }.join(', ')
             throw new ExpectedEnvironmentException("Multiple matching modules found in platform for name ${args.moduleName}" + (args.path ? "and properties_path ${args.path}" : '') + " : ${modulesString}")
