@@ -562,8 +562,7 @@ class Hesperides implements Serializable {
         args.platformInfo.version_id++
     }
 
-    @NonCPS
-    protected selectModule(Map args) { required(args, ['modules'])
+    protected selectModule(Map args) { required(args, ['modules']) // optional: path, moduleName
         def module
         if (args.path && args.moduleName){
             module = args.modules.find { it.name == args.moduleName && it.path == args.path}
