@@ -44,8 +44,9 @@ class HTTPBuilderRequester implements Serializable {
         }
         def httpClient = new HTTPBuilder(endpoint)
         httpClient.ignoreSSLIssues() // src: https://github.com/jgritman/httpbuilder/blob/master/src/main/java/groovyx/net/http/HTTPBuilder.java#L929
+        def contentType = args.textOutput ? ContentType.TEXT : ContentType.JSON // hack needed in order to avoid a groovyx.net.http.ResponseParseException
         def parsedResponse
-        httpClient.request(Method[args.method], ContentType[args.contentType]) { req ->
+        httpClient.request(Method[args.method], contentType) { req ->
             uri.path = args.uri.path
             uri.query = queryStringAsMap(args.uri.query)
             headers.Accept = ContentType[args.accept]

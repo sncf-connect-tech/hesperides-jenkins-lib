@@ -191,14 +191,14 @@ class Hesperides implements Serializable {
     def setPlatformModulesVersion(Map args) { required(args, ['app', 'platform', 'newVersion']) // optional: checkCurrentVersion, isWorkingcopy
         def platformInfo = getPlatformInfo(args)
         if (args.checkCurrentVersion) {
-            for (def i = 0; i < platformInfo.modules.size(); i++) {
+            for (int i = 0; i < platformInfo.modules.size(); i++) {
                 def module = platformInfo.modules[i]
                 if (module.version != args.checkCurrentVersion) {
                     throw new ExpectedEnvironmentException("Actual module $module.name version ${module.version} does not match expect version $args.currentVersion")
                 }
             }
         }
-        for (def i = 0; i < platformInfo.modules.size(); i++) {
+        for (int i = 0; i < platformInfo.modules.size(); i++) {
             platformInfo.modules[i].version = args.newVersion
             if (args.isWorkingcopy != null) {
                 platformInfo.modules[i].working_copy = args.isWorkingcopy
@@ -288,7 +288,7 @@ class Hesperides implements Serializable {
         }
 
         def moduleNames = propertyUpdates.keySet() as List
-        for (def i = 0; i < moduleNames.size(); i++) {  // DAMN Jenkins pipelines that does not support .each
+        for (int i = 0; i < moduleNames.size(); i++) {  // DAMN Jenkins pipelines that does not support .each
             def moduleName = moduleNames[i]
             def modulePropertyChanges = propertyUpdates[moduleName]
             log "---------\n# Module: $moduleName\n---------"
@@ -299,8 +299,8 @@ class Hesperides implements Serializable {
                 def path = moduleName.minus("path:").minus("#"+moduleNameFromPath)
                 def moduleFoundFromPath = selectModule(modules: platformInfo.modules, path: path, moduleName: moduleNameFromPath)
                 log "-> properties_path: $moduleFoundFromPath.properties_path"
-                for (def y = 0; y < moduleFoundFromPath.instances.size(); y++){
-                    def instance = moduleFoundFromPath.instances[y].name
+                for (int j = 0; j < moduleFoundFromPath.instances.size(); j++){
+                    def instance = moduleFoundFromPath.instances[j].name
                     def instanceInfo = extractInstanceInfo(module: moduleFoundFromPath,
                                                            instance: instance)
                     applyChanges(modulePropertyChanges, instanceInfo.key_values, "[instance=$instance] ")
@@ -318,13 +318,14 @@ class Hesperides implements Serializable {
             } else {  // il s'agit de properties globales ou de modules
                 def modulePropertiesPath = ['#']
                 if (moduleName != 'GLOBAL') {
-                    def modules = selectModules(args)
-                    for (int i = 0; i < modules.size(); i++){
-                        modulePropertiesPath << modules[i].properties_path
+                    def modules = selectModules(modules: platformInfo.modules, moduleName: moduleName)
+                    modulePropertiesPath = []
+                    for (int j = 0; j < modules.size(); j++) {
+                        modulePropertiesPath << modules[j].properties_path
                     }
                 }
                 for (int p = 0; p < modulePropertiesPath.size(); p++){
-                    log("-> properties_path: "+modulePropertiesPath[p])
+                    log('-> properties_path: ' + modulePropertiesPath[p])
                     def modulePlatformProperties = getModulePropertiesForPlatform(app: args.app,
                                                                                   platform: args.platform,
                                                                                   modulePropertiesPath: modulePropertiesPath[p])
@@ -337,7 +338,7 @@ class Hesperides implements Serializable {
                     // For iterable properties, we do not "apply" changes, we simply use the values provided
                     def iterableProperties = []
                     def iterableNames = newIterableProperties ? newIterableProperties.keySet() as List : []
-                    for (def j = 0; j < iterableNames.size(); j++) {  // DAMN Jenkins pipelines that does not support .each
+                    for (int j = 0; j < iterableNames.size(); j++) {  // DAMN Jenkins pipelines that does not support .each
                         def iterableName = iterableNames[j]
                         def newIterableItemProperties = newIterableProperties[iterableName]
                         def actualIterableProperties = listSelect(list: modulePlatformProperties.iterable_properties,
@@ -348,7 +349,7 @@ class Hesperides implements Serializable {
                             log COLOR_RED + "$diffSize iterable properties where DELETED for iterable $iterableName" + COLOR_END
                         }
                         def iterableValorisationItems = []
-                        for (def k = 0; k < newIterableItemProperties.size(); k++) { // DAMN Jenkins pipelines that does not support .eachWithIndex
+                        for (int k = 0; k < newIterableItemProperties.size(); k++) { // DAMN Jenkins pipelines that does not support .eachWithIndex
                             iterableValorisationItems << [title: 'not used', values: map2list(newIterableItemProperties[k], 'name', 'value')]
                             // Displaying props changes:
                             if (!actualIterableProperties) {
@@ -373,11 +374,12 @@ class Hesperides implements Serializable {
                 }
             }
         }
+        platformInfo
     }
 
     private applyChanges(changes, properties, logPrefix = '') {
         def propNames = changes.keySet() as List
-        for (def j = 0; j < propNames.size(); j++) {  // DAMN Jenkins pipelines that does not support .each
+        for (int j = 0; j < propNames.size(); j++) {  // DAMN Jenkins pipelines that does not support .each
             def propName = propNames[j]
             def newValue = changes[propName]
             def prop = listSelect(list: properties, key: 'name', value: propName)
@@ -395,7 +397,7 @@ class Hesperides implements Serializable {
 
     private displayChanges(oldProps, newProps, logPrefix = '') {
         def propNames = oldProps.keySet() + newProps.keySet()
-        for (def j = 0; j < propNames.size(); j++) {  // DAMN Jenkins pipelines that does not support .each
+        for (int j = 0; j < propNames.size(); j++) {  // DAMN Jenkins pipelines that does not support .each
             def propName = propNames[j]
             def newValue = newProps[propName]
             def oldValue = oldProps[propName]
@@ -475,7 +477,7 @@ class Hesperides implements Serializable {
     def deleteInstance(Map args) { required(args, ['app', 'platform', 'moduleName', 'instance'])
         def platformInfo = getPlatformInfo(args)
         def modules = selectModules(modules: platformInfo.modules, moduleName: args.moduleName)
-        for (def i = 0; i < modules.size(); i++) {
+        for (int i = 0; i < modules.size(); i++) {
             def module = modules[i]
             if (args.instance == '*') {
                 module.instances = []
@@ -495,7 +497,7 @@ class Hesperides implements Serializable {
                                         query: [isWorkingCopy: module.working_copy])
         def instanceFilesContents = [:]
         for (templateFile in instanceFiles) {
-            instanceFilesContents[templateFile.location] = httpRequest(url: "$apiRootUrl$templateFile.url", contentType: 'TEXT', accept: 'TEXT')
+            instanceFilesContents[templateFile.location] = httpRequest(url: "$apiRootUrl$templateFile.url", textOutput: true, accept: 'TEXT')
         }
         instanceFilesContents
     }
@@ -527,6 +529,7 @@ class Hesperides implements Serializable {
             }
         }
         args.method = args.method ?: 'GET'
+        args.textOutput = args.textOutput ?: (args.method == 'DELETE')
         log "$args.method $args.uri"
         if (args.body) {
             log prettyPrint(args.body)
@@ -581,7 +584,7 @@ class Hesperides implements Serializable {
         def matchingModules = selectModules(args)
         if (args.instance) {
             def filteredModules = []
-            for (def i = 0; i < matchingModules.size(); i++) {
+            for (int i = 0; i < matchingModules.size(); i++) {
                 def module = matchingModules[i]
                 if (listSelect(list: module.instances, key: 'name', value: args.instance)) {
                     filteredModules << module

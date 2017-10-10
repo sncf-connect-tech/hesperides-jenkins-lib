@@ -54,12 +54,11 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
     static instanceNameTwo = 'instanceTwo'
     static instanceNameThree = 'instanceThree'
     static logicGroupName = 'GROUP'
-    static LogicGroupNameTwo = 'CUSTOMGROUP'
+    static logicGroupNameTwo = 'CUSTOMGROUP'
     static subLogicGroup = 'TECHNO'
 
 
     def setupSpec() {
-
         log "${ENV.HESPERIDES_AUTH}@${ENV.HESPERIDES_HOST}:${ENV.HESPERIDES_PORT}"
         hesperides.createPlatform(app: applicationName, platform: platformName, version: '1.0.0.0')
         def infos = hesperides.getPlatformInfo(app: applicationName, platform: platformName)
@@ -82,10 +81,10 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
                 moduleName: secondModuleName,
                 moduleVersion: moduleVersion,
                 isWorkingCopy: true,
-                logicGroupPath: "#${LogicGroupNameTwo}#${subLogicGroup}")
+                logicGroupPath: "#${logicGroupNameTwo}#${subLogicGroup}")
         hesperides.createInstance(app: applicationName, platform: platformName, moduleName: moduleName, instance: instanceName, path: "#${logicGroupName}#${subLogicGroup}")
         hesperides.createInstance(app: applicationName, platform: platformName, moduleName: secondModuleName, instance: instanceNameTwo, path: "#${logicGroupName}#${subLogicGroup}")
-        hesperides.createInstance(app: applicationName, platform: platformName, moduleName: secondModuleName, instance: instanceNameThree, path: "#${LogicGroupNameTwo}#${subLogicGroup}")
+        hesperides.createInstance(app: applicationName, platform: platformName, moduleName: secondModuleName, instance: instanceNameThree, path: "#${logicGroupNameTwo}#${subLogicGroup}")
     }
 
     def cleanupSpec() {
@@ -154,7 +153,7 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
                   "${moduleName}#${instanceName}": {
                     "LCM_vha_test_instance_property": "hello World !"
                   },
-                  "path:#${LogicGroupNameTwo}#${subLogicGroup}#${secondModuleName}": {
+                  "path:#${logicGroupNameTwo}#${subLogicGroup}#${secondModuleName}": {
                     "LCM_vha_test_instance_property": "hello World on custom path!"
                   },
                   "${secondModuleName}": {
@@ -169,18 +168,18 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
             File jsonFile = new File('jsonProperties')
             jsonFile.text = jsonProperties
             hesperides.updateProperties(app: applicationName,
-                    platform: platformName,
-                    jsonPropertyUpdates: jsonFile.path,
-                    commitMsg: 'hesperides-jenkins-lib Spock tests')
+                                        platform: platformName,
+                                        jsonPropertyUpdates: jsonFile.path,
+                                        commitMsg: 'hesperides-jenkins-lib Spock tests')
             jsonFile.delete()
 
             def modulePropertiesPath = "#${logicGroupName}#${subLogicGroup}#${moduleName}#${moduleVersion}#WORKINGCOPY"
-            def moduleTwoPropertiesPath = "#${LogicGroupNameTwo}#${subLogicGroup}#${secondModuleName}#${moduleVersion}#WORKINGCOPY"
+            def moduleTwoPropertiesPath = "#${logicGroupNameTwo}#${subLogicGroup}#${secondModuleName}#${moduleVersion}#WORKINGCOPY"
             def platformProps = hesperides.getModulePropertiesForPlatform(app: applicationName, platform: platformName, modulePropertiesPath: modulePropertiesPath)
             def platformPropsModuleTwo = hesperides.getModulePropertiesForPlatform(app: applicationName, platform: platformName, modulePropertiesPath: moduleTwoPropertiesPath)
             def globalProps = hesperides.getModulePropertiesForPlatform(app: applicationName, platform: platformName, modulePropertiesPath: '#')
             def instanceProps = hesperides.getInstanceProperties(app: applicationName, platform: platformName, moduleName: moduleName, instance: instanceName)
-            def instancePropsModuleTwo = hesperides.getInstanceProperties(app: applicationName, platform: platformName, moduleName: secondModuleName, instance: instanceNameThree, path: "#${LogicGroupNameTwo}#${subLogicGroup}")
+            def instancePropsModuleTwo = hesperides.getInstanceProperties(app: applicationName, platform: platformName, moduleName: secondModuleName, instance: instanceNameThree, path: "#${logicGroupNameTwo}#${subLogicGroup}")
 
         then:
             platformProps['key_value_properties'].find { it.name == 'LCM_vha_test_property' }
@@ -189,11 +188,20 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
             platformProps['key_value_properties'].find {
                 it.name == 'LCM_vha_test_builtin_property'
             }['value'] == '{{hesperides.platform.name}}'
+
+            platformProps['iterable_properties'].size() > 0
+            platformProps['iterable_properties'].find {
+                it.name == 'LCM_vha_test_iterableProps'
+            }
+            platformProps['iterable_properties'].find {
+                it.name == 'LCM_vha_test_iterableProps'
+            }['iterable_valorisation_items'].size() > 0
             platformProps['iterable_properties'].find {
                 it.name == 'LCM_vha_test_iterableProps'
             }['iterable_valorisation_items'][0]['values'].find {
                 it.name == 'LCM_vha_test_iterableProp'
             }['value'] == 'TOTO'
+
             globalProps['key_value_properties'].find {
                 it.name == 'LCM_vha_test_global_property'
             }['value'] == 'Over 9000 !'

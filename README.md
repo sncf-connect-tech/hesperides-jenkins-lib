@@ -83,6 +83,8 @@ Integration tests use a dockerized Hesperides instance.
 If you want to only use Docker to launch an Hesperides instance:
 
     docker-compose up -d hesperides
+    HESPERIDES_HOST=http://localhost
+    HESPERIDES_PORT=8080
     gradle test
 
 

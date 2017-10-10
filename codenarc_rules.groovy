@@ -156,7 +156,6 @@ ruleset {
     ThrowThrowable
 
     // rulesets/formatting.xml
-    BlankLineBeforePackage
     BracesForClass
     BracesForForLoop
     BracesForIfElse
