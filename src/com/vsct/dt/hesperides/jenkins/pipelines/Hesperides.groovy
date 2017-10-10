@@ -597,7 +597,7 @@ class Hesperides implements Serializable {
 
     @NonCPS
     protected listSelect(Map args) { required(args, ['list', 'key', 'value'])
-        def matches = args.list.findAll { it[args.key] == args.value }
+        def matches = args.list.findAll { it && it[args.key] == args.value }
         if (!matches) {
             return null
         }
@@ -609,12 +609,12 @@ class Hesperides implements Serializable {
 
     @NonCPS
     protected listSelectAll(Map args) { required(args, ['list', 'key', 'value'])
-        args.list.findAll { it[args.key] == args.value }
+        args.list.findAll { it && it[args.key] == args.value }
     }
 
     @NonCPS
     protected listRemove(Map args) { required(args, ['list', 'key', 'value'])
-        args.list.removeAll { it[args.key] == args.value }
+        args.list.removeAll { it && it[args.key] == args.value }
     }
 
     @NonCPS
