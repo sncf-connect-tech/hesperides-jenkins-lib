@@ -313,6 +313,9 @@ class Hesperides implements Serializable {
                 def instanceInfo = extractInstanceInfo(modules: platformInfo.modules,
                                                        moduleName: moduleName,
                                                        instance: instance)
+                if (!instanceInfo.key_values) {
+                    instanceInfo.key_values = []
+                }
                 applyChanges(modulePropertyChanges, instanceInfo.key_values, "[instance=$instance] ")
                 updatePlatform(platformInfo: platformInfo)
             } else {  // il s'agit de properties globales ou de modules
@@ -378,6 +381,9 @@ class Hesperides implements Serializable {
     }
 
     private applyChanges(changes, properties, logPrefix = '') {
+        if (properties == null) {
+            throw new IllegalArgumentException('NULL properties argument provided')
+        }
         def propNames = changes.keySet() as List
         for (int j = 0; j < propNames.size(); j++) {  // DAMN Jenkins pipelines that does not support .each
             def propName = propNames[j]
