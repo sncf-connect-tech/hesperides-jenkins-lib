@@ -324,8 +324,11 @@ class Hesperides implements Serializable {
                 for (int p = 0; p < modulePropertiesPath.size(); p++){
                     log("-> properties_path: "+modulePropertiesPath[p])
                     def modulePlatformProperties = getModulePropertiesForPlatform(app: args.app,
-                            platform: args.platform,
-                            modulePropertiesPath: modulePropertiesPath[p])
+                                                                                  platform: args.platform,
+                                                                                  modulePropertiesPath: modulePropertiesPath[p])
+                    if (modulePlatformProperties.key_value_properties == null) {
+                        modulePlatformProperties.key_value_properties = []
+                    }
                     def newIterableProperties = modulePropertyChanges.remove('iterable_properties')
                     applyChanges(modulePropertyChanges, modulePlatformProperties.key_value_properties)
 
@@ -562,25 +565,39 @@ class Hesperides implements Serializable {
         args.platformInfo.version_id++
     }
 
-    protected selectModule(Map args) { required(args, ['modules']) // optional: path, moduleName
-        def module
-        if (args.path && args.moduleName){
-            module = args.modules.find { it.name == args.moduleName && it.path == args.path}
-            log ("module found : "+module.name)
-        } else if (args.moduleName) {
-            module = args.modules.find { it.name == args.moduleName }
-            log("module found : " + module.name)
+    protected selectModule(Map args) { required(args, ['modules', 'moduleName']) // optional: path
+        def matchingModules = listSelectAll(list: args.modules, key: 'name', value: args.moduleName)
+        if (!matchingModules) {
+            throw new ExpectedEnvironmentException("No module found in platform for name ${args.moduleName}")
         }
-        if (!module) {
-            throw new ExpectedEnvironmentException("No module found in platform for name ${args.moduleName}" + (args.propsPath ? "and properties_path ${args.propsPath}" : ''))
+        if (args.path){
+            matchingModules = listSelectAll(list: matchingModules, key: 'path', value: args.path)
+            if (!matchingModules) {
+                throw new ExpectedEnvironmentException("No module found in platform for properties_path ${args.path}")
+            }
         }
-        module
+        if (matchingModules.size() > 1) {
+            throw new ExpectedEnvironmentException("Multiple matching modules found in platform for name ${args.moduleName}" + (args.path ? "and properties_path ${args.path}" : ''))
+        }
+        matchingModules[0]
     }
 
 
     @NonCPS
     protected listSelect(Map args) { required(args, ['list', 'key', 'value'])
-        args.list.find { it[args.key] == args.value }
+        def matches = args.list.findAll { it[args.key] == args.value }
+        if (!matches) {
+            return null
+        }
+        if (matches.size() > 1) {
+            throw new RuntimeException("Multiple matches found in list for key ${args.key} and value ${args.value}")
+        }
+        matches[0]
+    }
+
+    @NonCPS
+    protected listSelectAll(Map args) { required(args, ['list', 'key', 'value'])
+        args.list.findAll { it[args.key] == args.value }
     }
 
     @NonCPS
