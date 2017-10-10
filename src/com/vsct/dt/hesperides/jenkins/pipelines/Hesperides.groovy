@@ -577,7 +577,7 @@ class Hesperides implements Serializable {
             }
         }
         if (matchingModules.size() > 1) {
-            def modulesString = matchingModules.inject([]) { moduleNames, module -> moduleNames << module.name }.join(', ')
+            def modulesString = matchingModules.inject([]) { moduleDescs, module -> moduleDescs << "${module.name}#${module.path}" }.join(', ')
             throw new ExpectedEnvironmentException("Multiple matching modules found in platform for name ${args.moduleName}" + (args.path ? "and properties_path ${args.path}" : '') + " : ${modulesString}")
         }
         matchingModules[0]
