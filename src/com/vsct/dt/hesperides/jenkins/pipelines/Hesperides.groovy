@@ -301,8 +301,7 @@ class Hesperides implements Serializable {
                 log "-> properties_path: $moduleFoundFromPath.properties_path"
                 for (def y = 0; y < moduleFoundFromPath.instances.size(); y++){
                     def instance = moduleFoundFromPath.instances[y].name
-                    def instanceInfo = extractInstanceInfo(modules: platformInfo.modules,
-                                                           moduleName: moduleFoundFromPath,
+                    def instanceInfo = extractInstanceInfo(module: moduleFoundFromPath,
                                                            instance: instance)
                     applyChanges(modulePropertyChanges, instanceInfo.key_values, "[instance=$instance] ")
                 }
@@ -319,7 +318,10 @@ class Hesperides implements Serializable {
             } else {  // il s'agit de properties globales ou de modules
                 def modulePropertiesPath = ['#']
                 if (moduleName != 'GLOBAL') {
-                    modulePropertiesPath = findModulePropertiesPath(moduleName: moduleName, modules: platformInfo.modules)
+                    def modules = selectModules(args)
+                    for (int i = 0; i < modules.size(); i++){
+                        modulePropertiesPath << modules[i].properties_path
+                    }
                 }
                 for (int p = 0; p < modulePropertiesPath.size(); p++){
                     log("-> properties_path: "+modulePropertiesPath[p])
@@ -416,36 +418,26 @@ class Hesperides implements Serializable {
     }
 
     @NonCPS
-    private extractInstanceInfo(Map args) { required(args, ['modules', 'moduleName', 'instance'])
-        def matchingModules = selectModules(args)
-        def moduleWithInstance = matchingModules.find { it.instances.find { it.name == args.instance } }
-        if (!moduleWithInstance) {
-            throw new ExpectedEnvironmentException("No instance ${args.instance} found, in module named ${args.moduleName}")
+    private extractInstanceInfo(Map args) { required(args, ['instance']) // + required: module OR modules & moduleName
+        def instanceInfo
+        if (args.module) {
+            instanceInfo = args.module.instances.find { it.name == args.instance }
+            if (!instanceInfo) {
+                throw new ExpectedEnvironmentException("No instance ${args.instance} found, in module named ${args.module.name}")
+            }
+        } else {
+            def module = selectModule(args)
+            if (!module) {
+                throw new ExpectedEnvironmentException("No instance ${args.instance} found, in module named ${args.moduleName}")
+            }
+            instanceInfo = module.instances.find { it.name == args.instance }
         }
-        def instanceInfo = moduleWithInstance.instances.find { it.name == args.instance }
         if (instanceInfo.key_values.empty) {
             // empty lists from JSON data are immutable by defaut (adding new entries is going to be refused as unsupported operation)
             // -> we change it into a dynamic list
             instanceInfo.key_values = []
         }
         instanceInfo
-    }
-
-    @NonCPS
-    private findModulePropertiesPath(Map args) { required(args, ['modules', 'moduleName']) // optional: instance
-        def modulesWithPropertiesPath = []
-        def modulesFound = args.modules.findAll { mod ->
-            mod.name == args.moduleName && (!args.instance || mod.instances.find {
-                it.name == args.instance
-            })
-        }
-        if (!modulesFound) {
-            throw new ExpectedEnvironmentException("No module ${args.moduleName} found in platform" + (args.instance ? " on instance ${args.instance}" : ''))
-        }
-        for (int i = 0; i < modulesFound.size()  ;i++){
-            modulesWithPropertiesPath << modulesFound[i].properties_path
-        }
-        modulesWithPropertiesPath
     }
 
     private setPlatformProperties(Map args) { required(args, ['platformInfo', 'modulePropertiesPath', 'commitMsg', 'properties'])
@@ -585,15 +577,30 @@ class Hesperides implements Serializable {
         matchingModules
     }
 
-    protected selectModule(Map args) { required(args, ['modules', 'moduleName']) // optional: path
+    protected selectModule(Map args) { required(args, ['modules', 'moduleName']) // optional: instance, path
         def matchingModules = selectModules(args)
+        if (args.instance) {
+            def filteredModules = []
+            for (def i = 0; i < matchingModules.size(); i++) {
+                def module = matchingModules[i]
+                if (listSelect(list: module.instances, key: 'name', value: args.instance)) {
+                    filteredModules << module
+                }
+            }
+            matchingModules = filteredModules
+        }
         if (matchingModules.size() > 1) {
-            def modulesString = matchingModules.inject([]) { moduleDescs, module -> moduleDescs << "${module.name}#${module.path}" }.join(', ')
+            def modulesString = modulesStringDescription(matchingModules)
             throw new ExpectedEnvironmentException("Multiple matching modules found in platform for name ${args.moduleName}" + (args.path ? "and properties_path ${args.path}" : '') + " : ${modulesString}")
         }
         matchingModules[0]
     }
 
+
+    @NonCPS
+    protected modulesStringDescription(List modules) {
+        modules.inject([]) { moduleDescs, module -> moduleDescs << "${module.name}#${module.path}" }.join(', ')
+    }
 
     @NonCPS
     protected listSelect(Map args) { required(args, ['list', 'key', 'value'])
