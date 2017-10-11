@@ -5,6 +5,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [1.1.3] - 2017-10-11
+### Added
+- `updateProperties` now accepts properties paths to specify which module to update - thanks @achoimet !
+
+### Fixed
+- Using an application/json Content-Type with DELETE calls
+
+
+## [1.1.2] - 2017-09-14
+### Added
+- Exposing `doesWorkingcopyExistForModuleVersion` & `doesReleaseExistForModuleVersion` methods - thanks @benjaminrene !
+
+### Fixed
+- Allowing `auth` to be null in `Hesperides` constructor
+- Properly catching HTTP errors as exceptions with `JenkinsHTTRequester` - thanks @benjaminrene !
+
+
 ## [1.1.1] - 2017-09-14
 ### Added
 - `deleteInstance` now supports a wildcard '*' value for its `instance` parameter
