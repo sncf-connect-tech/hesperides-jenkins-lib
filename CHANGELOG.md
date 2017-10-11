@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Using an application/json Content-Type with DELETE calls
 
 
-## [1.1.2] - 2017-09-14
+## [1.1.2] - 2017-10-04
 ### Added
 - Exposing `doesWorkingcopyExistForModuleVersion` & `doesReleaseExistForModuleVersion` methods - thanks @benjaminrene !
 
