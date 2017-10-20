@@ -67,8 +67,8 @@ class Hesperides implements Serializable {
 
     ******************************************************************************/
 
-    def getAppInfo(app) { required(args, ['app'])
-        httpRequest(path: "/rest/applications/${app}")
+    def getAppInfo(Map args) { required(args, ['app'])
+        httpRequest(path: "/rest/applications/${args.app}")
     }
 
     def getPlatformInfo(Map args) { required(args, ['app', 'platform'])
