@@ -27,7 +27,7 @@ def getAppInfo(Map args) {
     new Hesperides(apiRootUrl: args.apiRootUrl,
                    auth: args.auth,
                    httpRequester: new JenkinsHTTRequester(this.steps),
-                   steps: this.steps).getAppInfo(args.app)
+                   steps: this.steps).getAppInfo(args)
 }
 
 def createPlatform(Map args) {
