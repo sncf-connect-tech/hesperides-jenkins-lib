@@ -93,6 +93,13 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
         hesperides.deleteModule(moduleName: secondModuleName, version: moduleVersion, moduleType: 'workingcopy')
     }
 
+    def "Can get versions of a module"() {
+        when:
+        def versions = hesperides.getModuleVersions(moduleName: moduleName)
+        then:
+        versions == [moduleVersion]
+    }
+
     def "Can create a module"() {
         when:
             def moduleName = 'module-' + UUID.randomUUID().toString()

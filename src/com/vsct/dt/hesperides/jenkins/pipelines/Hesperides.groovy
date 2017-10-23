@@ -139,6 +139,10 @@ class Hesperides implements Serializable {
         httpRequest(path: "/rest/modules/${args.moduleName}/${args.version}/${args.moduleType}")
     }
 
+    def getModuleVersions(Map args) { required(args, ['moduleName'])
+        httpRequest(path: "/rest/modules/${args.moduleName}")
+    }
+
     def releaseModule(Map args) { required(args, ['moduleName', 'workingcopyVersion', 'releaseVersion'])
         httpRequest(method: 'POST',
                     path: '/rest/modules/create_release',

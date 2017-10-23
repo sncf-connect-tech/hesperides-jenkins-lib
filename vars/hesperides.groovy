@@ -71,6 +71,13 @@ def getModule(Map args) {
                    steps: this.steps).getModule(args)
 }
 
+def getModuleVersions(Map args) {
+    new Hesperides(apiRootUrl: args.apiRootUrl,
+            auth: args.auth,
+            httpRequester: new JenkinsHTTRequester(this.steps),
+            steps: this.steps).getModuleVersions(args)
+}
+
 def createModule(Map args) {
     new Hesperides(apiRootUrl: args.apiRootUrl,
                    auth: args.auth,
