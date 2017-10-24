@@ -57,6 +57,16 @@
     <h1>Modules</h1>
 
     <section>
+        <h1>hesperides.getModuleVersions</h1>
+        Retrieve the versions of a module.
+        <br>
+        Example:
+        <pre><code>
+        hesperides.getModuleVersions moduleName: 'toto'
+        </code></pre>
+    </section>
+
+    <section>
         <h1>hesperides.releaseModule</h1>
         Release one or several modules from their working copies.
         <br>
