@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [1.1.4] - Not released yet
+### Added
+- `getModuleVersions` - thanks @efouret !
+
+### Fixed
+- `getAppInfo` method - thanks @efouret !
+
+
 ## [1.1.3] - 2017-10-11
 ### Added
 - `updateProperties` now accepts properties paths to specify which module to update - thanks @achoimet !
