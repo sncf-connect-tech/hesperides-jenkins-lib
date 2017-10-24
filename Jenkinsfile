@@ -65,6 +65,12 @@ node {
                                                                     jsonPropertyUpdates: 'http://gitlab.mycompany.com/KTN-USN1.json',
                                                                     commitMsg: 'vsct-hesperides-api tests from Jenkinsfile')))
             }
+
+            stage('Test getModuleVersions') {
+                echo prettyPrint(toJson(hesperides.getModuleVersions(apiRootUrl: API_ROOT_URL,
+                        auth: auth,
+                        moduleName: 'demoKatana-war')))
+            }
         } finally {
             stage('Test deleteModule') {
                 hesperides.deleteModule(apiRootUrl: API_ROOT_URL,
