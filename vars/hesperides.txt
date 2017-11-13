@@ -132,11 +132,11 @@
             }
           },
           "another-module#INSTANCE_NAME": {},
-          "path:#logicGroup#another-third-module": {
-            "polymorphistic_property": "a value"
+          "another-third-module": {
+            "polymorphistic_property": "a default value on the platform"
           },
           "path:#anotherLogicGroup#another-third-module": {
-            "polymorphistic_property": "another value"
+            "polymorphistic_property": "an overriden value for a specific path"
           },
           "GLOBAL": {}
         }

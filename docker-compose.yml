@@ -6,7 +6,7 @@ services:
   redis: 
     image: "redis" 
   hesperides: 
-    image: "hesperides/hesperides"
+    image: "hesperides/hesperides:demo-chaos"
     ports: 
       - "8080:8080"
     depends_on:

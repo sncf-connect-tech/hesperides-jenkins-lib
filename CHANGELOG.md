@@ -8,9 +8,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.1.4] - Not released yet
 ### Added
 - `getModuleVersions` - thanks @efouret !
+- `updateInstanceProperties` private method - thanks @achoimet !
+- `updateModuleProperties` private method - thanks @achoimet !
+- `updatePathSpecificProperties` private method - thanks @achoimet !
 
 ### Fixed
 - `getAppInfo` method - thanks @efouret !
+
+### Changed
+- `updateProperties` now the method is easier to understand, she calls 3 others private methods - thanks @achoimet !
 
 
 ## [1.1.3] - 2017-10-11
@@ -33,7 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.1.1] - 2017-09-14
 ### Added
 - `deleteInstance` now supports a wildcard '*' value for its `instance` parameter
-
+ 
 
 ## [1.1.0] - 2017-08-16
 Publication on Github

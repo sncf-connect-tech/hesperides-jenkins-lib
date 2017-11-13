@@ -292,96 +292,111 @@ class Hesperides implements Serializable {
         }
 
         def moduleNames = propertyUpdates.keySet() as List
-        for (int i = 0; i < moduleNames.size(); i++) {  // DAMN Jenkins pipelines that does not support .each
-            def moduleName = moduleNames[i]
-            def modulePropertyChanges = propertyUpdates[moduleName]
-            log "---------\n# Module: $moduleName\n---------"
-            log "---------${platformInfo.modules}---------"
-            if (moduleName.startsWith("path:")) {
-                // changes to apply on a module to a specific path on all instances
-                def moduleNameFromPath = moduleName.split("#").last()
-                def path = moduleName.minus("path:").minus("#"+moduleNameFromPath)
-                def moduleFoundFromPath = selectModule(modules: platformInfo.modules, path: path, moduleName: moduleNameFromPath)
-                log "-> properties_path: $moduleFoundFromPath.properties_path"
-                for (int j = 0; j < moduleFoundFromPath.instances.size(); j++){
-                    def instance = moduleFoundFromPath.instances[j].name
-                    def instanceInfo = extractInstanceInfo(module: moduleFoundFromPath,
-                                                           instance: instance)
-                    applyChanges(modulePropertyChanges, instanceInfo.key_values, "[instance=$instance] ")
-                }
-                updatePlatform(platformInfo: platformInfo)
-            } else if (moduleName.contains('#')) { // il s'agit de properties d'instance
-                def splittedMod = moduleName.split('#')  // DAMN Jenkins pipelines that does not support tuples
-                moduleName = splittedMod[0]
-                def instance = splittedMod[1]
-                def instanceInfo = extractInstanceInfo(modules: platformInfo.modules,
-                                                       moduleName: moduleName,
-                                                       instance: instance)
-                if (!instanceInfo.key_values) {
-                    instanceInfo.key_values = []
-                }
-                applyChanges(modulePropertyChanges, instanceInfo.key_values, "[instance=$instance] ")
-                updatePlatform(platformInfo: platformInfo)
-            } else {  // il s'agit de properties globales ou de modules
-                def modulePropertiesPath = ['#']
-                if (moduleName != 'GLOBAL') {
-                    def modules = selectModules(modules: platformInfo.modules, moduleName: moduleName)
-                    modulePropertiesPath = []
-                    for (int j = 0; j < modules.size(); j++) {
-                        modulePropertiesPath << modules[j].properties_path
-                    }
-                }
-                for (int p = 0; p < modulePropertiesPath.size(); p++){
-                    log('-> properties_path: ' + modulePropertiesPath[p])
-                    def modulePlatformProperties = getModulePropertiesForPlatform(app: args.app,
-                                                                                  platform: args.platform,
-                                                                                  modulePropertiesPath: modulePropertiesPath[p])
-                    if (modulePlatformProperties.key_value_properties == null) {
-                        modulePlatformProperties.key_value_properties = []
-                    }
-                    def newIterableProperties = modulePropertyChanges.remove('iterable_properties')
-                    applyChanges(modulePropertyChanges, modulePlatformProperties.key_value_properties)
-
-                    // For iterable properties, we do not "apply" changes, we simply use the values provided
-                    def iterableProperties = []
-                    def iterableNames = newIterableProperties ? newIterableProperties.keySet() as List : []
-                    for (int j = 0; j < iterableNames.size(); j++) {  // DAMN Jenkins pipelines that does not support .each
-                        def iterableName = iterableNames[j]
-                        def newIterableItemProperties = newIterableProperties[iterableName]
-                        def actualIterableProperties = listSelect(list: modulePlatformProperties.iterable_properties,
-                                                                  key: 'name',
-                                                                  value: iterableName)
-                        if (actualIterableProperties && newIterableItemProperties.size() < actualIterableProperties.iterable_valorisation_items.size()) {
-                            def diffSize = actualIterableProperties.iterable_valorisation_items.size() - newIterableItemProperties.size()
-                            log COLOR_RED + "$diffSize iterable properties where DELETED for iterable $iterableName" + COLOR_END
-                        }
-                        def iterableValorisationItems = []
-                        for (int k = 0; k < newIterableItemProperties.size(); k++) { // DAMN Jenkins pipelines that does not support .eachWithIndex
-                            iterableValorisationItems << [title: 'not used', values: map2list(newIterableItemProperties[k], 'name', 'value')]
-                            // Displaying props changes:
-                            if (!actualIterableProperties) {
-                                continue
-                            }
-                            def actualIterableItemProperties = actualIterableProperties.iterable_valorisation_items[k]
-                            if (!actualIterableItemProperties) {
-                                continue
-                            }
-                            displayChanges(list2map(actualIterableItemProperties.values, 'name', 'value'),
-                                           newIterableItemProperties[k],
-                                           "[iterable=$iterableName.$k] ")
-                        }
-                        iterableProperties << [name: iterableName, iterable_valorisation_items: iterableValorisationItems]
-                    }
-                    modulePlatformProperties.iterable_properties = iterableProperties
-
-                    setPlatformProperties(platformInfo: platformInfo,
-                                          modulePropertiesPath: modulePropertiesPath[p],
-                                          properties: modulePlatformProperties,
-                                          commitMsg: args.commitMsg)
-                }
-            }
+        // Split into the 3 types of properties we can have (normal and global, on specific path, on specific instance)
+        moduleNames.findAll(){it != 'GLOBAL' && !it.startsWith("path:") && it.contains("#")}.each {
+            def modulePropertyChanges = propertyUpdates[it]
+            log("------------ module name for specific instance: "+it)
+            updateInstanceProperties(platformInfo: platformInfo, modulePropertyChanges: modulePropertyChanges, moduleName: it)
+        }
+        moduleNames.findAll(){(!it.startsWith("path:") && !it.contains("#"))}.each {
+            def modulePropertyChanges = propertyUpdates[it]
+            log("------------ module name : "+it)
+            updateModuleProperties(app: args.app, platform: args.platform, platformInfo: platformInfo, modulePropertyChanges: modulePropertyChanges, moduleName: it, commitMsg: args.commitMsg)
+        }
+        moduleNames.findAll(){it.startsWith("path:")}.each {
+            def modulePropertyChanges = propertyUpdates[it]
+            log("------------ module name for specific path: "+it)
+            updatePathSpecificProperties(app: args.app, platform: args.platform, platformInfo: platformInfo, modulePropertyChanges: modulePropertyChanges, moduleName: it, commitMsg: args.commitMsg)
         }
         platformInfo
+    }
+
+    private updateModuleProperties(args){
+        def modulePropertiesPath = ['#']
+        if (args.moduleName != 'GLOBAL') {
+            modulePropertiesPath = []
+            selectModules(modules: args.platformInfo.modules, moduleName: args.moduleName).each(){
+                modulePropertiesPath << it.properties_path
+            }
+        }
+        modulePropertiesPath.each(){
+            log('-> properties_path: ' + it)
+            def modulePlatformProperties = getModulePropertiesForPlatform(app: args.app,
+                    platform: args.platform,
+                    modulePropertiesPath: it)
+            if (modulePlatformProperties.key_value_properties == null) {
+                modulePlatformProperties.key_value_properties = []
+            }
+            def newIterableProperties = args.modulePropertyChanges.remove('iterable_properties')
+            applyChanges(args.modulePropertyChanges, modulePlatformProperties.key_value_properties)
+
+            // For iterable properties, we do not "apply" changes, we simply use the values provided
+            def iterableProperties = []
+            def iterableNames = newIterableProperties != null ? newIterableProperties.keySet() as List : []
+            iterableNames.each() {
+                def iterableName = it
+                def newIterableItemProperties = newIterableProperties[iterableName]
+                def actualIterableProperties = listSelect(list: modulePlatformProperties.iterable_properties,
+                        key: 'name',
+                        value: iterableName)
+                if (actualIterableProperties && newIterableItemProperties.size() < actualIterableProperties.iterable_valorisation_items.size()) {
+                    def diffSize = actualIterableProperties.iterable_valorisation_items.size() - newIterableItemProperties.size()
+                    log COLOR_RED + "$diffSize iterable properties where DELETED for iterable $iterableName" + COLOR_END
+                }
+                def iterableValorisationItems = []
+                for (int k = 0; k < newIterableItemProperties.size(); k++) { // DAMN Jenkins pipelines that does not support .eachWithIndex
+                    iterableValorisationItems << [title: 'not used', values: map2list(newIterableItemProperties[k], 'name', 'value')]
+                    // Displaying props changes:
+                    if (!actualIterableProperties) {
+                        continue
+                    }
+                    def actualIterableItemProperties = actualIterableProperties.iterable_valorisation_items[k]
+                    if (!actualIterableItemProperties) {
+                        continue
+                    }
+                    displayChanges(list2map(actualIterableItemProperties.values, 'name', 'value'),
+                            newIterableItemProperties[k],
+                            "[iterable=$iterableName.$k] ")
+                }
+                iterableProperties << [name: iterableName, iterable_valorisation_items: iterableValorisationItems]
+            }
+            modulePlatformProperties.iterable_properties = iterableProperties
+
+            setPlatformProperties(platformInfo: args.platformInfo,
+                    modulePropertiesPath: it,
+                    properties: modulePlatformProperties,
+                    commitMsg: args.commitMsg)
+        }
+    }
+
+    private updateInstanceProperties(args){
+        def splittedMod = args.moduleName.split('#')
+        args.moduleName = splittedMod[0]
+        def instance = splittedMod[1]
+        def instanceInfo = extractInstanceInfo(modules: args.platformInfo.modules,
+                moduleName: args.moduleName,
+                instance: instance)
+        if (!instanceInfo.key_values) {
+            instanceInfo.key_values = []
+        }
+        applyChanges(args.modulePropertyChanges, instanceInfo.key_values, "[instance=$instance] ")
+        updatePlatform(platformInfo: args.platformInfo)
+    }
+
+    private updatePathSpecificProperties(args){
+        // changes to apply on a module to a specific path on all instances
+        def moduleNameFromPath = args.moduleName.split("#").last()
+        def path = args.moduleName.minus("path:").minus("#"+moduleNameFromPath)
+        def moduleFoundFromPath = selectModule(modules: args.platformInfo.modules, path: path, moduleName: moduleNameFromPath)
+        log "-> properties_path: $moduleFoundFromPath.properties_path"
+        def modulePlatformProperties = getModulePropertiesForPlatform(app: args.app,
+                platform: args.platform,
+                modulePropertiesPath: moduleFoundFromPath.properties_path)
+        applyChanges(args.modulePropertyChanges, modulePlatformProperties.key_value_properties)
+        setPlatformProperties(platformInfo: args.platformInfo,
+                modulePropertiesPath: moduleFoundFromPath.properties_path,
+                properties: modulePlatformProperties,
+                commitMsg: args.commitMsg)
     }
 
     private applyChanges(changes, properties, logPrefix = '') {
