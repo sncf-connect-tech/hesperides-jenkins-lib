@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `updatePathSpecificProperties` private method - thanks @achoimet !
 
 ### Fixed
+- `updateProperties` the new `path:`-prefix introduced in 1.1.3 had a bug, cf. PR #4 - thanks @achoimet !
 - `getAppInfo` method - thanks @efouret !
 
 ### Changed
@@ -39,7 +40,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.1.1] - 2017-09-14
 ### Added
 - `deleteInstance` now supports a wildcard '*' value for its `instance` parameter
- 
+
 
 ## [1.1.0] - 2017-08-16
 Publication on Github
