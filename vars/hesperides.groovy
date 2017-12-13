@@ -154,6 +154,27 @@ def createTemplate(Map args) {
                    steps: this.steps).createTemplate(args)
 }
 
+def updateTemplate(Map args) {
+    new Hesperides(apiRootUrl: args.apiRootUrl,
+            auth: args.auth,
+            httpRequester: new JenkinsHTTRequester(this.steps),
+            steps: this.steps).updateTemplate(args)
+}
+
+def getTemplate(Map args) {
+    new Hesperides(apiRootUrl: args.apiRootUrl,
+            auth: args.auth,
+            httpRequester: new JenkinsHTTRequester(this.steps),
+            steps: this.steps).getTemplate(args)
+}
+
+def upsertTemplate(Map args) {
+    new Hesperides(apiRootUrl: args.apiRootUrl,
+            auth: args.auth,
+            httpRequester: new JenkinsHTTRequester(this.steps),
+            steps: this.steps).upsertTemplate(args)
+}
+
 def getModuleTemplateProperties(Map args) {
     new Hesperides(apiRootUrl: args.apiRootUrl,
                    auth: args.auth,

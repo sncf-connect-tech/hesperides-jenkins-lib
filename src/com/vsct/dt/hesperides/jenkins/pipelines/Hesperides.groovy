@@ -261,6 +261,42 @@ class Hesperides implements Serializable {
                     body: toJson(payload))
     }
 
+    def updateTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'version_id', 'content']) // optional: title
+        def title = args.title ?: args.filename
+        def payload = [
+                name: title,
+                filename: args.filename,
+                location: args.location,
+                content: args.content,
+                version_id: args.version_id,
+                rights: [
+                        user: [:],
+                        group: [:]
+                ]
+        ]
+        httpRequest(method: 'PUT',
+                path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/workingcopy/templates/",
+                body: toJson(payload))
+    }
+
+    def getTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'filename']) // optional: title
+        def title = args.title ?: args.filename
+        httpRequest(method: 'GET',
+                path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/workingcopy/templates/${title}")
+    }
+
+    def upsertTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'content']) // optional: title
+        try {
+            args.version_id = getTemplate(args).version_id
+            updateTemplate(args)
+        } catch (HttpException httpException) {
+            if (httpException.statusCode != 404) {
+                throw ex
+            }
+            createTemplate(args)
+        }
+    }
+
     def getModuleTemplateProperties(Map args) { required(args, ['moduleName', 'version']) // optional: isRelease
         def releasePath = args.isRelease ? 'release' : 'workingcopy'
         httpRequest(path: "/rest/modules/${args.moduleName}/${args.version}/${releasePath}/model")

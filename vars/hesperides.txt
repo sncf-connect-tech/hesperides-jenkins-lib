@@ -148,4 +148,15 @@
         updateProperties app: 'CSC', platform: 'USN1', jsonPropertyUpdates: "$env.WORKSPACE/hesperides_changes/CSC-USN1.json", commitMsg: 'Test'
         </code></pre>
     </section>
+
+    <section>
+        <h1>hesperides.upsertTemplate</h1>
+        Upsert (create or update) a template on a given module. Existing template for a module version is replaced.
+
+        <br>
+        Example:
+        <pre><code>
+        upsertTemplate moduleName: 'corporate-client-aggregator', moduleVersion: '1.1.10', location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: '{keycloakUrl: {{keycloak.url}}}'
+        </code></pre>
+    </section>
 </section>

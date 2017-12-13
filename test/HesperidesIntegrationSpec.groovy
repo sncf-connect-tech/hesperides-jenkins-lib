@@ -358,6 +358,36 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
             ]
     }
 
+    def "Can retrieve a template with title"() {
+        when:
+            def template = hesperides.getTemplate(moduleName: moduleName, moduleVersion: moduleVersion, filename: 'titi', title: 'titi')
+        then:
+            template.filename == 'titi'
+    }
+
+    def "Can retrieve a template without title"() {
+        when:
+            def template = hesperides.getTemplate(moduleName: moduleName, moduleVersion: moduleVersion, filename: 'titi')
+        then:
+            template.filename == 'titi'
+    }
+
+    def "Can create a template with upsert method"() {
+        when:
+            hesperides.upsertTemplate(moduleName: moduleName, moduleVersion: moduleVersion, location: '/etc/test', filename: 'test_upsert', content: 'upsert content')
+        then:
+            hesperides.getTemplate(moduleName: moduleName, moduleVersion: moduleVersion, filename: 'test_upsert').content == 'upsert content'
+
+    }
+
+    def "Can update a template with upsert method"() {
+        when:
+            hesperides.createTemplate(moduleName: moduleName, moduleVersion: moduleVersion, location: '/etc/test', filename: 'test_upsert2', content: 'upsert content')
+            hesperides.upsertTemplate(moduleName: moduleName, moduleVersion: moduleVersion, location: '/etc/test', filename: 'test_upsert2', content: 'upsert content 33')
+        then:
+            hesperides.getTemplate(moduleName: moduleName, moduleVersion: moduleVersion, filename: 'test_upsert2').content == 'upsert content 33'
+    }
+
     def "Can delete an instance"() {
         setup:
             hesperides.createInstance(app: applicationName, platform: platformName, moduleName: moduleName, instance: 'TOTO')
