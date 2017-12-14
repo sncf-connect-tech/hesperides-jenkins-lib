@@ -1,0 +1,21 @@
+{
+  "moduleFromDescriptorOne": {
+    "test/resources/moduleFromDescriptorOne/templateOne.yml": {
+      "title": "templateOne.yml",
+      "filename": "templateOne.yml",
+      "location": "/appl/{{userwas}}/properties"
+    },
+    "test/resources/moduleFromDescriptorOne/templateTwo.yml": {
+      "title": "templateTwo.yml",
+      "filename": "templateTwo.yml",
+      "location": "/appl/{{userwas}}/properties"
+    }
+  },
+  "moduleFromDescriptorTwo": {
+    "test/resources/moduleFromDescriptorTwo/templateThree.yml": {
+      "title": "templateThree.yml",
+      "filename": "templateThree.yml",
+      "location": "/appl/{{userwas}}/properties"
+    }
+  }
+}

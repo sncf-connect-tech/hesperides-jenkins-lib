@@ -159,4 +159,40 @@
         upsertTemplate moduleName: 'corporate-client-aggregator', moduleVersion: '1.1.10', location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: '{keycloakUrl: {{keycloak.url}}}'
         </code></pre>
     </section>
+
+    <section>
+        <h1>hesperides.upsertFromDescriptor</h1>
+        Upsert (create or update) one or several module(s) and the templates from a file descriptor. Existing module / templates are replaced.
+        If 'title' field isn't set, the 'filename' is used instead.
+
+        <br>
+        Example jenkinsfile code :
+        <pre><code>
+        upsertFromDescriptor descriptor_path: './hesperides-descriptor.json', moduleVersion: '1.1.10'
+        </code></pre>
+        Examble descriptor file :
+        <pre><code>
+        {
+          "csc-engine-api": {
+            "engine-api/src/main/resources-dev/template-application-prod.yml": {
+              "title": "application-prod.yml",
+              "filename": "application-prod.yml",
+              "location": "/appl/{{userwas}}/properties"
+            },
+            "engine-api/src/main/resources-dev/template-logback.properties": {
+              "title": "logback.properties",
+              "filename": "logback.properties",
+              "location": "/appl/{{userwas}}/properties"
+            }
+          },
+          "csc-engine-core": {
+            "engine-core/src/main/resources-dev/template-application-core-prod.yml": {
+              "title": "application-core-prod.yml",
+              "filename": "application-core-prod.yml",
+              "location": "/appl/{{userwas}}/properties"
+            }
+          }
+        }
+        </code></pre>
+    </section>
 </section>
