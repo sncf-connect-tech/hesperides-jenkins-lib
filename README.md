@@ -80,6 +80,10 @@ Integration tests use a dockerized Hesperides instance.
     docker-compose build
     docker-compose run gradle-test
 
+To expose the `build/` directory generated, containing the tests reports:
+
+    docker-compose run --volume ./build:/home/gradle/build gradle-test
+
 If you want to only use Docker to launch an Hesperides instance:
 
     docker-compose up -d hesperides
