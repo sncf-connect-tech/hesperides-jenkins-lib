@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [1.1.5] -
+### Added
+- `updateTemplate` - update a template for a given module working copy
+- `upsertTemplate` - upsert (create or update) a template for a given module working copy
+- `getTemplate` - retrieve a template by filename (or title)
+
 ## [1.1.4] - 2017-11-04
 ### Added
 - `getModuleVersions` - thanks @efouret !
