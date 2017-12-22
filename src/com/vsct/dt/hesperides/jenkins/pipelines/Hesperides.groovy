@@ -67,8 +67,8 @@ class Hesperides implements Serializable {
      ******************************************************************************/
 
     def upsertFromDescriptor(Map args) { required(args, ['descriptorPath', 'moduleVersion'])
-        def descriptor_content = propertiesFromJsonFile(args.descriptorPath)
-        descriptor_content.each { moduleName, moduleValue ->
+        def descriptorContent = propertiesFromJsonFile(args.descriptorPath)
+        descriptorContent.each { moduleName, moduleValue ->
             if (doesWorkingcopyExistForModuleVersion(moduleName: moduleName, version: args.moduleVersion)) {
                 deleteModule(
                         moduleName: moduleName,
