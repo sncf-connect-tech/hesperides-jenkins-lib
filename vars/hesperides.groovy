@@ -64,6 +64,13 @@ def setPlatformVersion(Map args) {
                                     MODULES
 
 ******************************************************************************/
+def upsertFromDescriptor(Map args) {
+    new Hesperides(apiRootUrl: args.apiRootUrl,
+            auth: args.auth,
+            httpRequester: new JenkinsHTTRequester(this.steps),
+            steps: this.steps).upsertFromDescriptor(args)
+}
+
 def getModule(Map args) {
     new Hesperides(apiRootUrl: args.apiRootUrl,
                    auth: args.auth,

@@ -60,6 +60,37 @@ class Hesperides implements Serializable {
     }
 
 
+    /******************************************************************************
+
+     CONSUME FILE DESCRIPTION AND UDPATE HESPERIDES
+
+     ******************************************************************************/
+
+    def upsertFromDescriptor(Map args) { required(args, ['descriptorPath', 'moduleVersion'])
+        def descriptor_content = propertiesFromJsonFile(args.descriptorPath)
+        descriptor_content.each { moduleName, moduleValue ->
+            if (doesWorkingcopyExistForModuleVersion(moduleName: moduleName, version: args.moduleVersion)) {
+                deleteModule(
+                        moduleName: moduleName,
+                        version: args.moduleVersion,
+                        moduleType: 'workingcopy')
+            }
+            createModule(
+                    moduleName: moduleName,
+                    version: args.moduleVersion)
+            moduleValue.each { templatePath, templateDefinition ->
+                def title = templateDefinition.containsKey('title') ? templateDefinition.title : templateDefinition.filename
+                createTemplate(
+                        moduleName: moduleName,
+                        moduleVersion: args.moduleVersion,
+                        location: templateDefinition.location,
+                        filename: templateDefinition.filename,
+                        content: new File(templatePath).text,
+                        title: title)
+            }
+        }
+    }
+
 
     /******************************************************************************
 
@@ -234,8 +265,6 @@ class Hesperides implements Serializable {
             false
         }
     }
-
-
 
     /******************************************************************************
 

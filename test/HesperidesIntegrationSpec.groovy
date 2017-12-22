@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+import com.vsct.dt.hesperides.jenkins.pipelines.http.HttpException
 import spock.lang.Shared
 import spock.lang.Specification
 import com.vsct.dt.hesperides.jenkins.pipelines.Hesperides
@@ -56,6 +57,12 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
     static logicGroupName = 'GROUP'
     static logicGroupNameTwo = 'CUSTOMGROUP'
     static subLogicGroup = 'TECHNO'
+    static templateOne = 'templateOne.yml'
+    static templateTwo = 'templateTwo.yml'
+    static templateThree = 'templateThree.yml'
+    static templateFour = 'templateFour.yml'
+    static moduleFromDescriptorOne = 'moduleFromDescriptorOne'
+    static moduleFromDescriptorTwo = 'moduleFromDescriptorTwo'
 
 
     def setupSpec() {
@@ -93,11 +100,68 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
         hesperides.deleteModule(moduleName: secondModuleName, version: moduleVersion, moduleType: 'workingcopy')
     }
 
+    def "Can create module and template from descriptor"() {
+        when:
+            hesperides.upsertFromDescriptor(descriptorPath: 'test/resources/templatesDescriptorWithModules-1-2-andTemplates-1-2-3.json', moduleVersion: moduleVersion)
+        then:
+            hesperides.getModule(moduleName: moduleFromDescriptorOne, version: moduleVersion, moduleType: 'workingcopy').version == moduleVersion
+            hesperides.getModule(moduleName: moduleFromDescriptorTwo, version: moduleVersion, moduleType: 'workingcopy').version == moduleVersion
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateOne).content == 'foo={{bar}}\r\n'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateTwo).content == 'bar={{foo}}\r\n'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorTwo, moduleVersion: moduleVersion, filename: templateThree).content == 'foo={{bar}}\r\n'
+        cleanup:
+            hesperides.deleteModule(moduleName: moduleFromDescriptorOne, version: moduleVersion, moduleType: 'workingcopy')
+            hesperides.deleteModule(moduleName: moduleFromDescriptorTwo, version: moduleVersion, moduleType: 'workingcopy')
+    }
+
+    def "Can create a template in an existing module from a descriptor"() {
+        when:
+            hesperides.createModule(moduleName: moduleFromDescriptorOne, version: moduleVersion)
+            hesperides.upsertFromDescriptor(descriptorPath: 'test/resources/templatesDescriptorWithModules-1-2-andTemplates-1-2-3.json', moduleVersion: moduleVersion)
+        then:
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateOne).content == 'foo={{bar}}\r\n'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateTwo).content == 'bar={{foo}}\r\n'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorTwo, moduleVersion: moduleVersion, filename: templateThree).content == 'foo={{bar}}\r\n'
+        cleanup:
+            hesperides.deleteModule(moduleName: moduleFromDescriptorOne, version: moduleVersion, moduleType: 'workingcopy')
+            hesperides.deleteModule(moduleName: moduleFromDescriptorTwo, version: moduleVersion, moduleType: 'workingcopy')
+    }
+
+    def "Can update module and template from descriptor"() {
+        when:
+            hesperides.upsertFromDescriptor(descriptorPath: 'test/resources/templatesDescriptorWithModules-1-2-andTemplates-1-2-3.json', moduleVersion: moduleVersion)
+            hesperides.upsertFromDescriptor(descriptorPath: 'test/resources/templatesDescriptorWithModules-1-2-andTemplates-3-4.json', moduleVersion: moduleVersion)
+        then:
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateFour).content == 'bar={{foobar}}\r\n'
+        cleanup:
+            hesperides.deleteModule(moduleName: moduleFromDescriptorOne, version: moduleVersion, moduleType: 'workingcopy')
+            hesperides.deleteModule(moduleName: moduleFromDescriptorTwo, version: moduleVersion, moduleType: 'workingcopy')
+    }
+
+    def "Can delete a template from an existing module, from a descriptor"() {
+        when:
+            hesperides.upsertFromDescriptor(descriptorPath: 'test/resources/templatesDescriptorWithModules-1-2-andTemplates-1-2-3.json', moduleVersion: moduleVersion)
+            hesperides.upsertFromDescriptor(descriptorPath: 'test/resources/templatesDescriptorWithModules-1-2-andTemplates-3-4.json', moduleVersion: moduleVersion)
+        then:
+            try {
+                hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateOne)
+                assert false, 'Template should not exist'
+            } catch (HttpException httpException) {
+                if (httpException.statusCode != 404) {
+                    throw ex
+                }
+                assert true
+            }
+        cleanup:
+            hesperides.deleteModule(moduleName: moduleFromDescriptorOne, version: moduleVersion, moduleType: 'workingcopy')
+            hesperides.deleteModule(moduleName: moduleFromDescriptorTwo, version: moduleVersion, moduleType: 'workingcopy')
+    }
+
     def "Can get versions of a module"() {
         when:
-        def versions = hesperides.getModuleVersions(moduleName: moduleName)
+            def versions = hesperides.getModuleVersions(moduleName: moduleName)
         then:
-        versions == [moduleVersion]
+            versions == [moduleVersion]
     }
 
     def "Can create a module"() {
