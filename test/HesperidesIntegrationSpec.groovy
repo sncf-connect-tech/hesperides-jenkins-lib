@@ -106,9 +106,9 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
         then:
             hesperides.getModule(moduleName: moduleFromDescriptorOne, version: moduleVersion, moduleType: 'workingcopy').version == moduleVersion
             hesperides.getModule(moduleName: moduleFromDescriptorTwo, version: moduleVersion, moduleType: 'workingcopy').version == moduleVersion
-            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateOne).content == 'foo={{bar}}\r\n'
-            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateTwo).content == 'bar={{foo}}\r\n'
-            hesperides.getTemplate(moduleName: moduleFromDescriptorTwo, moduleVersion: moduleVersion, filename: templateThree).content == 'foo={{bar}}\r\n'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateOne).content.trim() == 'foo={{bar}}'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateTwo).content.trim() == 'bar={{foo}}'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorTwo, moduleVersion: moduleVersion, filename: templateThree).content.trim() == 'foo={{bar}}'
         cleanup:
             hesperides.deleteModule(moduleName: moduleFromDescriptorOne, version: moduleVersion, moduleType: 'workingcopy')
             hesperides.deleteModule(moduleName: moduleFromDescriptorTwo, version: moduleVersion, moduleType: 'workingcopy')
@@ -119,9 +119,9 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
             hesperides.createModule(moduleName: moduleFromDescriptorOne, version: moduleVersion)
             hesperides.upsertFromDescriptor(descriptorPath: 'test/resources/templatesDescriptorWithModules-1-2-andTemplates-1-2-3.json', moduleVersion: moduleVersion)
         then:
-            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateOne).content == 'foo={{bar}}\r\n'
-            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateTwo).content == 'bar={{foo}}\r\n'
-            hesperides.getTemplate(moduleName: moduleFromDescriptorTwo, moduleVersion: moduleVersion, filename: templateThree).content == 'foo={{bar}}\r\n'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateOne).content.trim() == 'foo={{bar}}'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateTwo).content.trim() == 'bar={{foo}}'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorTwo, moduleVersion: moduleVersion, filename: templateThree).content.trim() == 'foo={{bar}}'
         cleanup:
             hesperides.deleteModule(moduleName: moduleFromDescriptorOne, version: moduleVersion, moduleType: 'workingcopy')
             hesperides.deleteModule(moduleName: moduleFromDescriptorTwo, version: moduleVersion, moduleType: 'workingcopy')
@@ -132,7 +132,7 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
             hesperides.upsertFromDescriptor(descriptorPath: 'test/resources/templatesDescriptorWithModules-1-2-andTemplates-1-2-3.json', moduleVersion: moduleVersion)
             hesperides.upsertFromDescriptor(descriptorPath: 'test/resources/templatesDescriptorWithModules-1-2-andTemplates-3-4.json', moduleVersion: moduleVersion)
         then:
-            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateFour).content == 'bar={{foobar}}\r\n'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateFour).content.trim() == 'bar={{foobar}}'
         cleanup:
             hesperides.deleteModule(moduleName: moduleFromDescriptorOne, version: moduleVersion, moduleType: 'workingcopy')
             hesperides.deleteModule(moduleName: moduleFromDescriptorTwo, version: moduleVersion, moduleType: 'workingcopy')
