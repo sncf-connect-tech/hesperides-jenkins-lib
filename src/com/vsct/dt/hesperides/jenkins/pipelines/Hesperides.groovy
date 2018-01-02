@@ -248,7 +248,7 @@ class Hesperides implements Serializable {
             true
         } catch (HttpException httpException) {
             if (httpException.statusCode != 404) {
-                throw ex
+                throw httpException
             }
             false
         }
@@ -260,7 +260,7 @@ class Hesperides implements Serializable {
             true
         } catch (HttpException httpException) {
             if (httpException.statusCode != 404) {
-                throw ex
+                throw httpException
             }
             false
         }
