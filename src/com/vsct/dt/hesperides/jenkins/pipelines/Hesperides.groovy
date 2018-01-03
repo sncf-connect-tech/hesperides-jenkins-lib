@@ -85,7 +85,7 @@ class Hesperides implements Serializable {
                         moduleVersion: args.moduleVersion,
                         location: templateDefinition.location,
                         filename: templateDefinition.filename,
-                        content: new File(templatePath).text,
+                        content: steps ? steps.readFile(templatePath) : new File(templatePath).text,
                         title: title)
             }
         }
