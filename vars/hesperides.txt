@@ -168,7 +168,7 @@
         <br>
         Example jenkinsfile code :
         <pre><code>
-        upsertFromDescriptor descriptor_path: './hesperides-descriptor.json', moduleVersion: '1.1.10'
+        upsertFromDescriptor descriptorPath: './hesperides-descriptor.json', moduleVersion: '1.1.10'
         </code></pre>
         Examble descriptor file :
         <pre><code>
