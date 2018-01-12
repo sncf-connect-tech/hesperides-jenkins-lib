@@ -1,5 +1,7 @@
 [![](https://travis-ci.org/voyages-sncf-technologies/hesperides-jenkins-lib.svg?branch=master)](https://travis-ci.org/voyages-sncf-technologies/hesperides-jenkins-lib) [![](https://circleci.com/gh/voyages-sncf-technologies/hesperides-jenkins-lib.svg?style=shield&circle-token=0d3df4d3ea31cbfb310f718d969926af6ef7a6bf)](https://circleci.com/gh/voyages-sncf-technologies/hesperides-jenkins-lib)
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 ![](jenkins-hesperides-apple.png)
 
 This is a [Groovy shared lib](https://jenkins.io/doc/book/pipeline/shared-libraries/) for Jenkins 2 pipelines, but also useable as a Groovy command-line script.
