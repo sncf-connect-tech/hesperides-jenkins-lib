@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [1.1.5] -
+## [1.1.5] - 2018-01-15
 ### Added
 - `updateTemplate` - update a template for a given module working copy
 - `upsertTemplate` - upsert (create or update) a template for a given module working copy
