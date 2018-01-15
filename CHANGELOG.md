@@ -7,10 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.1.5] - 2018-01-15
 ### Added
-- `updateTemplate` - update a template for a given module working copy
-- `upsertTemplate` - upsert (create or update) a template for a given module working copy
-- `getTemplate` - retrieve a template by filename (or title)
-- `upsertFromDescriptor` - upsert (create or update) module(s) and template(s) from a JSON descriptor file
+- `updateTemplate` - update a template for a given module working copy - thanks @pepcitron & @emartin !
+- `upsertTemplate` - upsert (create or update) a template for a given module working copy - thanks @pepcitron & @emartin !
+- `getTemplate` - retrieve a template by filename (or title) - thanks @pepcitron & @emartin !
+- `upsertFromDescriptor` - upsert (create or update) module(s) and template(s) from a JSON descriptor file - thanks @pepcitron & @emartin !
 
 ## [1.1.4] - 2017-11-04
 ### Added
