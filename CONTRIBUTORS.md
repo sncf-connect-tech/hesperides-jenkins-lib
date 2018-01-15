@@ -5,5 +5,7 @@ Many thanks to the following people for their contributions to this project !
 - Antoine Choimet
 - Lucas Cimon
 - Gwendal Jouannic
+- Emmanuel Martin
+- Pierre-Emmanuel Pedron
 - Jérémy Rechet
 - Benjamin René
