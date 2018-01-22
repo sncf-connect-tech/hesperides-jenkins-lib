@@ -218,12 +218,14 @@ class Hesperides implements Serializable {
                 }
             }
             module.version = args.newVersion
-            module.working_copy = args.isWorkingcopy
+            if (args.isWorkingcopy != null) {
+                module.working_copy = args.isWorkingcopy
+            }
             updatePlatform(platformInfo: platformInfo, copyPropertiesForUpgradedModules: true)
         }
     }
 
-    def setPlatformModulesVersion(Map args) { required(args, ['app', 'platform', 'newVersion']) // optional: checkCurrentVersion, isWorkingcopy
+    def setPlatformModulesVersion(Map args) { required(args, ['app', 'platform', 'newVersion']) // optional: checkCurrentVersion, isWorkingcopy, path
         def platformInfo = getPlatformInfo(args)
         if (args.checkCurrentVersion) {
             for (int i = 0; i < platformInfo.modules.size(); i++) {
