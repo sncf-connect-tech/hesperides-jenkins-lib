@@ -208,19 +208,19 @@ class Hesperides implements Serializable {
         modules.collect { it.id.toInteger() }.max()
     }
 
-    def setPlatformModuleVersion(Map args) { required(args, ['app', 'platform', 'moduleName', 'newVersion']) // optional: checkCurrentVersion, isWorkingcopy
+    def setPlatformModuleVersion(Map args) { required(args, ['app', 'platform', 'moduleName', 'newVersion']) // optional: checkCurrentVersion, isWorkingcopy, path
         def platformInfo = getPlatformInfo(args)
-        def module = selectModule(modules: platformInfo.modules, moduleName: args.moduleName)
-        if (args.checkCurrentVersion) {
-            if (module.version != args.checkCurrentVersion) {
-                throw new ExpectedEnvironmentException("Actual module $module.name version ${module.version} does not match expect version $args.currentVersion")
+        def modules = selectModules(modules: platformInfo.modules, moduleName: args.moduleName, path: args.path)
+        for (module in modules) {
+            if (args.checkCurrentVersion) {
+                if (module.version != args.checkCurrentVersion) {
+                    throw new ExpectedEnvironmentException("Actual module $module.name version ${module.version} does not match expect version $args.currentVersion")
+                }
             }
-        }
-        module.version = args.newVersion
-        if (args.isWorkingcopy != null) {
+            module.version = args.newVersion
             module.working_copy = args.isWorkingcopy
+            updatePlatform(platformInfo: platformInfo, copyPropertiesForUpgradedModules: true)
         }
-        updatePlatform(platformInfo: platformInfo, copyPropertiesForUpgradedModules: true)
     }
 
     def setPlatformModulesVersion(Map args) { required(args, ['app', 'platform', 'newVersion']) // optional: checkCurrentVersion, isWorkingcopy
