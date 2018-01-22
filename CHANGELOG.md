@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [1.1.6] - 2018-01-22
+### Added
+- Allow updating all modules having the same name inside a platform - thanks @victorsalaun & @GeoffreyMc !
+
 ## [1.1.5] - 2018-01-15
 ### Added
 - `updateTemplate` - update a template for a given module working copy - thanks @pepcitron & @emartin !
