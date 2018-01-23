@@ -37,27 +37,27 @@ cf. [Jenkinsfile](Jenkinsfile) & `vars/*.txt` documentation files for examples.
 **Note:** to check your Jenkinsfiles syntax, use a linter ! _cf._ https://github.com/Lucas-C/pre-commit-hooks#other-useful-local-hooks
 
 ## CLI script for the standard Groovy interpreter
+```groovy
+@GrabResolver(name='nexus', root='http://nexus.mycompany.com/content/repositories/jenkins-ci/repo.jenkins-ci.org/public')
+@Grab(group='com.cloudbees', module='groovy-cps', version='1.12')
+@Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.7.2')
 
-    @GrabResolver(name='nexus', root='http://nexus.mycompany.com/content/repositories/jenkins-ci/repo.jenkins-ci.org/public')
-    @Grab(group='com.cloudbees', module='groovy-cps', version='1.12')
-    @Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.7.2')
+import static groovy.json.JsonOutput.*
+import com.vsct.dt.hesperides.jenkins.pipelines.Hesperides
+import com.vsct.dt.hesperides.jenkins.pipelines.http.HTTPBuilderRequester
 
-    import static groovy.json.JsonOutput.*
-    import com.vsct.dt.hesperides.jenkins.pipelines.Hesperides
-    import com.vsct.dt.hesperides.jenkins.pipelines.http.HTTPBuilderRequester
-
-    def cli = new CliBuilder()
-    cli.apiRootUrl(args:1, argName:'endpoint', 'Default: https://hesperides.mycompany.com')
-    cli.auth(args:1, required:true, argName:'auth', 'user:password')
-    cli.app(args:1, required:true, argName:'trigram', '')
-    cli.platform(args:1, required:true, argName:'instance', '')
-    def options = cli.parse(args)
-    if (options) {
-        def hesperides = new Hesperides(apiRootUrl: options.apiRootUrl, auth: options.auth, httpRequester: new HTTPBuilderRequester())
-        def platformInfo = hesperides.getPlatformInfo(app: options.app, platform: options.platform)
-        System.out.println prettyPrint(toJson(platformInfo))
-    }
-
+def cli = new CliBuilder()
+cli.apiRootUrl(args:1, argName:'endpoint', 'Default: https://hesperides.mycompany.com')
+cli.auth(args:1, required:true, argName:'auth', 'user:password')
+cli.app(args:1, required:true, argName:'trigram', '')
+cli.platform(args:1, required:true, argName:'instance', '')
+def options = cli.parse(args)
+if (options) {
+    def hesperides = new Hesperides(apiRootUrl: options.apiRootUrl, auth: options.auth, httpRequester: new HTTPBuilderRequester())
+    def platformInfo = hesperides.getPlatformInfo(app: options.app, platform: options.platform)
+    System.out.println prettyPrint(toJson(platformInfo))
+}
+```
 
 # Tests
 
