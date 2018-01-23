@@ -134,7 +134,7 @@ Use the CodeNarc Groovy linter:
 
 ## Known issues with Jenkins Pipeline
 
-:bangbang: ⚠️ :bangbang:
+:bangbang: ⚠️ You may or may not be impacted by the issues in this list, depending on the Jenkins version you use  :bangbang:
 
 - it does not support tuples : https://issues.jenkins-ci.org/browse/JENKINS-38846
 - iterators are not supported : https://issues.jenkins-ci.org/browse/JENKINS-27421
