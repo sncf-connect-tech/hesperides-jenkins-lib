@@ -144,8 +144,7 @@ Use the CodeNarc Groovy linter:
 - use `JsonSlurperClassic` instead of `JsonSlurper` : http://stackoverflow.com/a/38439681/636849
 - assignment in `if` statements : https://issues.jenkins-ci.org/browse/JENKINS-41422
 
-
-## Other known issuess
+### Other known issues
 
 `javax.net.ssl.SSLException: java.lang.RuntimeException: Could not generate DH keypair` exception when using [http_request](https://wiki.jenkins-ci.org/display/JENKINS/HTTP+Request+Plugin) plugin : you need to run Jenkins with Java 8, a bug with Java 7 will prevent you from making HTTPS requests.
 
