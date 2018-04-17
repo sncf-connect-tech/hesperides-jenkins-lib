@@ -45,7 +45,6 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
                                            auth: ENV.HESPERIDES_AUTH,
                                            httpRequester: new HTTPBuilderRequester())
 
-    // Utilisation de valeurs random afin de ne pas avoir à docker-compose down/up entre chaque lancement en mode dev.
     static applicationName = 'app'
     static platformName = 'platform'
     static moduleName = 'module'
@@ -225,7 +224,7 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
                     "LCM_vha_test_instance_property": "hello World !"
                   },
                   "path:#${logicGroupNameTwo}#${subLogicGroup}#${secondModuleName}": {
-                    "propriete_commune_secondmodule": "Canon Garrick",                    
+                    "propriete_commune_secondmodule": "Canon Garrick",
                     "iterable_properties": {
                       "iterablePropsWithPath": [
                         {
@@ -288,12 +287,12 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
             instanceProps['key_values'].find { it.name == 'LCM_vha_test_instance_property' }['value'] == 'hello World !'
             platformPropsModuleTwoOtherPath['key_value_properties'].find { it.name == 'propriete_commune_secondmodule'}['value'] == 'Canon Garrick'
 
-			platformPropsModuleTwoOtherPath['iterable_properties'].size() > 0
-			platformPropsModuleTwoOtherPath['iterable_properties'].find {
-				it.name == 'iterablePropsWithPath'
-			}['iterable_valorisation_items'][0]['values'].find {
-				it.name == 'iterablePropWithPath'
-			}['value'] == 'TATA'
+            platformPropsModuleTwoOtherPath['iterable_properties'].size() > 0
+            platformPropsModuleTwoOtherPath['iterable_properties'].find {
+                it.name == 'iterablePropsWithPath'
+            }['iterable_valorisation_items'][0]['values'].find {
+                it.name == 'iterablePropWithPath'
+            }['value'] == 'TATA'
     }
 
     def "Can upgrade platform version"() {
