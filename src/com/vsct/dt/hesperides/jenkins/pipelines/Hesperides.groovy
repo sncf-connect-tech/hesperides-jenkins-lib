@@ -394,40 +394,9 @@ class Hesperides implements Serializable {
             if (modulePlatformProperties.key_value_properties == null) {
                 modulePlatformProperties.key_value_properties = []
             }
-            def newIterableProperties = args.modulePropertyChanges.remove('iterable_properties')
+			
+			handleIterableProperties(args.modulePropertyChanges, modulePlatformProperties.iterable_properties)
             applyChanges(args.modulePropertyChanges, modulePlatformProperties.key_value_properties)
-
-            // For iterable properties, we do not "apply" changes, we simply use the values provided
-            def iterableProperties = []
-            def iterableNames = newIterableProperties != null ? newIterableProperties.keySet() as List : []
-            iterableNames.each() {
-                def iterableName = it
-                def newIterableItemProperties = newIterableProperties[iterableName]
-                def actualIterableProperties = listSelect(list: modulePlatformProperties.iterable_properties,
-                        key: 'name',
-                        value: iterableName)
-                if (actualIterableProperties && newIterableItemProperties.size() < actualIterableProperties.iterable_valorisation_items.size()) {
-                    def diffSize = actualIterableProperties.iterable_valorisation_items.size() - newIterableItemProperties.size()
-                    log COLOR_RED + "$diffSize iterable properties where DELETED for iterable $iterableName" + COLOR_END
-                }
-                def iterableValorisationItems = []
-                for (int k = 0; k < newIterableItemProperties.size(); k++) { // DAMN Jenkins pipelines that does not support .eachWithIndex
-                    iterableValorisationItems << [title: 'not used', values: map2list(newIterableItemProperties[k], 'name', 'value')]
-                    // Displaying props changes:
-                    if (!actualIterableProperties) {
-                        continue
-                    }
-                    def actualIterableItemProperties = actualIterableProperties.iterable_valorisation_items[k]
-                    if (!actualIterableItemProperties) {
-                        continue
-                    }
-                    displayChanges(list2map(actualIterableItemProperties.values, 'name', 'value'),
-                            newIterableItemProperties[k],
-                            "[iterable=$iterableName.$k] ")
-                }
-                iterableProperties << [name: iterableName, iterable_valorisation_items: iterableValorisationItems]
-            }
-            modulePlatformProperties.iterable_properties = iterableProperties
 
             setPlatformProperties(platformInfo: args.platformInfo,
                     modulePropertiesPath: it,
@@ -458,8 +427,11 @@ class Hesperides implements Serializable {
         log "-> properties_path: $moduleFoundFromPath.properties_path"
         def modulePlatformProperties = getModulePropertiesForPlatform(app: args.app,
                 platform: args.platform,
-                modulePropertiesPath: moduleFoundFromPath.properties_path)
+                modulePropertiesPath: moduleFoundFromPath.properties_path)				
+		
+        handleIterableProperties(args.modulePropertyChanges, modulePlatformProperties.iterable_properties)
         applyChanges(args.modulePropertyChanges, modulePlatformProperties.key_value_properties)
+		
         setPlatformProperties(platformInfo: args.platformInfo,
                 modulePropertiesPath: moduleFoundFromPath.properties_path,
                 properties: modulePlatformProperties,
@@ -485,6 +457,46 @@ class Hesperides implements Serializable {
                 properties << [name: propName, value: newValue]
             }
         }
+    }
+	
+	// Get the iterable properties from the changes list
+    // then populate the iterableProperties list with the given iterable properties
+    //
+    // the iterables properties will be removed from the changes list
+    private handleIterableProperties(changes, iterableProperties) {
+        // Get the iterables properties et remove them from the changes list so they cannot be treated as simple properties later on
+        def newIterableProperties = changes.remove('iterable_properties')
+
+        // For iterable properties, we do not "apply" changes, we simply use the values provided
+        def iterableNames = newIterableProperties != null ? newIterableProperties.keySet() as List : []
+        iterableNames.each {
+            def iterableName = it
+            def newIterableItemProperties = newIterableProperties[iterableName]
+            def actualIterableProperties = listSelect(list: iterableProperties,
+                    key: 'name',
+                    value: iterableName)
+            if (actualIterableProperties && newIterableItemProperties.size() < actualIterableProperties.iterable_valorisation_items.size()) {
+                def diffSize = actualIterableProperties.iterable_valorisation_items.size() - newIterableItemProperties.size()
+                log COLOR_RED + "$diffSize iterable properties where DELETED for iterable $iterableName" + COLOR_END
+            }
+            def iterableValorisationItems = []
+            for (int k = 0; k < newIterableItemProperties.size(); k++) { // DAMN Jenkins pipelines that does not support .eachWithIndex
+                iterableValorisationItems << [title: 'not used', values: map2list(newIterableItemProperties[k], 'name', 'value')]
+                // Displaying props changes:
+                if (!actualIterableProperties) {
+                    continue
+                }
+                def actualIterableItemProperties = actualIterableProperties.iterable_valorisation_items[k]
+                if (!actualIterableItemProperties) {
+                    continue
+                }
+                displayChanges(list2map(actualIterableItemProperties.values, 'name', 'value'),
+                        newIterableItemProperties[k],
+                        "[iterable=$iterableName.$k] ")
+            }
+            iterableProperties << [name: iterableName, iterable_valorisation_items: iterableValorisationItems]
+        }
+
     }
 
     private displayChanges(oldProps, newProps, logPrefix = '') {
