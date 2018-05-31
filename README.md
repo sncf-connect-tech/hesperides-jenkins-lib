@@ -103,4 +103,4 @@ If you want to only use Docker to launch an Hesperides instance:
 
 
 # Contributing / Development
-_cf._ [CONTIBUTING.md](CONTIBUTING.md)
+_cf._ [CONTIBUTING.md](CONTRIBUTING.md)

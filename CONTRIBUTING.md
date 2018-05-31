@@ -1,4 +1,4 @@
-![Two hands crossing their little fingers](docs/contributing.svg)
+![Two hands crossing their little fingers](contributing.svg)
 
 <!-- To update this ToC: markdown-toc --indent "    " -i CONTRIBUTING.md -->
 
@@ -7,7 +7,7 @@
 - [Introduction](#introduction)
 - [Suggesting new features](#suggesting-new-features)
 - [Reporting a bug](#reporting-a-bug)
-- [Contribute some code](#contribute-some-code)
+- [Contributing some code](#contributing-some-code)
     * [PR Checklist](#pr-checklist)
     * [Development environment](#development-environment)
     * [Coding style](#coding-style)
@@ -33,7 +33,7 @@ There are many ways you can help us in this project:
 - help us by **communicating** around the project: present it to your coworkers, and maybe use it in your organization !
 - suggest **new features** and/or improvements to existing ones: get a look at the "[suggesting new features](#Suggesting-new-features)" section below detailing how to proceed
 - tell us when you face **bugs** by creating a [bug report issue](#reporting-a-bug)
-- **contribute some code** to the project, by making a [pull request](#contribute-some-code)
+- **contribute some code** to the project, by making a [pull request](#contributing-some-code)
 
 Overall, don't hesitate to get in touch with us throught this project [issues](https://github.com/voyages-sncf-technologies/hesperides-jenkins-lib/issues) for any request,
 even for simple questions.
@@ -72,7 +72,7 @@ Ideally, indicate in this issue that you intend to work on it to begin with.
 and install your [development environment](#development-environment).
 3. Write some code !
 4. Commit and push your changes on your forked repo, ideally on a specific branch and not on `master` (to allow you to work on different issues in parallel).
-During this step, the [pre-commit hooks](#pre-commit-hooks) should be executed to detect some issues before you commit.
+During this step, the [continuous integration](#continuous-integration) checks will be executed to detect issues before your code is merged.
 5. [Create a pull request](https://help.github.com/articles/creating-a-pull-request/), and make sure the [Travis CI & Circle CI](#continuous-integration) builds pass.
 Then mention in the related issue that you created this PR, and ask for a [code review](#code-review).
 6. It is very likely you will be asked to make some minor changes: simply add commits in your branch on your forked repo,
