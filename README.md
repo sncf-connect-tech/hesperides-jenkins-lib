@@ -23,8 +23,6 @@ It lets you interact with [Hesperides](https://voyages-sncf-technologies.github.
 - [Usage](#usage)
     * [Jenkins pipeline](#jenkins-pipeline)
     * [CLI script for the standard Groovy interpreter](#cli-script-for-the-standard-groovy-interpreter)
-- [Tests](#tests)
-    * [With docker-compose](#with-docker-compose)
 - [Contributing / Development](#contributing--development)
 
 <!-- tocstop -->
@@ -66,40 +64,6 @@ if (options) {
     System.out.println prettyPrint(toJson(platformInfo))
 }
 ```
-
-# Tests
-
-The tests require the `$HESPERIDES_HOST` environment variable to be set, including the protocol.
-An optional `$HESPERIDES_PORT` can also be specified,
-along with `$HESPERIDES_AUTH` as `<USERNAME>:<PASSWORD>`.
-
-    gradle test
-
-To run a single test:
-
-    gradle -Dtest.single=HesperidesIntegrationSpec test
-
-⚠️ **WARNING**: Integration tests perform modifications on the target Hesperides instance
-
-The test report is generated in `build/reports/tests/test/index.html`.
-
-## With docker-compose
-
-Integration tests use a dockerized Hesperides instance.
-
-    docker-compose build
-    docker-compose run gradle-test
-
-To expose the `build/` directory generated, containing the tests reports:
-
-    docker-compose run --volume ./build:/home/gradle/build gradle-test
-
-If you want to only use Docker to launch an Hesperides instance:
-
-    docker-compose up -d hesperides
-    HESPERIDES_HOST=http://localhost
-    HESPERIDES_PORT=8080
-    gradle test
 
 
 # Contributing / Development
