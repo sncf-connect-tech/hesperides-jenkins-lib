@@ -7,7 +7,7 @@
 - [Introduction](#introduction)
 - [Suggesting new features](#suggesting-new-features)
 - [Reporting a bug](#reporting-a-bug)
-- [Contribute some code](#contribute-some-code)
+- [Contributing some code](#contributing-some-code)
     * [PR Checklist](#pr-checklist)
     * [Development environment](#development-environment)
     * [Tests](#tests)
@@ -65,7 +65,7 @@ If not, please open an issue including the following information:
 - please include the Jenkins logs and stack trace whenever possible
 
 
-# Contribute some code
+# Contributing some code
 
 The overall process is:
 1. Make sure there is an issue detailing the feature you want to implement or bug you want to fix.
