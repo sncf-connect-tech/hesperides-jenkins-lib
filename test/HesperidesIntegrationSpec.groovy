@@ -205,6 +205,22 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
             props['iterable_properties'] != null
     }
 
+    def "Should Add one property to the existing list when calling updatePropertiesForPlatform method"() {
+        def info = hesperides.getPlatformInfo(app: applicationName, platform: platformName)
+        when:
+            def modulePropertiesPath = info.modules[0].properties_path
+            def props = hesperides.getModulePropertiesForPlatform(app: applicationName, platform: platformName, modulePropertiesPath: modulePropertiesPath)
+            props['key_value_properties'].add([
+                name: "myPropertyName",
+                value: "myPropertyValue"
+            ])
+            log(info)
+            hesperides.updatePropertiesForPlatform(app: applicationName, platform: platformName, modulePropertiesPath: modulePropertiesPath, commitMsg: 'Update AGG properties from jenkins pipeline', properties: props, platformVid: info.version_id)
+            def newProps = hesperides.getModulePropertiesForPlatform(app: applicationName, platform: platformName, modulePropertiesPath: modulePropertiesPath)
+        then:
+            newProps['key_value_properties'].size() == 1
+    }
+
     def "Can update new properties"() {
         when:
             def jsonProperties = """

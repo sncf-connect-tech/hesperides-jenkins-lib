@@ -346,6 +346,10 @@ class Hesperides implements Serializable {
         moduleProperties
     }
 
+    def updatePropertiesForPlatform(Map args) { required(args, ['app', 'platform', 'modulePropertiesPath', 'commitMsg', 'platformVid', 'properties'])
+        setPlatformProperties(platformInfo: [application_name: args.app, platform_name: args.platform, version_id: args.platformVid], modulePropertiesPath: args.modulePropertiesPath, commitMsg: args.commitMsg, properties: args.properties)
+    }
+
     def updateProperties(Map args) { required(args, ['app', 'platform', 'jsonPropertyUpdates', 'commitMsg'])
         def platformInfo = getPlatformInfo(args)
 

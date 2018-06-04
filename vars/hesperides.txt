@@ -195,4 +195,14 @@
         }
         </code></pre>
     </section>
+    <section>
+           <h1>hesperides.updatePropertiesForPlatform</h1>
+               Update properties for given module path.
+               Usually, before using this method, retrieve properties to update with getModulePropertiesForPlatform(...) and properties_path from chosen module
+           <br>
+               Example:
+           <pre><code>
+               hesperides.updatePropertiesForPlatform(app: 'APP', platform: "MyPlatform", modulePropertiesPath: "APP#MyPlatform#myModule", commitMsg: 'MyCommitMsg', properties: myJsonPropertiesRetreivedFromGetAPI, platformVid: platformVid, auth: auth)
+           </code></pre>
+    </section>
 </section>
