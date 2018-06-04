@@ -66,6 +66,43 @@ node {
                                                                     commitMsg: 'vsct-hesperides-api tests from Jenkinsfile')))
             }
 
+            stage('Test updateProperties') {
+                jsonPropertiesAsMap = tryParseJSON("""
+                        {
+                          "key_value_properties": [
+                            {
+                              "name": "myPropertyName",
+                              "value": "myPropertyValue"
+                            }
+                          ],
+                          "iterable_properties": [
+                                {
+                                    "name": "myIterablePropertyName",
+                                    "iterable_valorisation_items": [{
+                                        "title": "iterableTitle",
+                                        "values": [
+                                            {
+                                                "name": "myPropertyName",
+                                                "value": "myPropertyValue"
+                                            }
+                                        ]
+                                     }]
+                                }
+                          ]  
+                        }
+                        """)
+                echo prettyPrint(toJson(hesperides.updatePropertiesForPlatform(
+                        apiRootUrl: API_ROOT_URL,
+                        auth: auth,
+                        app: 'myApp',
+                        platform: 'myPlatform',
+                        modulePropertiesPath: '#myPlatform#myLogicGroup#myModule#myVersion#WORKINGCOPY',
+                        jsonPropertyUpdates: jsonPropertiesAsMap,
+                        commitMsg: 'update module properties',
+                        platformVid: 1)
+                ))
+            }
+
             stage('Test getModuleVersions') {
                 echo prettyPrint(toJson(hesperides.getModuleVersions(apiRootUrl: API_ROOT_URL,
                         auth: auth,

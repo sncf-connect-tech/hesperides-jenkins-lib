@@ -9,3 +9,4 @@ Many thanks to the following people for their contributions to this project !
 - Pierre-Emmanuel Pedron
 - Jérémy Rechet
 - Benjamin René
+- Nordwin Hoff

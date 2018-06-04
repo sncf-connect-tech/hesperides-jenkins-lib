@@ -196,6 +196,13 @@ def getModulePropertiesForPlatform(Map args) {
                    steps: this.steps).getModulePropertiesForPlatform(args)
 }
 
+def updatePropertiesForPlatform(Map args) {
+    new Hesperides(apiRootUrl: args.apiRootUrl,
+            auth: args.auth,
+            httpRequester: new JenkinsHTTRequester(this.steps),
+            steps: this.steps).updatePropertiesForPlatform(args)
+}
+
 
 /******************************************************************************
 
