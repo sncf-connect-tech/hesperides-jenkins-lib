@@ -6,9 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.1.10] - 2018-06-14
 ### Added
-- Bugfix: allowing `copyPropertiesForUpgradedModules` to be `false` in `setPlatformModuleVersion` & `updatePlatform` - thanks @mareths !
 - Generalizing optional `copyPropertiesForUpgradedModules` arg to `createPlatform` / `setPlatformVersion` / `setPlatformModulesVersion`
 - Adding optional args `userRights` & `groupRights` to `createTemplate` & `updateTemplate`
+
+### Fixed
+- allowing `copyPropertiesForUpgradedModules` to be `false` in `setPlatformModuleVersion` & `updatePlatform` - thanks @mareths !
 
 ## [1.1.9] - 2018-06-14
 ### Added
