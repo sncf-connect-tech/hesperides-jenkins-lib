@@ -79,14 +79,15 @@ class Hesperides implements Serializable {
                     moduleName: moduleName,
                     version: args.moduleVersion)
             moduleValue.each { templatePath, templateDefinition ->
-                def title = templateDefinition.containsKey('title') ? templateDefinition.title : templateDefinition.filename
+                def title = templateDefinition.title ?: templateDefinition.filename
                 createTemplate(
                         moduleName: moduleName,
                         moduleVersion: args.moduleVersion,
                         location: templateDefinition.location,
                         filename: templateDefinition.filename,
                         content: steps ? steps.readFile(templatePath) : new File(templatePath).text,
-                        title: title)
+                        title: title,
+                        filePerms: templateDefinition.filePerms)
             }
         }
     }
@@ -278,40 +279,32 @@ class Hesperides implements Serializable {
 
     ******************************************************************************/
 
-    def createTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'content']) // optional: title, userRights, groupRights
+    def createTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'content']) // optional: title, filePerms
         def title = args.title ?: args.filename
-        def userRights = args.userRights ?: [:]
-        def groupRights = args.groupRights ?: [:]
+        def filePerms = args.filePerms ?: [:]
         def payload = [
             name: title,
             filename: args.filename,
             location: args.location,
             content: args.content,
             version_id: -1,
-            rights: [
-                user: userRights,
-                group: groupRights
-            ]
+            rights: filePerms
         ]
         httpRequest(method: 'POST',
                     path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/workingcopy/templates",
                     body: toJson(payload))
     }
 
-    def updateTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'version_id', 'content']) // optional: title, userRights, groupRights
+    def updateTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'version_id', 'content']) // optional: title, filePerms
         def title = args.title ?: args.filename
-        def userRights = args.userRights ?: [:]
-        def groupRights = args.groupRights ?: [:]
+        def filePerms = args.filePerms ?: [:]
         def payload = [
                 name: title,
                 filename: args.filename,
                 location: args.location,
                 content: args.content,
                 version_id: args.version_id,
-                rights: [
-                    user: userRights,
-                    group: groupRights
-                ]
+                rights: filePerms
         ]
         httpRequest(method: 'PUT',
                 path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/workingcopy/templates/",
@@ -324,7 +317,7 @@ class Hesperides implements Serializable {
                 path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/workingcopy/templates/${title}")
     }
 
-    def upsertTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'content']) // optional: title
+    def upsertTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'content']) // optional: title, filePerms
         try {
             args.version_id = getTemplate(args).version_id
             updateTemplate(args)
@@ -390,7 +383,7 @@ class Hesperides implements Serializable {
         platformInfo
     }
 
-    private updateModuleProperties(args){
+    private updateModuleProperties(args) {
         def modulePropertiesPath = ['#']
         if (args.moduleName != 'GLOBAL') {
             modulePropertiesPath = []
@@ -420,7 +413,7 @@ class Hesperides implements Serializable {
         }
     }
 
-    private updateInstanceProperties(args){
+    private updateInstanceProperties(args) {
         def splittedMod = args.moduleName.split('#')
         args.moduleName = splittedMod[0]
         def instance = splittedMod[1]
@@ -434,7 +427,7 @@ class Hesperides implements Serializable {
         updatePlatform(platformInfo: args.platformInfo)
     }
 
-    private updatePathSpecificProperties(args){
+    private updatePathSpecificProperties(args) {
         // changes to apply on a module to a specific path on all instances
         def moduleNameFromPath = args.moduleName.split("#").last()
         def path = args.moduleName.minus("path:").minus("#"+moduleNameFromPath)

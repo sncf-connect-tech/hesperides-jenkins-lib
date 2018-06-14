@@ -17,7 +17,7 @@
         <br>
         Example:
         <pre><code>
-        hesperides.createPlatform app:'ABC' platform:'USN1' version:'0.0'
+        hesperides.createPlatform app:'ABC' platform:'USN1' version:'1.0', isProduction:true, fromApplication:'DEF', fromPlatform:'PRD2', copyPropertiesForUpgradedModules:false
         hesperides.createPlatform app:'ABC' platform:'USN1' version:'0.0', modules: [
             [
               id: 0,
@@ -48,7 +48,7 @@
         <br>
         Example:
         <pre><code>
-        hesperides.setPlatformVersion app:'CSC' platform:'USN2' checkCurrentVersion:'1-18-SNAPSHOT' newVersion:'1.24-SNAPSHOT'
+        hesperides.setPlatformVersion app:'CSC', platform:'USN2', checkCurrentVersion:'1-18-SNAPSHOT', newVersion:'1.24-SNAPSHOT', copyPropertiesForUpgradedModules:false
         </code></pre>
     </section>
 </section>
@@ -92,23 +92,95 @@
         <br>
         Example:
         <pre><code>
-        setPlatformModuleVersion app:'CSC' platform:'USN2' moduleName:'csc-engine-api' checkCurrentVersion:'1-18-SNAPSHOT' newVersion:'1.24-SNAPSHOT'
+        setPlatformModuleVersion app:'CSC', platform:'USN2', moduleName:'csc-engine-api', checkCurrentVersion:'1-18-SNAPSHOT', newVersion:'1.24-SNAPSHOT', isWorkingcopy: true, path: '#LOGIC#PATH', copyPropertiesForUpgradedModules: false
         </code></pre>
     </section>
 
     <section>
         <h1>hesperides.setPlatformModulesVersion</h1><code>
-        Change the version of all modules on a plateform.
+        Change the version of all modules on a plateform. Same parameters as <code>setPlatformModuleVersion</code> without the need for <code>moduleName</code>.
         <br>
         Example:
         <pre><code>
-        setPlatformModulesVersion app:'CSC' platform:'USN2' checkCurrentVersion:'1-18-SNAPSHOT' newVersion:'1.24-SNAPSHOT'
+        setPlatformModulesVersion app:'CSC', platform:'USN2', newVersion:'1.24-SNAPSHOT'
         </code></pre>
     </section>
 </section>
 
 <section>
     <h1>Templates &amp; properties</h1>
+
+    <section>
+        <h1>hesperides.upsertTemplate</h1>
+        Upsert (create or update) a template on a given module. Existing template for a module version is replaced.
+
+        <br>
+        Example:
+        <pre><code>
+        upsertTemplate moduleName: 'corporate-client-aggregator', moduleVersion: '1.1.10', location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: '{keycloakUrl: {{keycloak.url}}}',
+                       title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
+        </code></pre>
+    </section>
+
+    <section>
+        <h1>hesperides.createTemplate</h1>
+        Create a new template on a given module for a specific version.
+
+        <br>
+        Example:
+        <pre><code>
+        createTemplate moduleName: 'toto', moduleVersion: '0.1.0', location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: 'keycloakUrl: {{keycloak.url}}',
+                       title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
+        </code></pre>
+    </section>
+
+    <section>
+        <h1>hesperides.updateTemplate</h1>
+        Update a template on a given module for a specific version.
+
+        <br>
+        Example:
+        <pre><code>
+        updateTemplate moduleName: 'toto', moduleVersion: '0.1.0', location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: 'keycloakUrl: {{keycloak.url}}',
+                       title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
+        </code></pre>
+    </section>
+
+    <section>
+        <h1>hesperides.upsertFromDescriptor</h1>
+        Upsert (create or update) one or several module(s) and the templates from a file descriptor. Existing module / templates are replaced.
+        If 'title' field isn't set, the 'filename' is used instead.
+
+        <br>
+        Example jenkinsfile code :
+        <pre><code>
+        upsertFromDescriptor descriptorPath: './hesperides-descriptor.json', moduleVersion: '1.1.10'
+        </code></pre>
+        Examble descriptor file :
+        <pre><code>
+        {
+          "csc-engine-api": {
+            "engine-api/src/main/resources-dev/template-application-prod.yml": {
+              "title": "application-prod.yml",
+              "filename": "application-prod.yml",
+              "location": "/appl/{{userwas}}/properties"
+            },
+            "engine-api/src/main/resources-dev/template-logback.properties": {
+              "title": "logback.properties",
+              "filename": "logback.properties",
+              "location": "/appl/{{userwas}}/properties"
+            }
+          },
+          "csc-engine-core": {
+            "engine-core/src/main/resources-dev/template-application-core-prod.yml": {
+              "title": "application-core-prod.yml",
+              "filename": "application-core-prod.yml",
+              "location": "/appl/{{userwas}}/properties"
+            }
+          }
+        }
+        </code></pre>
+    </section>
 
     <section>
         <h1>hesperides.updateProperties</h1>
@@ -149,52 +221,6 @@
         </code></pre>
     </section>
 
-    <section>
-        <h1>hesperides.upsertTemplate</h1>
-        Upsert (create or update) a template on a given module. Existing template for a module version is replaced.
-
-        <br>
-        Example:
-        <pre><code>
-        upsertTemplate moduleName: 'corporate-client-aggregator', moduleVersion: '1.1.10', location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: '{keycloakUrl: {{keycloak.url}}}'
-        </code></pre>
-    </section>
-
-    <section>
-        <h1>hesperides.upsertFromDescriptor</h1>
-        Upsert (create or update) one or several module(s) and the templates from a file descriptor. Existing module / templates are replaced.
-        If 'title' field isn't set, the 'filename' is used instead.
-
-        <br>
-        Example jenkinsfile code :
-        <pre><code>
-        upsertFromDescriptor descriptorPath: './hesperides-descriptor.json', moduleVersion: '1.1.10'
-        </code></pre>
-        Examble descriptor file :
-        <pre><code>
-        {
-          "csc-engine-api": {
-            "engine-api/src/main/resources-dev/template-application-prod.yml": {
-              "title": "application-prod.yml",
-              "filename": "application-prod.yml",
-              "location": "/appl/{{userwas}}/properties"
-            },
-            "engine-api/src/main/resources-dev/template-logback.properties": {
-              "title": "logback.properties",
-              "filename": "logback.properties",
-              "location": "/appl/{{userwas}}/properties"
-            }
-          },
-          "csc-engine-core": {
-            "engine-core/src/main/resources-dev/template-application-core-prod.yml": {
-              "title": "application-core-prod.yml",
-              "filename": "application-core-prod.yml",
-              "location": "/appl/{{userwas}}/properties"
-            }
-          }
-        }
-        </code></pre>
-    </section>
     <section>
            <h1>hesperides.updatePropertiesForPlatform</h1>
                Update properties for given module path.
