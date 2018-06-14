@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.10] - 2018-06-14
+### Added
+- Bugfix: allowing `copyPropertiesForUpgradedModules` to be `false` in `setPlatformModuleVersion` & `updatePlatform` - thanks @mareths !
+- Generalizing optional `copyPropertiesForUpgradedModules` arg to `createPlatform` / `setPlatformVersion` / `setPlatformModulesVersion`
+- Adding optional args `userRights` & `groupRights` to `createTemplate` & `updateTemplate`
+
 ## [1.1.9] - 2018-06-14
 ### Added
 - Adding `copyPropertiesForUpgradedModules` optionnal arg in `setPlatformModuleVersion` - thanks @mareths !
