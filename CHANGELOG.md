@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.9] - 2018-06-14
+### Added
+- Adding `copyPropertiesForUpgradedModules` optionnal arg in `setPlatformModuleVersion` - thanks @mareths !
+
 ## [1.1.8] - 2018-06-04
 ### Added
 - Adding `updatePropertiesForPlatform` method to update properties same way as you get it from `getModulePropertiesForPlatform` - thanks @dedalusium !
