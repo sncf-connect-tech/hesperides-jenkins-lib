@@ -106,7 +106,8 @@ class Hesperides implements Serializable {
         httpRequest(path: "/rest/applications/${args.app}/platforms/${args.platform}")
     }
 
-    def createPlatform(args) { required(args, ['app', 'platform', 'version']) // optional: modules, isProduction, fromApplication, fromPlatform
+    def createPlatform(args) { required(args, ['app', 'platform', 'version']) // optional: modules, isProduction, fromApplication, fromPlatform, copyPropertiesForUpgradedModules
+        def copyPropertiesForUpgradedModules = args.copyPropertiesForUpgradedModules != null ? args.copyPropertiesForUpgradedModules : true
         def platformInfo = [
             application_name: args.app,
             platform_name: args.platform,
@@ -121,7 +122,7 @@ class Hesperides implements Serializable {
                         application_name : args.app,
                         from_application: args.fromApplication,
                         from_platform: args.fromPlatform,
-                        copyPropertiesForUpgradedModules: true
+                        copyPropertiesForUpgradedModules: copyPropertiesForUpgradedModules
                     ],
                     body: toJson(platformInfo))
     }
@@ -132,13 +133,14 @@ class Hesperides implements Serializable {
         )
     }
 
-    def setPlatformVersion(Map args) { required(args, ['app', 'platform', 'newVersion']) // optional: checkCurrentVersion
+    def setPlatformVersion(Map args) { required(args, ['app', 'platform', 'newVersion']) // optional: checkCurrentVersion, copyPropertiesForUpgradedModules
+        def copyPropertiesForUpgradedModules = args.copyPropertiesForUpgradedModules != null ? args.copyPropertiesForUpgradedModules : true
         def platformInfo = getPlatformInfo(args)
         if (args.checkCurrentVersion && platformInfo.application_version != args.checkCurrentVersion) {
             throw new ExpectedEnvironmentException("Actual app version ${platformInfo.application_version} does not match expect version $args.currentVersion")
         }
         platformInfo.application_version = args.newVersion
-        updatePlatform(platformInfo: platformInfo, copyPropertiesForUpgradedModules: true)
+        updatePlatform(platformInfo: platformInfo, copyPropertiesForUpgradedModules: copyPropertiesForUpgradedModules)
     }
 
 
@@ -226,7 +228,8 @@ class Hesperides implements Serializable {
         }
     }
 
-    def setPlatformModulesVersion(Map args) { required(args, ['app', 'platform', 'newVersion']) // optional: checkCurrentVersion, isWorkingcopy, path
+    def setPlatformModulesVersion(Map args) { required(args, ['app', 'platform', 'newVersion']) // optional: checkCurrentVersion, isWorkingcopy, path, copyPropertiesForUpgradedModules
+        def copyPropertiesForUpgradedModules = args.copyPropertiesForUpgradedModules != null ? args.copyPropertiesForUpgradedModules : true
         def platformInfo = getPlatformInfo(args)
         if (args.checkCurrentVersion) {
             for (int i = 0; i < platformInfo.modules.size(); i++) {
@@ -242,7 +245,7 @@ class Hesperides implements Serializable {
                 platformInfo.modules[i].working_copy = args.isWorkingcopy
             }
         }
-        updatePlatform(platformInfo: platformInfo, copyPropertiesForUpgradedModules: true)
+        updatePlatform(platformInfo: platformInfo, copyPropertiesForUpgradedModules: copyPropertiesForUpgradedModules)
     }
 
     def doesWorkingcopyExistForModuleVersion(Map args) { required(args, ['moduleName', 'version'])
