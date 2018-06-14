@@ -209,7 +209,7 @@ class Hesperides implements Serializable {
     }
 
     def setPlatformModuleVersion(Map args) { required(args, ['app', 'platform', 'moduleName', 'newVersion']) // optional: checkCurrentVersion, isWorkingcopy, path, copyPropertiesForUpgradedModules
-        def copyPropertiesForUpgradedModules = args.copyPropertiesForUpgradedModules ?: true
+        def copyPropertiesForUpgradedModules = args.copyPropertiesForUpgradedModules != null ? args.copyPropertiesForUpgradedModules : true
         def platformInfo = getPlatformInfo(args)
         def modules = selectModules(modules: platformInfo.modules, moduleName: args.moduleName, path: args.path)
         for (module in modules) {
@@ -666,7 +666,7 @@ class Hesperides implements Serializable {
     }
 
     protected updatePlatform(Map args) { required(args, ['platformInfo']) // optional: copyPropertiesForUpgradedModules
-        def copyPropertiesForUpgradedModules = args.copyPropertiesForUpgradedModules ?: true
+        def copyPropertiesForUpgradedModules = args.copyPropertiesForUpgradedModules != null ? args.copyPropertiesForUpgradedModules : true
         httpRequest(method: 'PUT',
                     path: "/rest/applications/${args.platformInfo.application_name}/platforms",
                     query: [application_name: args.platformInfo.application_name, copyPropertiesForUpgradedModules: copyPropertiesForUpgradedModules],

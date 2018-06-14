@@ -37,3 +37,8 @@
         language: pcre
         entry: " instanceof G?String"
         files: \.groovy$
+    -   id: forbid-elvis-operator-followed-by-true
+        name: Forbidding Elvis operator followed by true as it won't work as you expect
+        language: pcre
+        entry: "\\?:\\s*true"
+        files: \.groovy$
