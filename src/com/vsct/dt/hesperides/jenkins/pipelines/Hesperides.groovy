@@ -278,8 +278,10 @@ class Hesperides implements Serializable {
 
     ******************************************************************************/
 
-    def createTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'content']) // optional: title
+    def createTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'content']) // optional: title, userRights, groupRights
         def title = args.title ?: args.filename
+        def userRights = args.userRights ?: [:]
+        def groupRights = args.groupRights ?: [:]
         def payload = [
             name: title,
             filename: args.filename,
@@ -287,8 +289,8 @@ class Hesperides implements Serializable {
             content: args.content,
             version_id: -1,
             rights: [
-                user: [:],
-                group: [:]
+                user: userRights,
+                group: groupRights
             ]
         ]
         httpRequest(method: 'POST',
@@ -296,8 +298,10 @@ class Hesperides implements Serializable {
                     body: toJson(payload))
     }
 
-    def updateTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'version_id', 'content']) // optional: title
+    def updateTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'version_id', 'content']) // optional: title, userRights, groupRights
         def title = args.title ?: args.filename
+        def userRights = args.userRights ?: [:]
+        def groupRights = args.groupRights ?: [:]
         def payload = [
                 name: title,
                 filename: args.filename,
@@ -305,8 +309,8 @@ class Hesperides implements Serializable {
                 content: args.content,
                 version_id: args.version_id,
                 rights: [
-                        user: [:],
-                        group: [:]
+                    user: userRights,
+                    group: groupRights
                 ]
         ]
         httpRequest(method: 'PUT',
