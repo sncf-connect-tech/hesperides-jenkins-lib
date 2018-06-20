@@ -175,7 +175,8 @@
             "engine-core/src/main/resources-dev/template-application-core-prod.yml": {
               "title": "application-core-prod.yml",
               "filename": "application-core-prod.yml",
-              "location": "/appl/{{userwas}}/properties"
+              "location": "/appl/{{userwas}}/properties",
+              "filePerms": {"user": {"read": true, "write": true}, "group": {"read": true}, "other": {"read": true}}
             }
           }
         }
