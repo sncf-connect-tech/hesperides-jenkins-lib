@@ -157,8 +157,8 @@ class Hesperides implements Serializable {
         def payload = [name: args.moduleName, version: args.version, working_copy: true, version_id: -1, technos: technos]
         def query = null
         if (args.fromModule) {
-            args.fromModule.isWorkingcopy = args.fromModule.isWorkingcopy ?: false
-            query = [from_module_name: args.fromModule.name, from_module_version: args.fromModule.version, from_is_working_copy: args.fromModule.isWorkingcopy]
+            args.fromModule.isWorkingCopy = args.fromModule.isWorkingCopy ?: args.fromModule.isWorkingcopy ?: false
+            query = [from_module_name: args.fromModule.name, from_module_version: args.fromModule.version, from_is_working_copy: args.fromModule.isWorkingCopy]
         }
         httpRequest(method: 'POST',
                     path: '/rest/modules',
@@ -211,7 +211,7 @@ class Hesperides implements Serializable {
         modules.collect { it.id.toInteger() }.max()
     }
 
-    def setPlatformModuleVersion(Map args) { required(args, ['app', 'platform', 'moduleName', 'newVersion']) // optional: checkCurrentVersion, isWorkingcopy, path, copyPropertiesForUpgradedModules
+    def setPlatformModuleVersion(Map args) { required(args, ['app', 'platform', 'moduleName', 'newVersion']) // optional: checkCurrentVersion, isWorkingCopy, path, copyPropertiesForUpgradedModules
         def copyPropertiesForUpgradedModules = args.copyPropertiesForUpgradedModules != null ? args.copyPropertiesForUpgradedModules : true
         def platformInfo = getPlatformInfo(args)
         def modules = selectModules(modules: platformInfo.modules, moduleName: args.moduleName, path: args.path)
@@ -222,14 +222,14 @@ class Hesperides implements Serializable {
                 }
             }
             module.version = args.newVersion
-            if (args.isWorkingcopy != null) {
-                module.working_copy = args.isWorkingcopy
+            if (args.isWorkingCopy != null || args.isWorkingcopy != null) {
+                module.working_copy = args.isWorkingCopy ?: args.isWorkingcopy
             }
             updatePlatform(platformInfo: platformInfo, copyPropertiesForUpgradedModules: copyPropertiesForUpgradedModules)
         }
     }
 
-    def setPlatformModulesVersion(Map args) { required(args, ['app', 'platform', 'newVersion']) // optional: checkCurrentVersion, isWorkingcopy, path, copyPropertiesForUpgradedModules
+    def setPlatformModulesVersion(Map args) { required(args, ['app', 'platform', 'newVersion']) // optional: checkCurrentVersion, isWorkingCopy, path, copyPropertiesForUpgradedModules
         def copyPropertiesForUpgradedModules = args.copyPropertiesForUpgradedModules != null ? args.copyPropertiesForUpgradedModules : true
         def platformInfo = getPlatformInfo(args)
         if (args.checkCurrentVersion) {
@@ -242,8 +242,8 @@ class Hesperides implements Serializable {
         }
         for (int i = 0; i < platformInfo.modules.size(); i++) {
             platformInfo.modules[i].version = args.newVersion
-            if (args.isWorkingcopy != null) {
-                platformInfo.modules[i].working_copy = args.isWorkingcopy
+            if (args.isWorkingCopy != null || args.isWorkingcopy != null) {
+                platformInfo.modules[i].working_copy = args.isWorkingCopy ?: args.isWorkingcopy
             }
         }
         updatePlatform(platformInfo: platformInfo, copyPropertiesForUpgradedModules: copyPropertiesForUpgradedModules)

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased] - 2018-07-16
+### Changed
+- Consistency case change on `isWorkingcopy` argument (`createModule`, `setPlatformModuleVersion`, `setPlatformModulesVersion`), now `isWorkingCopy` #17
+
 ## [1.1.11] - 2018-06-14
 ### Changed
 - replaced `userRights` / `groupRights` optional args by `filePerms`
