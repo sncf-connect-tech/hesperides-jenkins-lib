@@ -338,10 +338,10 @@ class Hesperides implements Serializable {
         def moduleProperties = httpRequest(path: "/rest/applications/${args.app}/platforms/${args.platform}/properties", query: [path: args.modulePropertiesPath])
         // empty lists from JSON data are immutable by defaut (adding new entries is going to be refused as unsupported operation)
         // -> we change it into a dynamic list
-        if (moduleProperties.key_value_properties.empty) {
+        if (moduleProperties.key_value_properties.isEmpty()) {
             moduleProperties.key_value_properties = []
         }
-        if (moduleProperties.iterable_properties.empty) {
+        if (moduleProperties.iterable_properties.isEmpty()) {
             moduleProperties.iterable_properties = []
         }
         moduleProperties
@@ -542,7 +542,7 @@ class Hesperides implements Serializable {
             }
             instanceInfo = module.instances.find { it.name == args.instance }
         }
-        if (instanceInfo.key_values.empty) {
+        if (instanceInfo.key_values.isEmpty()) {
             // empty lists from JSON data are immutable by defaut (adding new entries is going to be refused as unsupported operation)
             // -> we change it into a dynamic list
             instanceInfo.key_values = []
