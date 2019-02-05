@@ -49,4 +49,69 @@ class HesperidesSpec extends Specification {
         when: hesperides.createPlatform(app: 'ABC', platform: 'USN1')
         then: thrown IllegalArgumentException
     }
+    def "handle new iterables prpoerties that already exists"() {
+        when:
+            def initial = [["name": "elasticsearch.indexes",
+            "iterable_valorisation_items": [
+                ["title": "title1",
+                "values": [
+                    [
+                      "name": "alias_name",
+                      "value": "catalog_{{hesperides.platform.name}}"
+                    ],
+                    [
+                      "name": "els_hosts",
+                      "value": "zangarella,padiglione,bologne"
+                    ]
+                ]],
+                ["title": "",
+                "values": [
+                    [
+                      "name": "alias_name",
+                      "value": "catalog_INT6"
+                    ],
+                    [
+                      "name": "els_hosts",
+                      "value": "zangarella,padiglione,bologne"
+                    ]
+                ]]
+            ]]]
+            def change = ["elasticsearch.indexes": [
+                [
+                  "alias_name": "catalog_{{hesperides.platform.name}}",
+                  "els_hosts": "sermaglia,barghe,monte",
+                ],
+                [
+                  "alias_name": "catalog_INT6",
+                  "els_hosts": "sermaglia,barghe,monte",
+                ]
+            ]]
+            def merged = hesperides.handleIterableProperties(change, initial)
+        then:
+            assert initial == [["name": "elasticsearch.indexes",
+            "iterable_valorisation_items": [
+                ["title": "not used",
+                "values": [
+                    [
+                      "name": "alias_name",
+                      "value": "catalog_{{hesperides.platform.name}}"
+                    ],
+                    [
+                      "name": "els_hosts",
+                      "value": "sermaglia,barghe,monte"
+                    ]
+                ]],
+                ["title": "not used",
+                "values": [
+                    [
+                      "name": "alias_name",
+                      "value": "catalog_INT6"
+                    ],
+                    [
+                      "name": "els_hosts",
+                      "value": "sermaglia,barghe,monte"
+                    ]
+                ]]
+            ]]]
+    }
 }
