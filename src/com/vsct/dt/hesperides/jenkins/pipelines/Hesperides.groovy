@@ -486,7 +486,7 @@ class Hesperides implements Serializable {
             }
             def iterableValorisationItems = []
             for (int k = 0; k < newIterableItemProperties.size(); k++) { // DAMN Jenkins pipelines that does not support .eachWithIndex
-                iterableValorisationItems << [title: 'not used', values: map2list(newIterableItemProperties[k], 'name', 'value')]
+                iterableValorisationItems << [title: "not used", values: map2list(newIterableItemProperties[k], 'name', 'value')]
                 // Displaying props changes:
                 if (!actualIterableProperties) {
                     continue
@@ -499,6 +499,8 @@ class Hesperides implements Serializable {
                                newIterableItemProperties[k],
                                "[iterable=$iterableName.$k] ")
             }
+            // Removes the initial value of the iterable properties
+            iterableProperties.removeAll {it.name == iterableName}
             iterableProperties << [name: iterableName, iterable_valorisation_items: iterableValorisationItems]
         }
     }
