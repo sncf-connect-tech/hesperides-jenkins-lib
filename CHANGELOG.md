@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.1.12] - 2019-02-06
 ### Changed
-- Consistency case change on `isWorkingcopy` argument (`createModule`, `setPlatformModuleVersion`, `setPlatformModulesVersion`), now `isWorkingCopy` #17
-- Replaced all the calls to buggy .empty: #20
-- Bugfix: replacing existing iterable properties during platform update: #22
+- Consistency case change on `isWorkingcopy` argument (`createModule`, `setPlatformModuleVersion`, `setPlatformModulesVersion`), now `isWorkingCopy`: #17 - thanks @benjaminrene !
+- Replaced all the calls to buggy .empty: #20 - thanks @yann-soliman !
+- Bugfix: replacing existing iterable properties during platform update: #22 - thanks @A---- !
 
 ## [1.1.11] - 2018-06-14
 ### Changed
@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.1.9] - 2018-06-14
 ### Added
-- Adding `copyPropertiesForUpgradedModules` optionnal arg in `setPlatformModuleVersion` - thanks @mareths !
+- Adding `copyPropertiesForUpgradedModules` optional arg in `setPlatformModuleVersion` - thanks @mareths !
 
 ## [1.1.8] - 2018-06-04
 ### Added
