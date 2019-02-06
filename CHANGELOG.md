@@ -4,9 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased] - 2018-07-16
+## [Unreleased] - 2019-XX-YY
+
+
+## [1.1.12] - 2019-02-06
 ### Changed
 - Consistency case change on `isWorkingcopy` argument (`createModule`, `setPlatformModuleVersion`, `setPlatformModulesVersion`), now `isWorkingCopy` #17
+- Replaced all the calls to buggy .empty: #20
+- Bugfix: replacing existing iterable properties during platform update: #22
 
 ## [1.1.11] - 2018-06-14
 ### Changed
