@@ -499,11 +499,9 @@ class Hesperides implements Serializable {
                                newIterableItemProperties[k],
                                "[iterable=$iterableName.$k] ")
             }
-            for (int k = 0; k < iterableProperties.size(); k++) {
-                if (iterableProperties[k].name == iterableName) {
-                    iterableProperties[k] = [name: iterableName, iterable_valorisation_items: iterableValorisationItems]
-                }
-            }
+            // Removes the initial value of the iterable properties
+            iterableProperties.removeAll {it.name == iterableName}
+            iterableProperties << [name: iterableName, iterable_valorisation_items: iterableValorisationItems]
         }
     }
 
