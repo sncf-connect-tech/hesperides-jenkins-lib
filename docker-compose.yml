@@ -1,17 +1,11 @@
-version: '2' 
-services: 
-  elasticsearch: 
-    image: "elasticsearch:1.7" 
-    command: "elasticsearch -Dcluster.name=hesperides" 
-  redis: 
-    image: "redis" 
+version: '3'
+services:
   hesperides: 
-    image: "hesperides/hesperides:demo-chaos"
+    image: "hesperides/hesperides"
     ports: 
       - "8080:8080"
-    depends_on:
-      - elasticsearch
-      - redis
+    environment:
+      - SPRING_PROFILES_ACTIVE=fake_mongo,noldap
   gradle-test:
     build:
       context: .
@@ -20,3 +14,4 @@ services:
     environment:
       - HESPERIDES_HOST=http://hesperides
       - HESPERIDES_PORT=8080
+      - HESPERIDES_AUTH=user:password

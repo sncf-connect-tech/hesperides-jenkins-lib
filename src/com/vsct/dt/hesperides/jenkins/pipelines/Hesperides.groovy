@@ -23,6 +23,8 @@ import static com.vsct.dt.hesperides.jenkins.pipelines.LogUtils.*
 
 import groovy.json.JsonSlurperClassic
 
+import java.net.InetAddress
+
 import com.cloudbees.groovy.cps.NonCPS
 
 import com.vsct.dt.hesperides.jenkins.pipelines.http.HttpException
@@ -33,8 +35,6 @@ import com.vsct.dt.hesperides.jenkins.pipelines.http.SerializableURIBuilder
 class Hesperides implements Serializable {
 
     private static final long serialVersionUID = 13648552184566987952L
-
-    static final DEFAULT_API_ROOT_URL = 'https://hesperides'
 
     String apiRootUrl
     String authHeader
@@ -52,11 +52,21 @@ class Hesperides implements Serializable {
             }
             this.authHeader = 'Basic ' + args.auth.bytes.encodeBase64()
         }
-        this.apiRootUrl = args.apiRootUrl ?: DEFAULT_API_ROOT_URL
+        this.apiRootUrl = args.apiRootUrl ?: defaultApiRootUrl()
         if (this.apiRootUrl[-1] == '/') {
             this.apiRootUrl = this.apiRootUrl[0..-2]
         }
         this.steps = args.steps
+    }
+
+    @NonCPS
+    private static defaultApiRootUrl() {
+        def hostname = 'hesperides'
+        try { // we try to build a FQDN based on the Jenkins executor own domain name
+            def fqdn = InetAddress.getByName(hostname).getCanonicalHostName()
+            hostname += '.' + fqdn.split('\\.', 2)[1]
+        } catch (UnknownHostException|SecurityException exception) {} // do nothing
+        return "https://${hostname}"
     }
 
 

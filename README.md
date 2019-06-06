@@ -67,4 +67,4 @@ if (options) {
 
 
 # Contributing / Development
-_cf._ [CONTIBUTING.md](CONTRIBUTING.md)
+_cf._ [CONTRIBUTING.md](CONTRIBUTING.md)
