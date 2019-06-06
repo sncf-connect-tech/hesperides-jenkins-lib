@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased] - 2019-XX-YY
 
+## [1.1.13] - 2019-06-06
+### Added
+- we try to build a FQDN based on the Jenkins executor own domain name to set the default API URL
 
 ## [1.1.12] - 2019-02-06
 ### Changed
