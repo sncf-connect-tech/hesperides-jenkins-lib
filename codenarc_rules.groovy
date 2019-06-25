@@ -16,375 +16,85 @@
 
 ruleset {
 
-    description '''
-        A Sample Groovy RuleSet containing all CodeNarc Rules, grouped by category.
-        You can use this as a template for your own custom RuleSet.
-        Just delete the rules that you don't want to include.
-        '''
+    ruleset('rulesets/basic.xml') {
+        EmptyCatchBlock(enabled:false)
+    }
 
-    // rulesets/basic.xml
-    AssertWithinFinallyBlock
-    AssignmentInConditional
-    BigDecimalInstantiation
-    BitwiseOperatorInConditional
-    BooleanGetBoolean
-    BrokenNullCheck
-    BrokenOddnessCheck
-    ClassForName
-    ComparisonOfTwoConstants
-    ComparisonWithSelf
-    ConstantAssertExpression
-    ConstantIfExpression
-    ConstantTernaryExpression
-    DeadCode
-    DoubleNegative
-    DuplicateCaseStatement
-    DuplicateMapKey
-    DuplicateSetValue
-    EmptyClass
-    EmptyElseBlock
-    EmptyFinallyBlock
-    EmptyForStatement
-    EmptyIfStatement
-    EmptyInstanceInitializer
-    EmptyMethod
-    EmptyStaticInitializer
-    EmptySwitchStatement
-    EmptySynchronizedStatement
-    EmptyTryBlock
-    EmptyWhileStatement
-    EqualsAndHashCode
-    EqualsOverloaded
-    ExplicitGarbageCollection
-    ForLoopShouldBeWhileLoop
-    HardCodedWindowsFileSeparator
-    HardCodedWindowsRootDirectory
-    IntegerGetInteger
-    MultipleUnaryOperators
-    RandomDoubleCoercedToZero
-    RemoveAllOnSelf
-    ReturnFromFinallyBlock
-    ThrowExceptionFromFinallyBlock
+    ruleset('rulesets/braces.xml')
 
-    // rulesets/braces.xml
-    ElseBlockBraces
-    ForStatementBraces
-    IfStatementBraces
-    WhileStatementBraces
+    ruleset('rulesets/concurrency.xml')
 
-    // rulesets/concurrency.xml
-    BusyWait
-    DoubleCheckedLocking
-    InconsistentPropertyLocking
-    InconsistentPropertySynchronization
-    NestedSynchronization
-    StaticCalendarField
-    StaticConnection
-    StaticDateFormatField
-    StaticMatcherField
-    StaticSimpleDateFormatField
-    SynchronizedMethod
-    SynchronizedOnBoxedPrimitive
-    SynchronizedOnGetClass
-    SynchronizedOnReentrantLock
-    SynchronizedOnString
-    SynchronizedOnThis
-    SynchronizedReadObjectMethod
-    SystemRunFinalizersOnExit
-    ThisReferenceEscapesConstructor
-    ThreadGroup
-    ThreadLocalNotStaticFinal
-    ThreadYield
-    UseOfNotifyMethod
-    VolatileArrayField
-    VolatileLongOrDoubleField
-    WaitOutsideOfWhileLoop
+    ruleset('rulesets/convention.xml') {
+        CompileStatic(enabled:false)
+        MethodParameterTypeRequired(enabled:false)
+        MethodReturnTypeRequired(enabled:false)
+        NoDef(enabled:false)
+        PublicMethodsBeforeNonPublicMethods(enabled:false)
+        VariableTypeRequired(enabled:false)
+    }
 
-    // rulesets/convention.xml
-    ConfusingTernary
-    CouldBeElvis
-    CouldBeSwitchStatement
-    FieldTypeRequired
-    HashtableIsObsolete
-    IfStatementCouldBeTernary
-    InvertedCondition
-    InvertedIfElse
-    LongLiteralWithLowerCaseL
-    NoJavaUtilDate
-    NoTabCharacter
-    ParameterReassignment
-    StaticFieldsBeforeInstanceFields
-    StaticMethodsBeforeInstanceMethods
-    TernaryCouldBeElvis
-    TrailingComma
-    VectorIsObsolete
+    ruleset('rulesets/design.xml') {
+        Instanceof(enabled:false)
+        NestedForLoop(enabled:false)
+    }
 
-    // rulesets/design.xml
-    AbstractClassWithPublicConstructor
-    AbstractClassWithoutAbstractMethod
-    AssignmentToStaticFieldFromInstanceMethod
-    BooleanMethodReturnsNull
-    BuilderMethodWithSideEffects
-    CloneableWithoutClone
-    CloseWithoutCloseable
-    CompareToWithoutComparable
-    ConstantsOnlyInterface
-    EmptyMethodInAbstractClass
-    FinalClassWithProtectedMember
-    ImplementationAsType
-    LocaleSetDefault
-    PrivateFieldCouldBeFinal
-    PublicInstanceField
-    ReturnsNullInsteadOfEmptyArray
-    ReturnsNullInsteadOfEmptyCollection
-    SimpleDateFormatMissingLocale
-    StatelessSingleton
-    ToStringReturnsNull
+    ruleset('rulesets/dry.xml') {
+        DuplicateListLiteral(enabled:false)
+        DuplicateNumberLiteral(enabled:false)
+        DuplicateStringLiteral(enabled:false)
+    }
 
-    // rulesets/dry.xml
-    DuplicateMapLiteral
+    ruleset('rulesets/enhanced.xml')
 
-    // rulesets/enhanced.xml
-    CloneWithoutCloneable
-    JUnitAssertEqualsConstantActualValue
-    MissingOverrideAnnotation
-    UnsafeImplementationAsMap
+    ruleset('rulesets/exceptions.xml') {
+        ThrowRuntimeException(enabled:false)
+    }
 
-    // rulesets/exceptions.xml
-    CatchArrayIndexOutOfBoundsException
-    CatchError
-    CatchException
-    CatchIllegalMonitorStateException
-    CatchIndexOutOfBoundsException
-    CatchNullPointerException
-    CatchRuntimeException
-    CatchThrowable
-    ConfusingClassNamedException
-    ExceptionExtendsError
-    ExceptionExtendsThrowable
-    ExceptionNotThrown
-    MissingNewInThrowStatement
-    ReturnNullFromCatchBlock
-    SwallowThreadDeath
-    ThrowError
-    ThrowException
-    ThrowNullPointerException
-    ThrowThrowable
+    ruleset('rulesets/formatting.xml') {
+        ConsecutiveBlankLines (enabled:false)
+        Indentation (enabled:false)
+        LineLength (enabled:false)
+        SpaceAfterOpeningBrace (enabled:false)
+        SpaceAroundMapEntryColon (enabled:false)
+        SpaceBeforeClosingBrace (enabled:false)
+    }
 
-    // rulesets/formatting.xml
-    BlankLineBeforePackage
-    BlockEndsWithBlankLine
-    BlockStartsWithBlankLine
-    BracesForClass
-    BracesForForLoop
-    BracesForIfElse
-    BracesForMethod
-    BracesForTryCatchFinally
-    ClassEndsWithBlankLine
-    ClassStartsWithBlankLine
-    ClosureStatementOnOpeningLineOfMultipleLineClosure
-    FileEndsWithoutNewline
-    MissingBlankLineAfterImports
-    MissingBlankLineAfterPackage
-    SpaceAfterCatch
-    SpaceAfterClosingBrace
-    SpaceAfterComma
-    SpaceAfterFor
-    SpaceAfterIf
-    SpaceAfterSemicolon
-    SpaceAfterSwitch
-    SpaceAfterWhile
-    SpaceAroundClosureArrow
-    SpaceAroundOperator
-    SpaceBeforeOpeningBrace
-    TrailingWhitespace
+    ruleset('rulesets/generic.xml')
 
-    // rulesets/generic.xml
-    IllegalClassMember
-    IllegalClassReference
-    IllegalPackageReference
-    IllegalRegex
-    IllegalString
-    IllegalSubclass
-    RequiredRegex
-    RequiredString
-    StatelessClass
+    ruleset('rulesets/groovyism.xml')
 
-    // rulesets/groovyism.xml
-    AssignCollectionSort
-    AssignCollectionUnique
-    ClosureAsLastMethodParameter
-    CollectAllIsDeprecated
-    ConfusingMultipleReturns
-    ExplicitArrayListInstantiation
-    ExplicitCallToAndMethod
-    ExplicitCallToCompareToMethod
-    ExplicitCallToDivMethod
-    ExplicitCallToEqualsMethod
-    ExplicitCallToGetAtMethod
-    ExplicitCallToLeftShiftMethod
-    ExplicitCallToMinusMethod
-    ExplicitCallToModMethod
-    ExplicitCallToMultiplyMethod
-    ExplicitCallToOrMethod
-    ExplicitCallToPlusMethod
-    ExplicitCallToPowerMethod
-    ExplicitCallToPutAtMethod
-    ExplicitCallToRightShiftMethod
-    ExplicitCallToXorMethod
-    ExplicitHashMapInstantiation
-    ExplicitHashSetInstantiation
-    ExplicitLinkedHashMapInstantiation
-    ExplicitLinkedListInstantiation
-    ExplicitStackInstantiation
-    ExplicitTreeSetInstantiation
-    GStringAsMapKey
-    GStringExpressionWithinString
-    GetterMethodCouldBeProperty
-    GroovyLangImmutable
-    UseCollectMany
-    UseCollectNested
+    ruleset('rulesets/imports.xml') {
+        NoWildcardImports(enabled:false)
+        UnusedImport(enabled:false)
+    }
 
-    // rulesets/imports.xml
-    DuplicateImport
-    ImportFromSamePackage
-    ImportFromSunPackages
-    MisorderedStaticImports
-    UnnecessaryGroovyImport
+    ruleset('rulesets/logging.xml') {
+        SystemErrPrint(enabled:false)
+        SystemOutPrint(enabled:false)
+    }
 
-    // rulesets/jdbc.xml
-    DirectConnectionManagement
-    JdbcConnectionReference
-    JdbcResultSetReference
-    JdbcStatementReference
+    ruleset('rulesets/naming.xml') {
+        FactoryMethodName(enabled:false)
+    }
 
-    // rulesets/junit.xml
-    ChainedTest
-    CoupledTestCase
-    JUnitAssertAlwaysFails
-    JUnitAssertAlwaysSucceeds
-    JUnitFailWithoutMessage
-    JUnitLostTest
-    JUnitPublicField
-    JUnitPublicNonTestMethod
-    JUnitPublicProperty
-    JUnitSetUpCallsSuper
-    JUnitStyleAssertions
-    JUnitTearDownCallsSuper
-    JUnitTestMethodWithoutAssert
-    JUnitUnnecessarySetUp
-    JUnitUnnecessaryTearDown
-    JUnitUnnecessaryThrowsException
-    SpockIgnoreRestUsed
-    UnnecessaryFail
-    UseAssertEqualsInsteadOfAssertTrue
-    UseAssertFalseInsteadOfNegation
-    UseAssertNullInsteadOfAssertEquals
-    UseAssertSameInsteadOfAssertTrue
-    UseAssertTrueInsteadOfAssertEquals
-    UseAssertTrueInsteadOfNegation
+    ruleset('rulesets/security.xml') {
+        JavaIoPackageAccess(enabled:false)
+    }
 
-    // rulesets/logging.xml
-    LoggerForDifferentClass
-    LoggerWithWrongModifiers
-    LoggingSwallowsStacktrace
-    MultipleLoggers
-    PrintStackTrace
-    Println
+    ruleset('rulesets/serialization.xml')
 
-    // rulesets/naming.xml
-    AbstractClassName
-    ClassName
-    ClassNameSameAsFilename
-    ClassNameSameAsSuperclass
-    ConfusingMethodName
-    FieldName
-    InterfaceName
-    InterfaceNameSameAsSuperInterface
-    MethodName
-    ObjectOverrideMisspelledMethodName
-    PackageName
-    PackageNameMatchesFilePath
-    ParameterName
-    PropertyName
-    VariableName
+    ruleset('rulesets/size.xml') {
+        AbcMetric(enabled:false)
+        CrapMetric(enabled:false)
+        CyclomaticComplexity(enabled:false)
+        MethodCount(enabled:false)
+    }
 
-    // rulesets/security.xml
-    FileCreateTempFile
-    InsecureRandom
-    NonFinalPublicField
-    NonFinalSubclassOfSensitiveInterface
-    ObjectFinalize
-    PublicFinalizeMethod
-    SystemExit
-    UnsafeArrayDeclaration
+    ruleset('rulesets/unnecessary.xml'){
+        UnnecessaryReturnKeyword(enabled:false)
+        UnnecessarySetter(enabled:false)
+    }
 
-    // rulesets/serialization.xml
-    EnumCustomSerializationIgnored
-    SerialPersistentFields
-    SerialVersionUID
-    SerializableClassMustDefineSerialVersionUID
-
-    // rulesets/size.xml
-    ClassSize
-    MethodSize
-    NestedBlockDepth
-    ParameterCount
-
-    // rulesets/unnecessary.xml
-    AddEmptyString
-    ConsecutiveLiteralAppends
-    ConsecutiveStringConcatenation
-    UnnecessaryBigDecimalInstantiation
-    UnnecessaryBigIntegerInstantiation
-    UnnecessaryBooleanExpression
-    UnnecessaryBooleanInstantiation
-    UnnecessaryCallForLastElement
-    UnnecessaryCallToSubstring
-    UnnecessaryCast
-    UnnecessaryCatchBlock
-    UnnecessaryCollectCall
-    UnnecessaryCollectionCall
-    UnnecessaryConstructor
-    UnnecessaryDefInFieldDeclaration
-    UnnecessaryDefInMethodDeclaration
-    UnnecessaryDefInVariableDeclaration
-    UnnecessaryDotClass
-    UnnecessaryDoubleInstantiation
-    UnnecessaryElseStatement
-    UnnecessaryFinalOnPrivateMethod
-    UnnecessaryFloatInstantiation
-    UnnecessaryGString
-    UnnecessaryGetter
-    UnnecessaryIfStatement
-    UnnecessaryInstanceOfCheck
-    UnnecessaryInstantiationToGetClass
-    UnnecessaryIntegerInstantiation
-    UnnecessaryLongInstantiation
-    UnnecessaryModOne
-    UnnecessaryNullCheck
-    UnnecessaryNullCheckBeforeInstanceOf
-    UnnecessaryObjectReferences
-    UnnecessaryOverridingMethod
-    UnnecessaryPackageReference
-    UnnecessaryParenthesesForMethodCallWithClosure
-    UnnecessaryPublicModifier
-    UnnecessarySafeNavigationOperator
-    UnnecessarySelfAssignment
-    UnnecessarySemicolon
-    UnnecessaryStringInstantiation
-    UnnecessarySubstring
-    UnnecessaryTernaryExpression
-    UnnecessaryToString
-    UnnecessaryTransientModifier
-
-    // rulesets/unused.xml
-    UnusedArray
-    UnusedMethodParameter
-    UnusedObject
-    UnusedPrivateField
-    UnusedPrivateMethod
-    UnusedPrivateMethodParameter
-    UnusedVariable
+    ruleset('rulesets/unused.xml')
 
 }

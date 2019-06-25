@@ -23,6 +23,8 @@ plugins.withType(GroovyPlugin) {
 codenarc {
     configFile = file('codenarc_rules.groovy')
 }
+// On autorise les erreurs de linter dans les tests:
+codenarcTest.ignoreFailures = true
 
 configurations {
     ivy
@@ -39,7 +41,7 @@ dependencies {
 sourceSets {
     main {
         groovy {
-            srcDirs = ['bin', 'src', 'vars']
+            srcDirs = ['src', 'vars']
         }
     }
     test {
