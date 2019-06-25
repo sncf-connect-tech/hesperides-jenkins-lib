@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 package com.vsct.dt.hesperides.jenkins.pipelines
 
 
@@ -22,8 +21,6 @@ import static groovy.json.JsonOutput.*
 import static com.vsct.dt.hesperides.jenkins.pipelines.LogUtils.*
 
 import groovy.json.JsonSlurperClassic
-
-import java.net.InetAddress
 
 import com.cloudbees.groovy.cps.NonCPS
 
@@ -63,7 +60,7 @@ class Hesperides implements Serializable {
     private static defaultApiRootUrl() {
         def hostname = 'hesperides'
         try { // we try to build a FQDN based on the Jenkins executor own domain name
-            def fqdn = InetAddress.getByName(hostname).getCanonicalHostName()
+            def fqdn = InetAddress.getByName(hostname).canonicalHostName
             hostname += '.' + fqdn.split('\\.', 2)[1]
         } catch (UnknownHostException|SecurityException exception) {} // do nothing
         return "https://${hostname}"
@@ -117,7 +114,7 @@ class Hesperides implements Serializable {
         httpRequest(path: "/rest/applications/${args.app}/platforms/${args.platform}")
     }
 
-    def createPlatform(args) { required(args, ['app', 'platform', 'version']) // optional: modules, isProduction, fromApplication, fromPlatform, copyPropertiesForUpgradedModules
+    def createPlatform(Map args) { required(args, ['app', 'platform', 'version']) // optional: modules, isProduction, fromApplication, fromPlatform, copyPropertiesForUpgradedModules
         def copyPropertiesForUpgradedModules = args.copyPropertiesForUpgradedModules != null ? args.copyPropertiesForUpgradedModules : true
         def platformInfo = [
             application_name: args.app,
@@ -125,7 +122,7 @@ class Hesperides implements Serializable {
             application_version: args.version,
             modules: args.modules ?: [],
             production: args.isProduction ?: false,
-            version_id: 0
+            version_id: 0,
         ]
         httpRequest(method: 'POST',
                     path: "/rest/applications/${args.app}/platforms",
@@ -211,13 +208,13 @@ class Hesperides implements Serializable {
             path: args.logicGroupPath,
             instances: [],
             id: (maxModulesIds(platformInfo.modules) ?: 0) + 1,
-            properties_path: modulePropertiesPath
+            properties_path: modulePropertiesPath,
         ]
         updatePlatform(platformInfo: platformInfo)
     }
 
     @NonCPS
-    private maxModulesIds(modules) {
+    private maxModulesIds(List modules) {
         modules.collect { it.id.toInteger() }.max()
     }
 
@@ -298,7 +295,7 @@ class Hesperides implements Serializable {
             location: args.location,
             content: args.content,
             version_id: -1,
-            rights: filePerms
+            rights: filePerms,
         ]
         httpRequest(method: 'POST',
                     path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/workingcopy/templates",
@@ -314,7 +311,7 @@ class Hesperides implements Serializable {
                 location: args.location,
                 content: args.content,
                 version_id: args.version_id,
-                rights: filePerms
+                rights: filePerms,
         ]
         httpRequest(method: 'PUT',
                 path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/workingcopy/templates/",
@@ -333,7 +330,7 @@ class Hesperides implements Serializable {
             updateTemplate(args)
         } catch (HttpException httpException) {
             if (httpException.statusCode != 404) {
-                throw ex
+                throw httpException
             }
             createTemplate(args)
         }
@@ -348,13 +345,13 @@ class Hesperides implements Serializable {
         def moduleProperties = httpRequest(path: "/rest/applications/${args.app}/platforms/${args.platform}/properties", query: [path: args.modulePropertiesPath])
         // empty lists from JSON data are immutable by defaut (adding new entries is going to be refused as unsupported operation)
         // -> we change it into a dynamic list
-        if (moduleProperties.key_value_properties.isEmpty()) {
+        if (moduleProperties.key_value_properties.empty) {
             moduleProperties.key_value_properties = []
         }
-        if (moduleProperties.iterable_properties.isEmpty()) {
+        if (moduleProperties.iterable_properties.empty) {
             moduleProperties.iterable_properties = []
         }
-        moduleProperties
+        return moduleProperties
     }
 
     def updatePropertiesForPlatform(Map args) { required(args, ['app', 'platform', 'modulePropertiesPath', 'commitMsg', 'platformVid', 'properties'])
@@ -375,33 +372,33 @@ class Hesperides implements Serializable {
 
         def moduleNames = propertyUpdates.keySet() as List
         // Split into the 3 types of properties we can have (normal and global, on specific path, on specific instance)
-        moduleNames.findAll(){it != 'GLOBAL' && !it.startsWith("path:") && it.contains("#")}.each {
+        moduleNames.findAll { it != 'GLOBAL' && !it.startsWith('path:') && it.contains('#') }.each {
             def modulePropertyChanges = propertyUpdates[it]
-            log("------------ module name for specific instance: "+it)
+            log('------------ module name for specific instance: ' + it)
             updateInstanceProperties(platformInfo: platformInfo, modulePropertyChanges: modulePropertyChanges, moduleName: it)
         }
-        moduleNames.findAll(){(!it.startsWith("path:") && !it.contains("#"))}.each {
+        moduleNames.findAll { (!it.startsWith('path:') && !it.contains('#')) }.each {
             def modulePropertyChanges = propertyUpdates[it]
-            log("------------ module name : "+it)
+            log('------------ module name : ' + it)
             updateModuleProperties(app: args.app, platform: args.platform, platformInfo: platformInfo, modulePropertyChanges: modulePropertyChanges, moduleName: it, commitMsg: args.commitMsg)
         }
-        moduleNames.findAll(){it.startsWith("path:")}.each {
+        moduleNames.findAll { it.startsWith('path:') }.each {
             def modulePropertyChanges = propertyUpdates[it]
-            log("------------ module name for specific path: "+it)
+            log('------------ module name for specific path: ' + it)
             updatePathSpecificProperties(app: args.app, platform: args.platform, platformInfo: platformInfo, modulePropertyChanges: modulePropertyChanges, moduleName: it, commitMsg: args.commitMsg)
         }
-        platformInfo
+        return platformInfo
     }
 
-    private updateModuleProperties(args) {
+    private updateModuleProperties(Map args) {
         def modulePropertiesPath = ['#']
         if (args.moduleName != 'GLOBAL') {
             modulePropertiesPath = []
-            selectModules(modules: args.platformInfo.modules, moduleName: args.moduleName).each(){
+            selectModules(modules: args.platformInfo.modules, moduleName: args.moduleName).each {
                 modulePropertiesPath << it.properties_path
             }
         }
-        modulePropertiesPath.each(){
+        modulePropertiesPath.each {
             log('-> properties_path: ' + it)
             def modulePlatformProperties = getModulePropertiesForPlatform(app: args.app,
                     platform: args.platform,
@@ -423,24 +420,22 @@ class Hesperides implements Serializable {
         }
     }
 
-    private updateInstanceProperties(args) {
+    private updateInstanceProperties(Map args) {
         def splittedMod = args.moduleName.split('#')
         args.moduleName = splittedMod[0]
         def instance = splittedMod[1]
         def instanceInfo = extractInstanceInfo(modules: args.platformInfo.modules,
                 moduleName: args.moduleName,
                 instance: instance)
-        if (!instanceInfo.key_values) {
-            instanceInfo.key_values = []
-        }
+        instanceInfo.key_values = instanceInfo.key_values ?: []
         applyChanges(args.modulePropertyChanges, instanceInfo.key_values, "[instance=$instance] ")
         updatePlatform(platformInfo: args.platformInfo)
     }
 
-    private updatePathSpecificProperties(args) {
+    private updatePathSpecificProperties(Map args) {
         // changes to apply on a module to a specific path on all instances
-        def moduleNameFromPath = args.moduleName.split("#").last()
-        def path = args.moduleName.minus("path:").minus("#"+moduleNameFromPath)
+        def moduleNameFromPath = args.moduleName.split('#').last()
+        def path = args.moduleName - 'path:' - ('#' + moduleNameFromPath)
         def moduleFoundFromPath = selectModule(modules: args.platformInfo.modules, path: path, moduleName: moduleNameFromPath)
         log "-> properties_path: $moduleFoundFromPath.properties_path"
         def modulePlatformProperties = getModulePropertiesForPlatform(app: args.app,
@@ -459,7 +454,7 @@ class Hesperides implements Serializable {
                 commitMsg: args.commitMsg)
     }
 
-    private applyChanges(changes, properties, logPrefix = '') {
+    private applyChanges(Map changes, List properties, String logPrefix = '') {
         if (properties == null) {
             throw new IllegalArgumentException('NULL properties argument provided')
         }
@@ -481,7 +476,7 @@ class Hesperides implements Serializable {
     }
 
     // Populate the iterableProperties list with the given iterable properties
-    private handleIterableProperties(newIterableProperties, iterableProperties) {
+    private handleIterableProperties(Map newIterableProperties, List iterableProperties) {
         // For iterable properties, we do not "apply" changes, we simply use the values provided
         def iterableNames = newIterableProperties ? newIterableProperties.keySet() as List : []
         iterableNames.each {
@@ -496,7 +491,7 @@ class Hesperides implements Serializable {
             }
             def iterableValorisationItems = []
             for (int k = 0; k < newIterableItemProperties.size(); k++) { // DAMN Jenkins pipelines that does not support .eachWithIndex
-                iterableValorisationItems << [title: "not used", values: map2list(newIterableItemProperties[k], 'name', 'value')]
+                iterableValorisationItems << [title: 'not used', values: map2list(newIterableItemProperties[k], 'name', 'value')]
                 // Displaying props changes:
                 if (!actualIterableProperties) {
                     continue
@@ -515,7 +510,7 @@ class Hesperides implements Serializable {
         }
     }
 
-    private displayChanges(oldProps, newProps, logPrefix = '') {
+    private displayChanges(Map oldProps, Map newProps, String logPrefix = '') {
         def propNames = oldProps.keySet() + newProps.keySet()
         for (int j = 0; j < propNames.size(); j++) {  // DAMN Jenkins pipelines that does not support .each
             def propName = propNames[j]
@@ -534,7 +529,7 @@ class Hesperides implements Serializable {
         }
     }
 
-    private propertiesFromJsonFile(jsonFilePath) {
+    private propertiesFromJsonFile(String jsonFilePath) {
         def fileContent = steps ? steps.readFile(jsonFilePath) : new File(jsonFilePath).text
         new JsonSlurperClassic().parseText(fileContent)
     }
@@ -554,12 +549,12 @@ class Hesperides implements Serializable {
             }
             instanceInfo = module.instances.find { it.name == args.instance }
         }
-        if (instanceInfo.key_values.isEmpty()) {
+        if (instanceInfo.key_values.empty) {
             // empty lists from JSON data are immutable by defaut (adding new entries is going to be refused as unsupported operation)
             // -> we change it into a dynamic list
             instanceInfo.key_values = []
         }
-        instanceInfo
+        return instanceInfo
     }
 
     private setPlatformProperties(Map args) { required(args, ['platformInfo', 'modulePropertiesPath', 'commitMsg', 'properties'])
@@ -619,7 +614,7 @@ class Hesperides implements Serializable {
         for (templateFile in instanceFiles) {
             instanceFilesContents[templateFile.location] = httpRequest(url: "$apiRootUrl$templateFile.url", textOutput: true, accept: 'TEXT')
         }
-        instanceFilesContents
+        return instanceFilesContents
     }
 
 
@@ -630,7 +625,7 @@ class Hesperides implements Serializable {
 
     ******************************************************************************/
 
-    protected log(msg) {
+    protected log(String msg) {
         if (steps) {
             steps.echo msg
         } else {
@@ -657,14 +652,12 @@ class Hesperides implements Serializable {
         log "Content-Type: $args.contentType"
         args.accept = args.accept ?: (args.method == 'DELETE' ? 'ANY' : 'JSON')
         log "Accept: $args.accept"
-        if (!args.authHeader) {
-            args.authHeader = authHeader
-        }
+        args.authHeader = args.authHeader ?: authHeader
         httpRequester.performRequest(args)
     }
 
     @NonCPS
-    private buildUri(path, query = null) {
+    private buildUri(String path, Map query = null) {
         def uriBuilder = new SerializableURIBuilder(apiRootUrl)
         uriBuilder.path = path
         if (query) {
@@ -674,7 +667,7 @@ class Hesperides implements Serializable {
                 }
             }
         }
-        uriBuilder.build()
+        return uriBuilder.build()
     }
 
     protected updatePlatform(Map args) { required(args, ['platformInfo']) // optional: copyPropertiesForUpgradedModules
@@ -691,13 +684,13 @@ class Hesperides implements Serializable {
         if (!matchingModules) {
             throw new ExpectedEnvironmentException("No module found in platform for name ${args.moduleName}")
         }
-        if (args.path){
+        if (args.path) {
             matchingModules = listSelectAll(list: matchingModules, key: 'path', value: args.path)
             if (!matchingModules) {
                 throw new ExpectedEnvironmentException("No module found in platform for properties_path ${args.path}")
             }
         }
-        matchingModules
+        return matchingModules
     }
 
     protected selectModule(Map args) { required(args, ['modules', 'moduleName']) // optional: instance, path
@@ -716,7 +709,7 @@ class Hesperides implements Serializable {
             def modulesString = modulesStringDescription(matchingModules)
             throw new ExpectedEnvironmentException("Multiple matching modules found in platform for name ${args.moduleName}" + (args.path ? "and properties_path ${args.path}" : '') + " : ${modulesString}")
         }
-        matchingModules[0]
+        return matchingModules[0]
     }
 
 
@@ -734,7 +727,7 @@ class Hesperides implements Serializable {
         if (matches.size() > 1) {
             throw new RuntimeException("Multiple matches found in list for key ${args.key} and value ${args.value}")
         }
-        matches[0]
+        return matches[0]
     }
 
     @NonCPS
@@ -765,4 +758,5 @@ class Hesperides implements Serializable {
             }
         }
     }
+
 }

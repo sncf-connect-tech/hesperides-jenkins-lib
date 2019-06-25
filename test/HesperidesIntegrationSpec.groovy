@@ -147,7 +147,7 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
                 assert false, 'Template should not exist'
             } catch (HttpException httpException) {
                 if (httpException.statusCode != 404) {
-                    throw ex
+                    throw httpException
                 }
                 assert true
             }

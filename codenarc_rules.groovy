@@ -41,7 +41,6 @@ ruleset {
     DuplicateCaseStatement
     DuplicateMapKey
     DuplicateSetValue
-    EmptyCatchBlock
     EmptyClass
     EmptyElseBlock
     EmptyFinallyBlock
@@ -104,12 +103,20 @@ ruleset {
     // rulesets/convention.xml
     ConfusingTernary
     CouldBeElvis
+    CouldBeSwitchStatement
+    FieldTypeRequired
     HashtableIsObsolete
     IfStatementCouldBeTernary
+    InvertedCondition
     InvertedIfElse
     LongLiteralWithLowerCaseL
+    NoJavaUtilDate
     NoTabCharacter
+    ParameterReassignment
+    StaticFieldsBeforeInstanceFields
+    StaticMethodsBeforeInstanceMethods
     TernaryCouldBeElvis
+    TrailingComma
     VectorIsObsolete
 
     // rulesets/design.xml
@@ -134,9 +141,19 @@ ruleset {
     StatelessSingleton
     ToStringReturnsNull
 
+    // rulesets/dry.xml
+    DuplicateMapLiteral
+
+    // rulesets/enhanced.xml
+    CloneWithoutCloneable
+    JUnitAssertEqualsConstantActualValue
+    MissingOverrideAnnotation
+    UnsafeImplementationAsMap
+
     // rulesets/exceptions.xml
     CatchArrayIndexOutOfBoundsException
     CatchError
+    CatchException
     CatchIllegalMonitorStateException
     CatchIndexOutOfBoundsException
     CatchNullPointerException
@@ -152,15 +169,19 @@ ruleset {
     ThrowError
     ThrowException
     ThrowNullPointerException
-    ThrowRuntimeException
     ThrowThrowable
 
     // rulesets/formatting.xml
+    BlankLineBeforePackage
+    BlockEndsWithBlankLine
+    BlockStartsWithBlankLine
     BracesForClass
     BracesForForLoop
     BracesForIfElse
     BracesForMethod
     BracesForTryCatchFinally
+    ClassEndsWithBlankLine
+    ClassStartsWithBlankLine
     ClosureStatementOnOpeningLineOfMultipleLineClosure
     FileEndsWithoutNewline
     MissingBlankLineAfterImports
@@ -170,13 +191,12 @@ ruleset {
     SpaceAfterComma
     SpaceAfterFor
     SpaceAfterIf
-    SpaceAfterOpeningBrace
     SpaceAfterSemicolon
     SpaceAfterSwitch
     SpaceAfterWhile
     SpaceAroundClosureArrow
     SpaceAroundOperator
-    SpaceBeforeClosingBrace
+    SpaceBeforeOpeningBrace
     TrailingWhitespace
 
     // rulesets/generic.xml
@@ -189,18 +209,6 @@ ruleset {
     RequiredRegex
     RequiredString
     StatelessClass
-
-    // rulesets/grails.xml
-    GrailsDomainHasEquals
-    GrailsDomainHasToString
-    GrailsDomainReservedSqlKeywordName
-    GrailsDomainWithServiceReference
-    GrailsDuplicateConstraint
-    GrailsDuplicateMapping
-    GrailsMassAssignment
-    GrailsPublicControllerMethod
-    GrailsServletContextReference
-    GrailsStatelessService
 
     // rulesets/groovyism.xml
     AssignCollectionSort
@@ -221,6 +229,7 @@ ruleset {
     ExplicitCallToOrMethod
     ExplicitCallToPlusMethod
     ExplicitCallToPowerMethod
+    ExplicitCallToPutAtMethod
     ExplicitCallToRightShiftMethod
     ExplicitCallToXorMethod
     ExplicitHashMapInstantiation
@@ -301,6 +310,7 @@ ruleset {
     VariableName
 
     // rulesets/security.xml
+    FileCreateTempFile
     InsecureRandom
     NonFinalPublicField
     NonFinalSubclassOfSensitiveInterface
@@ -317,9 +327,9 @@ ruleset {
 
     // rulesets/size.xml
     ClassSize
-    MethodCount
     MethodSize
     NestedBlockDepth
+    ParameterCount
 
     // rulesets/unnecessary.xml
     AddEmptyString
@@ -354,11 +364,11 @@ ruleset {
     UnnecessaryModOne
     UnnecessaryNullCheck
     UnnecessaryNullCheckBeforeInstanceOf
+    UnnecessaryObjectReferences
     UnnecessaryOverridingMethod
     UnnecessaryPackageReference
     UnnecessaryParenthesesForMethodCallWithClosure
     UnnecessaryPublicModifier
-    UnnecessaryReturnKeyword
     UnnecessarySafeNavigationOperator
     UnnecessarySelfAssignment
     UnnecessarySemicolon

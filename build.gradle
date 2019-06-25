@@ -13,6 +13,13 @@ apply plugin: 'java'
 apply plugin: 'codenarc'
 apply plugin: 'maven'
 
+// Workaround for error: java.lang.NoClassDefFoundError: groovy/text/SimpleTemplateEngine"
+plugins.withType(GroovyPlugin) {
+  dependencies {
+    codenarc 'org.codenarc:CodeNarc:1.4'
+  }
+}
+
 codenarc {
     configFile = file('codenarc_rules.groovy')
 }

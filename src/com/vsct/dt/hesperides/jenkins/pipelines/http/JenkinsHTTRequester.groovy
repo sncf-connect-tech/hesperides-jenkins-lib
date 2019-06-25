@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 package com.vsct.dt.hesperides.jenkins.pipelines.http
 
 import static groovy.json.JsonOutput.prettyPrint
@@ -58,7 +57,7 @@ class JenkinsHTTRequester implements Serializable {
         }
     }
 
-    def tryParseJSON(text) {
+    def tryParseJSON(String text) {
         try {
             new JsonSlurperClassic().parseText(text)
         } catch (JsonException) {
@@ -68,7 +67,7 @@ class JenkinsHTTRequester implements Serializable {
         }
     }
 
-    def tryPrettyPrintJSON(obj) {
+    def tryPrettyPrintJSON(Object obj) {
         try {
             prettyPrint obj
         } catch (JsonException) {

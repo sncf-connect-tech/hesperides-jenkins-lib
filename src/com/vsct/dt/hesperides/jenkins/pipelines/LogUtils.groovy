@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 package com.vsct.dt.hesperides.jenkins.pipelines
 
 /**
@@ -21,8 +20,8 @@ package com.vsct.dt.hesperides.jenkins.pipelines
  */
 class LogUtils {
 
-    static final COLOR_GREEN = '\033[32m'
-    static final COLOR_RED = '\033[31m'
-    static final COLOR_END = '\033[0m'
+    static final String COLOR_GREEN = '\033[32m'
+    static final String COLOR_RED = '\033[31m'
+    static final String COLOR_END = '\033[0m'
 
 }

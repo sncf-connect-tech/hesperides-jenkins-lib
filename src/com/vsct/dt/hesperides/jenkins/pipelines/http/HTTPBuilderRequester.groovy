@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 package com.vsct.dt.hesperides.jenkins.pipelines.http
 
 
@@ -69,7 +68,7 @@ class HTTPBuilderRequester implements Serializable {
         parsedResponse
     }
 
-    def log(msg) {
+    def log(String msg) {
         System.err.println msg
     }
 
@@ -92,11 +91,12 @@ class HTTPBuilderRequester implements Serializable {
         outputStream.toString('utf8')
     }
 
-    def tryPrettyPrintJSON(obj) {
+    def tryPrettyPrintJSON(Object obj) {
         try {
             prettyPrint obj
         } catch (JsonException) {
             obj.toString()
         }
     }
+
 }

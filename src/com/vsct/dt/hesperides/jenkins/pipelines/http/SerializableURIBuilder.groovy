@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 package com.vsct.dt.hesperides.jenkins.pipelines.http
 
 import org.apache.http.client.utils.URIBuilder
@@ -26,4 +25,5 @@ class SerializableURIBuilder extends URIBuilder implements Serializable {
     SerializableURIBuilder(String string) {
         super(string)
     }
+
 }
