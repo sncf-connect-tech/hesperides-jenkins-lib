@@ -5,4 +5,4 @@ COPY  test test
 COPY  build.gradle build.gradle
 COPY  codenarc_rules.groovy codenarc_rules.groovy
 
-CMD ["gradle", "test", "--debug", "--stacktrace"]
+CMD ["gradle", "check", "--debug", "--stacktrace"]

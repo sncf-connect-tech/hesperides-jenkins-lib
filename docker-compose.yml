@@ -6,7 +6,7 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=fake_mongo,noldap
-  gradle-test:
+  gradle-check:
     build:
       context: .
     depends_on:

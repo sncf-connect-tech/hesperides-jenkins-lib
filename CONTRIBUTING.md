@@ -122,11 +122,11 @@ The test report is generated in `build/reports/tests/test/index.html`.
 Integration tests use a dockerized Hesperides instance.
 
     docker-compose build
-    docker-compose run gradle-test
+    docker-compose run gradle-check
 
 To expose the `build/` directory generated, containing the tests reports:
 
-    docker-compose run --volume ./build:/home/gradle/build gradle-test
+    docker-compose run --volume ./build:/home/gradle/build gradle-check
 
 If you want to only use Docker to launch an Hesperides instance:
 

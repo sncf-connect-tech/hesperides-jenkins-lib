@@ -18,7 +18,7 @@ jobs:
             chmod +x /usr/local/bin/docker-compose
 
       - run:
-          name: Running gradle test in Docker image
+          name: Running gradle check in Docker image
           command: |
             docker-compose build
-            docker-compose run gradle-test
+            docker-compose run gradle-check
