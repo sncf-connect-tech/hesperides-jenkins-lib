@@ -102,42 +102,46 @@ class Hesperides implements Serializable {
 
     /******************************************************************************
 
-                                APPLICATIONS & PLATFORMS
+     APPLICATIONS & PLATFORMS
 
-    ******************************************************************************/
+     ******************************************************************************/
 
     def getAppInfo(Map args) { required(args, ['app'])
         httpRequest(path: "/rest/applications/${args.app}")
     }
 
     def getPlatformInfo(Map args) { required(args, ['app', 'platform'])
-        httpRequest(path: "/rest/applications/${args.app}/platforms/${args.platform}")
+        def response = httpRequest(path: "/rest/applications/${args.app}/platforms/${args.platform}")
+        log('Platform version_id = ' + response.version_id)
+        return response
     }
 
     def createPlatform(Map args) { required(args, ['app', 'platform', 'version']) // optional: modules, isProduction, fromApplication, fromPlatform, copyPropertiesForUpgradedModules
         def copyPropertiesForUpgradedModules = args.copyPropertiesForUpgradedModules != null ? args.copyPropertiesForUpgradedModules : true
         def platformInfo = [
-            application_name: args.app,
-            platform_name: args.platform,
-            application_version: args.version,
-            modules: args.modules ?: [],
-            production: args.isProduction ?: false,
-            version_id: 0,
+                application_name: args.app,
+                platform_name: args.platform,
+                application_version: args.version,
+                modules: args.modules ?: [],
+                production: args.isProduction ?: false,
+                version_id: 0,
         ]
-        httpRequest(method: 'POST',
-                    path: "/rest/applications/${args.app}/platforms",
-                    query: [
+        def response = httpRequest(method: 'POST',
+                path: "/rest/applications/${args.app}/platforms",
+                query: [
                         application_name : args.app,
                         from_application: args.fromApplication,
                         from_platform: args.fromPlatform,
                         copyPropertiesForUpgradedModules: copyPropertiesForUpgradedModules
-                    ],
-                    body: toJson(platformInfo))
+                ],
+                body: toJson(platformInfo))
+        log('Platform created, version_id = ' + response.version_id)
+        return response
     }
 
     def deletePlatform(Map args) { required(args, ['app', 'platform'])
         httpRequest(method: 'DELETE',
-                    path: "/rest/applications/${args.app}/platforms/${args.platform}"
+                path: "/rest/applications/${args.app}/platforms/${args.platform}"
         )
     }
 
@@ -155,9 +159,9 @@ class Hesperides implements Serializable {
 
     /******************************************************************************
 
-                                        MODULES
+     MODULES
 
-    ******************************************************************************/
+     ******************************************************************************/
 
     def createModule(Map args) { required(args, ['moduleName', 'version']) // optional: technos, fromModule
         def technos = args.technos ?: []
@@ -167,17 +171,21 @@ class Hesperides implements Serializable {
             args.fromModule.isWorkingCopy = args.fromModule.isWorkingCopy ?: args.fromModule.isWorkingcopy ?: false
             query = [from_module_name: args.fromModule.name, from_module_version: args.fromModule.version, from_is_working_copy: args.fromModule.isWorkingCopy]
         }
-        httpRequest(method: 'POST',
-                    path: '/rest/modules',
-                    query: query,
-                    body: toJson(payload))
+        def response = httpRequest(method: 'POST',
+                path: '/rest/modules',
+                query: query,
+                body: toJson(payload))
+        log('Module created, version_id = ' + response.version_id)
+        return response
     }
 
     def getModule(Map args) { required(args, ['moduleName', 'version', 'moduleType'])
         if (!['release', 'workingcopy'].contains(args.moduleType)) {
             throw new IllegalArgumentException("Invalid moduleType $args.moduleType")
         }
-        httpRequest(path: "/rest/modules/${args.moduleName}/${args.version}/${args.moduleType}")
+        def response = httpRequest(path: "/rest/modules/${args.moduleName}/${args.version}/${args.moduleType}")
+        log('Module version_id = ' + response.version_id)
+        return response
     }
 
     def getModuleVersions(Map args) { required(args, ['moduleName'])
@@ -185,9 +193,11 @@ class Hesperides implements Serializable {
     }
 
     def releaseModule(Map args) { required(args, ['moduleName', 'workingcopyVersion', 'releaseVersion'])
-        httpRequest(method: 'POST',
-                    path: '/rest/modules/create_release',
-                    query: [module_name: args.moduleName, module_version: args.workingcopyVersion, release_version: args.releaseVersion])
+        def response = httpRequest(method: 'POST',
+                path: '/rest/modules/create_release',
+                query: [module_name: args.moduleName, module_version: args.workingcopyVersion, release_version: args.releaseVersion])
+        log('Module released, version_id = ' + response.version_id)
+        return response
     }
 
     def deleteModule(Map args) { required(args, ['moduleName', 'version', 'moduleType'])
@@ -195,20 +205,20 @@ class Hesperides implements Serializable {
             throw new IllegalArgumentException("Invalid moduleType $args.moduleType")
         }
         httpRequest(method: 'DELETE',
-                    path: "/rest/modules/${args.moduleName}/${args.version}/${args.moduleType}")
+                path: "/rest/modules/${args.moduleName}/${args.version}/${args.moduleType}")
     }
 
     def putModuleOnPlatform(Map args) { required(args, ['app', 'platform', 'moduleName', 'moduleVersion', 'isWorkingCopy', 'logicGroupPath'])
         def platformInfo = getPlatformInfo(args)
         def modulePropertiesPath = "#${args.logicGroupPath}#${args.moduleName}#${args.moduleVersion}#${args.isWorkingCopy ? 'WORKINGCOPY' : 'RELEASE'}"
         platformInfo.modules << [
-            name: args.moduleName,
-            version: args.moduleVersion,
-            working_copy: args.isWorkingCopy,
-            path: args.logicGroupPath,
-            instances: [],
-            id: (maxModulesIds(platformInfo.modules) ?: 0) + 1,
-            properties_path: modulePropertiesPath,
+                name: args.moduleName,
+                version: args.moduleVersion,
+                working_copy: args.isWorkingCopy,
+                path: args.logicGroupPath,
+                instances: [],
+                id: (maxModulesIds(platformInfo.modules) ?: 0) + 1,
+                properties_path: modulePropertiesPath,
         ]
         updatePlatform(platformInfo: platformInfo)
     }
@@ -282,24 +292,26 @@ class Hesperides implements Serializable {
 
     /******************************************************************************
 
-                                TEMPLATES & PROPERTIES
+     TEMPLATES & PROPERTIES
 
-    ******************************************************************************/
+     ******************************************************************************/
 
     def createTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'content']) // optional: title, filePerms
         def title = args.title ?: args.filename
         def filePerms = args.filePerms ?: [:]
         def payload = [
-            name: title,
-            filename: args.filename,
-            location: args.location,
-            content: args.content,
-            version_id: -1,
-            rights: filePerms,
+                name: title,
+                filename: args.filename,
+                location: args.location,
+                content: args.content,
+                version_id: -1,
+                rights: filePerms,
         ]
-        httpRequest(method: 'POST',
-                    path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/workingcopy/templates",
-                    body: toJson(payload))
+        def response = httpRequest(method: 'POST',
+                path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/workingcopy/templates",
+                body: toJson(payload))
+        log('Template created, version_id = ' + response.version_id)
+        return response
     }
 
     def updateTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'version_id', 'content']) // optional: title, filePerms
@@ -313,15 +325,20 @@ class Hesperides implements Serializable {
                 version_id: args.version_id,
                 rights: filePerms,
         ]
-        httpRequest(method: 'PUT',
+        log('Template version_id = ' + payload.version_id)
+        def response = httpRequest(method: 'PUT',
                 path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/workingcopy/templates/",
                 body: toJson(payload))
+        log('Template updated, version_id = ' + response.version_id)
+        return response
     }
 
     def getTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'filename']) // optional: title
         def title = args.title ?: args.filename
-        httpRequest(method: 'GET',
+        def response = httpRequest(method: 'GET',
                 path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/workingcopy/templates/${title}")
+        log('Template version_id = ' + response.version_id)
+        return response
     }
 
     def upsertTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'content']) // optional: title, filePerms
@@ -483,8 +500,8 @@ class Hesperides implements Serializable {
             def iterableName = it
             def newIterableItemProperties = newIterableProperties[iterableName]
             def actualIterableProperties = listSelect(list: iterableProperties,
-                                                      key: 'name',
-                                                      value: iterableName)
+                    key: 'name',
+                    value: iterableName)
             if (actualIterableProperties && newIterableItemProperties.size() < actualIterableProperties.iterable_valorisation_items.size()) {
                 def diffSize = actualIterableProperties.iterable_valorisation_items.size() - newIterableItemProperties.size()
                 log COLOR_RED + "$diffSize iterable properties where DELETED for iterable $iterableName" + COLOR_END
@@ -501,8 +518,8 @@ class Hesperides implements Serializable {
                     continue
                 }
                 displayChanges(list2map(actualIterableItemProperties.values, 'name', 'value'),
-                               newIterableItemProperties[k],
-                               "[iterable=$iterableName.$k] ")
+                        newIterableItemProperties[k],
+                        "[iterable=$iterableName.$k] ")
             }
             // Removes the initial value of the iterable properties
             iterableProperties.removeAll {it.name == iterableName}
@@ -561,9 +578,9 @@ class Hesperides implements Serializable {
         def app = args.platformInfo.application_name
         def platform = args.platformInfo.platform_name
         httpRequest(method: 'POST',
-                    path: "/rest/applications/$app/platforms/$platform/properties",
-                    query: [path: args.modulePropertiesPath, comment: args.commitMsg, platform_vid: args.platformInfo.version_id],
-                    body: toJson(args.properties))
+                path: "/rest/applications/$app/platforms/$platform/properties",
+                query: [path: args.modulePropertiesPath, comment: args.commitMsg, platform_vid: args.platformInfo.version_id],
+                body: toJson(args.properties))
         args.platformInfo.version_id++
     }
 
@@ -572,9 +589,9 @@ class Hesperides implements Serializable {
 
     /******************************************************************************
 
-                                    INSTANCES
+     INSTANCES
 
-    ******************************************************************************/
+     ******************************************************************************/
 
     def getInstanceProperties(Map args) { required(args, ['app', 'platform', 'instance'])
         def platformInfo = getPlatformInfo(args)
@@ -609,7 +626,7 @@ class Hesperides implements Serializable {
         def platformInfo = getPlatformInfo(args)
         def module = selectModule(modules: platformInfo.modules, moduleName: args.moduleName)
         def instanceFiles = httpRequest(path: "/rest/files/applications/${args.app}/platforms/${args.platform}/${module.path}/${args.moduleName}/${module.version}/instances/${args.instance}/",
-                                        query: [isWorkingCopy: module.working_copy])
+                query: [isWorkingCopy: module.working_copy])
         def instanceFilesContents = [:]
         for (templateFile in instanceFiles) {
             instanceFilesContents[templateFile.location] = httpRequest(url: "$apiRootUrl$templateFile.url", textOutput: true, accept: 'TEXT')
@@ -621,9 +638,9 @@ class Hesperides implements Serializable {
 
     /******************************************************************************
 
-                                    CORE UTILS
+     CORE UTILS
 
-    ******************************************************************************/
+     ******************************************************************************/
 
     protected log(String msg) {
         if (steps) {
@@ -653,7 +670,7 @@ class Hesperides implements Serializable {
         args.accept = args.accept ?: (args.method == 'DELETE' ? 'ANY' : 'JSON')
         log "Accept: $args.accept"
         args.authHeader = args.authHeader ?: authHeader
-        httpRequester.performRequest(args)
+        return httpRequester.performRequest(args)
     }
 
     @NonCPS
@@ -672,11 +689,14 @@ class Hesperides implements Serializable {
 
     protected updatePlatform(Map args) { required(args, ['platformInfo']) // optional: copyPropertiesForUpgradedModules
         def copyPropertiesForUpgradedModules = args.copyPropertiesForUpgradedModules != null ? args.copyPropertiesForUpgradedModules : true
-        httpRequest(method: 'PUT',
-                    path: "/rest/applications/${args.platformInfo.application_name}/platforms",
-                    query: [application_name: args.platformInfo.application_name, copyPropertiesForUpgradedModules: copyPropertiesForUpgradedModules],
-                    body: toJson(args.platformInfo))
+        log('Platform version_id = ' + args.platformInfo.version_id)
+        def response = httpRequest(method: 'PUT',
+                path: "/rest/applications/${args.platformInfo.application_name}/platforms",
+                query: [application_name: args.platformInfo.application_name, copyPropertiesForUpgradedModules: copyPropertiesForUpgradedModules],
+                body: toJson(args.platformInfo))
         args.platformInfo.version_id++
+        log('Platform updated, version_id = ' + response.version_id)
+        return response
     }
 
     protected selectModules(Map args) { required(args, ['modules', 'moduleName']) // optional: path
