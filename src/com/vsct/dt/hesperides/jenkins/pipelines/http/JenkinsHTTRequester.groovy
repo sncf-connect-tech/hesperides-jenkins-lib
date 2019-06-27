@@ -45,6 +45,8 @@ class JenkinsHTTRequester implements Serializable {
                                               ignoreSslErrors: true,
                                               validResponseCodes: '100:600'
 
+        log('Response header Set-Cookie = ' + tryPrettyPrintJSON(response.headers['Set-Cookie']))
+
         if (!(response.status in [200, 201])) {
             this.steps.echo COLOR_RED + tryPrettyPrintJSON(tryParseJSON(response.content)) + COLOR_END
             throw new HttpException(response.status, 'HTTP error')
