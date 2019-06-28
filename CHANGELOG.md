@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased] - 2019-XX-YY
 
+## [1.1.15] - 2019-06-28
+### Fixed
+- Calling a log method that doesn't exist, now using `steps.echo`
+
 ## [1.1.14] - 2019-06-28
 ### Added
 - added logs for version ID changes & `Set-Cookie` header - thanks @thomaslhostis !
