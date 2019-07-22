@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased] - 2019-XX-YY
 
+## [1.1.16] - 2019-07-22
+### Fixed
+- Bug de MAJ des propriétés d'instance : add @NonCPS on method `selectModule` and `selectModules` - fix #27 - thanks @brunoMod !
+
 ## [1.1.15] - 2019-06-28
 ### Fixed
 - Calling a log method that doesn't exist, now using `steps.echo`
