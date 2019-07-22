@@ -699,6 +699,7 @@ class Hesperides implements Serializable {
         return response
     }
 
+    @NonCPS
     protected selectModules(Map args) { required(args, ['modules', 'moduleName']) // optional: path
         def matchingModules = listSelectAll(list: args.modules, key: 'name', value: args.moduleName)
         if (!matchingModules) {
@@ -713,6 +714,7 @@ class Hesperides implements Serializable {
         return matchingModules
     }
 
+    @NonCPS
     protected selectModule(Map args) { required(args, ['modules', 'moduleName']) // optional: instance, path
         def matchingModules = selectModules(args)
         if (args.instance) {
