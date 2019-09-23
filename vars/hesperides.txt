@@ -112,7 +112,7 @@
 
     <section>
         <h1>hesperides.upsertTemplate</h1>
-        Upsert (create or update) a template on a given module. Existing template for a module version is replaced.
+        Upsert (create or update) a template on a given workingcopy module. Existing template for a module version is replaced.
 
         <br>
         Example:
@@ -124,7 +124,7 @@
 
     <section>
         <h1>hesperides.createTemplate</h1>
-        Create a new template on a given module for a specific version.
+        Create a new template on a given workingcopy module for a specific version.
 
         <br>
         Example:
@@ -148,7 +148,8 @@
 
     <section>
         <h1>hesperides.upsertFromDescriptor</h1>
-        Upsert (create or update) one or several module(s) and the templates from a file descriptor. Existing module / templates are replaced.
+        Upsert (create or update) one or several workingcopy module(s) and their templates from a file descriptor.
+        Any previously existing templates are deleted beforehand.
         If 'title' field isn't set, the 'filename' is used instead.
 
         <br>

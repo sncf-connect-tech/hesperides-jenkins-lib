@@ -76,15 +76,13 @@ class Hesperides implements Serializable {
     def upsertFromDescriptor(Map args) { required(args, ['descriptorPath', 'moduleVersion'])
         def descriptorContent = propertiesFromJsonFile(args.descriptorPath)
         descriptorContent.each { moduleName, moduleValue ->
-            if (doesWorkingcopyExistForModuleVersion(moduleName: moduleName, version: args.moduleVersion)) {
-                deleteModule(
-                        moduleName: moduleName,
-                        version: args.moduleVersion,
-                        moduleType: 'workingcopy')
+            if (!doesWorkingcopyExistForModuleVersion(moduleName: moduleName, version: args.moduleVersion)) {
+                createModule(moduleName: moduleName, version: args.moduleVersion)
             }
-            createModule(
-                    moduleName: moduleName,
-                    version: args.moduleVersion)
+            // On supprime tous les templates au préalable :
+            getTemplates(moduleName: moduleName, moduleVersion: args.moduleVersion, moduleType: 'workingcopy').each {
+                it -> deleteTemplate(moduleName: moduleName, moduleVersion: args.moduleVersion, templateName: it.name)
+            }
             moduleValue.each { templatePath, templateDefinition ->
                 def title = templateDefinition.title ?: templateDefinition.filename
                 createTemplate(
@@ -140,9 +138,7 @@ class Hesperides implements Serializable {
     }
 
     def deletePlatform(Map args) { required(args, ['app', 'platform'])
-        httpRequest(method: 'DELETE',
-                path: "/rest/applications/${args.app}/platforms/${args.platform}"
-        )
+        httpRequest(method: 'DELETE', path: "/rest/applications/${args.app}/platforms/${args.platform}")
     }
 
     def setPlatformVersion(Map args) { required(args, ['app', 'platform', 'newVersion']) // optional: checkCurrentVersion, copyPropertiesForUpgradedModules
@@ -204,8 +200,7 @@ class Hesperides implements Serializable {
         if (!['release', 'workingcopy'].contains(args.moduleType)) {
             throw new IllegalArgumentException("Invalid moduleType $args.moduleType")
         }
-        httpRequest(method: 'DELETE',
-                path: "/rest/modules/${args.moduleName}/${args.version}/${args.moduleType}")
+        httpRequest(method: 'DELETE', path: "/rest/modules/${args.moduleName}/${args.version}/${args.moduleType}")
     }
 
     def putModuleOnPlatform(Map args) { required(args, ['app', 'platform', 'moduleName', 'moduleVersion', 'isWorkingCopy', 'logicGroupPath'])
@@ -267,26 +262,24 @@ class Hesperides implements Serializable {
     }
 
     def doesWorkingcopyExistForModuleVersion(Map args) { required(args, ['moduleName', 'version'])
-        try {
-            httpRequest(path: "/rest/modules/${args.moduleName}/${args.version}/workingcopy")
-            true
-        } catch (HttpException httpException) {
-            if (httpException.statusCode != 404) {
-                throw httpException
-            }
-            false
-        }
+        args.moduleType = 'workingcopy'
+        return doesModuleExist(args)
     }
 
     def doesReleaseExistForModuleVersion(Map args) { required(args, ['moduleName', 'version'])
+        args.moduleType = 'release'
+        return doesModuleExist(args)
+    }
+
+    def doesModuleExist(Map args) { required(args, ['moduleName', 'version', 'moduleType'])
         try {
-            httpRequest(path: "/rest/modules/${args.moduleName}/${args.version}/release")
-            true
+            httpRequest(path: "/rest/modules/${args.moduleName}/${args.version}/${args.moduleType}")
+            return true
         } catch (HttpException httpException) {
             if (httpException.statusCode != 404) {
                 throw httpException
             }
-            false
+            return false
         }
     }
 
@@ -333,15 +326,24 @@ class Hesperides implements Serializable {
         return response
     }
 
-    def getTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'filename']) // optional: title
+    def deleteTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'templateName'])
+        return httpRequest(method: 'DELETE', path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/workingcopy/templates/${args.templateName}")
+    }
+
+    def getTemplates(Map args) { required(args, ['moduleName', 'moduleVersion', 'moduleType'])
+        return httpRequest(method: 'GET', path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/${args.moduleType}/templates")
+    }
+
+    def getTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'moduleType', 'filename']) // optional: title
         def title = args.title ?: args.filename
         def response = httpRequest(method: 'GET',
-                path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/workingcopy/templates/${title}")
+                path: "/rest/modules/${args.moduleName}/${args.moduleVersion}/${args.moduleType}/templates/${title}")
         log('Template version_id = ' + response.version_id)
         return response
     }
 
     def upsertTemplate(Map args) { required(args, ['moduleName', 'moduleVersion', 'location', 'filename', 'content']) // optional: title, filePerms
+        args.moduleType = 'workingcopy'
         try {
             args.version_id = getTemplate(args).version_id
             updateTemplate(args)
