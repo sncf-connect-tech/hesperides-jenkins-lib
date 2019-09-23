@@ -47,7 +47,7 @@ class JenkinsHTTRequester implements Serializable {
 
         steps.echo 'Response header Set-Cookie = ' + tryPrettyPrintJSON(response.headers['Set-Cookie'])
 
-        if (!(response.status in [200, 201])) {
+        if (!(response.status in [200, 201, 202, 203, 204, 205, 206])) {
             this.steps.echo COLOR_RED + tryPrettyPrintJSON(tryParseJSON(response.content)) + COLOR_END
             throw new HttpException(response.status, 'HTTP error')
         }
