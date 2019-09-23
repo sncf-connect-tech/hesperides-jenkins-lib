@@ -105,9 +105,9 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
         then:
             hesperides.getModule(moduleName: moduleFromDescriptorOne, version: moduleVersion, moduleType: 'workingcopy').version == moduleVersion
             hesperides.getModule(moduleName: moduleFromDescriptorTwo, version: moduleVersion, moduleType: 'workingcopy').version == moduleVersion
-            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateOne).content.trim() == 'foo={{bar}}'
-            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateTwo).content.trim() == 'bar={{foo}}'
-            hesperides.getTemplate(moduleName: moduleFromDescriptorTwo, moduleVersion: moduleVersion, filename: templateThree).content.trim() == 'foo={{bar}}'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, moduleType: 'workingcopy', filename: templateOne).content.trim() == 'foo={{bar}}'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, moduleType: 'workingcopy', filename: templateTwo).content.trim() == 'bar={{foo}}'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorTwo, moduleVersion: moduleVersion, moduleType: 'workingcopy', filename: templateThree).content.trim() == 'foo={{bar}}'
         cleanup:
             hesperides.deleteModule(moduleName: moduleFromDescriptorOne, version: moduleVersion, moduleType: 'workingcopy')
             hesperides.deleteModule(moduleName: moduleFromDescriptorTwo, version: moduleVersion, moduleType: 'workingcopy')
@@ -118,9 +118,9 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
             hesperides.createModule(moduleName: moduleFromDescriptorOne, version: moduleVersion)
             hesperides.upsertFromDescriptor(descriptorPath: 'test/resources/templatesDescriptorWithModules-1-2-andTemplates-1-2-3.json', moduleVersion: moduleVersion)
         then:
-            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateOne).content.trim() == 'foo={{bar}}'
-            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateTwo).content.trim() == 'bar={{foo}}'
-            hesperides.getTemplate(moduleName: moduleFromDescriptorTwo, moduleVersion: moduleVersion, filename: templateThree).content.trim() == 'foo={{bar}}'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, moduleType: 'workingcopy', filename: templateOne).content.trim() == 'foo={{bar}}'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, moduleType: 'workingcopy', filename: templateTwo).content.trim() == 'bar={{foo}}'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorTwo, moduleVersion: moduleVersion, moduleType: 'workingcopy', filename: templateThree).content.trim() == 'foo={{bar}}'
         cleanup:
             hesperides.deleteModule(moduleName: moduleFromDescriptorOne, version: moduleVersion, moduleType: 'workingcopy')
             hesperides.deleteModule(moduleName: moduleFromDescriptorTwo, version: moduleVersion, moduleType: 'workingcopy')
@@ -131,7 +131,7 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
             hesperides.upsertFromDescriptor(descriptorPath: 'test/resources/templatesDescriptorWithModules-1-2-andTemplates-1-2-3.json', moduleVersion: moduleVersion)
             hesperides.upsertFromDescriptor(descriptorPath: 'test/resources/templatesDescriptorWithModules-1-2-andTemplates-3-4.json', moduleVersion: moduleVersion)
         then:
-            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateFour).content.trim() == 'bar={{foobar}}'
+            hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, moduleType: 'workingcopy', filename: templateFour).content.trim() == 'bar={{foobar}}'
         cleanup:
             hesperides.deleteModule(moduleName: moduleFromDescriptorOne, version: moduleVersion, moduleType: 'workingcopy')
             hesperides.deleteModule(moduleName: moduleFromDescriptorTwo, version: moduleVersion, moduleType: 'workingcopy')
@@ -143,7 +143,7 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
             hesperides.upsertFromDescriptor(descriptorPath: 'test/resources/templatesDescriptorWithModules-1-2-andTemplates-3-4.json', moduleVersion: moduleVersion)
         then:
             try {
-                hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, filename: templateOne)
+                hesperides.getTemplate(moduleName: moduleFromDescriptorOne, moduleVersion: moduleVersion, moduleType: 'workingcopy', filename: templateOne)
                 assert false, 'Template should not exist'
             } catch (HttpException httpException) {
                 if (httpException.statusCode != 404) {
@@ -466,14 +466,14 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
 
     def "Can retrieve a template with title"() {
         when:
-            def template = hesperides.getTemplate(moduleName: moduleName, moduleVersion: moduleVersion, filename: 'titi', title: 'titi')
+            def template = hesperides.getTemplate(moduleName: moduleName, moduleVersion: moduleVersion, moduleType: 'workingcopy', filename: 'titi', title: 'titi')
         then:
             template.filename == 'titi'
     }
 
     def "Can retrieve a template without title"() {
         when:
-            def template = hesperides.getTemplate(moduleName: moduleName, moduleVersion: moduleVersion, filename: 'titi')
+            def template = hesperides.getTemplate(moduleName: moduleName, moduleVersion: moduleVersion, moduleType: 'workingcopy', filename: 'titi')
         then:
             template.filename == 'titi'
     }
@@ -482,16 +482,16 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
         when:
             hesperides.upsertTemplate(moduleName: moduleName, moduleVersion: moduleVersion, location: '/etc/test', filename: 'test_upsert', content: 'upsert content')
         then:
-            hesperides.getTemplate(moduleName: moduleName, moduleVersion: moduleVersion, filename: 'test_upsert').content == 'upsert content'
+            hesperides.getTemplate(moduleName: moduleName, moduleVersion: moduleVersion, moduleType: 'workingcopy', filename: 'test_upsert').content == 'upsert content'
 
     }
 
     def "Can update a template with upsert method"() {
         when:
-            hesperides.createTemplate(moduleName: moduleName, moduleVersion: moduleVersion, location: '/etc/test', filename: 'test_upsert2', content: 'upsert content')
-            hesperides.upsertTemplate(moduleName: moduleName, moduleVersion: moduleVersion, location: '/etc/test', filename: 'test_upsert2', content: 'upsert content 33')
+            hesperides.createTemplate(moduleName: moduleName, moduleVersion: moduleVersion, moduleType: 'workingcopy', location: '/etc/test', filename: 'test_upsert2', content: 'upsert content')
+            hesperides.upsertTemplate(moduleName: moduleName, moduleVersion: moduleVersion, moduleType: 'workingcopy', location: '/etc/test', filename: 'test_upsert2', content: 'upsert content 33')
         then:
-            hesperides.getTemplate(moduleName: moduleName, moduleVersion: moduleVersion, filename: 'test_upsert2').content == 'upsert content 33'
+            hesperides.getTemplate(moduleName: moduleName, moduleVersion: moduleVersion, moduleType: 'workingcopy', filename: 'test_upsert2').content == 'upsert content 33'
     }
 
     def "Can delete an instance"() {

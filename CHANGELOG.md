@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased] - 2019-XX-YY
 
+## [1.1.17] - 2019-09-23
+### Fixed
+- `upsertFromDescriptor` compatibility with [Hesperides API v2019-09-20](https://github.com/voyages-sncf-technologies/hesperides/blob/2019-09-20/CHANGELOG.md#2019-09-20) : https://github.com/voyages-sncf-technologies/hesperides-jenkins-lib/pull/29
+### Added
+- `getTemplates` & `deleteTemplate`
+### Changed
+- `getTemplate` now requires a `moduleType` argument
+
 ## [1.1.16] - 2019-07-22
 ### Fixed
 - Bug de MAJ des propriétés d'instance : add @NonCPS on method `selectModule` and `selectModules` - fix #27 - thanks @brunoMod !
