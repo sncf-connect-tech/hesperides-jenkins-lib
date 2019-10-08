@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased] - 2019-XX-YY
 
+## [1.1.18] - 2019-10-08
+### Fixed
+- remove buggy uses of `.empty` in favour of `.isEmpty`, _cf._ [JENKINS-50863](https://issues.jenkins-ci.org/browse/JENKINS-50863)
+Impacted methods: `getModulePropertiesForPlatform` & `updateProperties`.
+
 ## [1.1.17] - 2019-09-23
 ### Fixed
 - `upsertFromDescriptor` compatibility with [Hesperides API v2019-09-20](https://github.com/voyages-sncf-technologies/hesperides/blob/2019-09-20/CHANGELOG.md#2019-09-20) : https://github.com/voyages-sncf-technologies/hesperides-jenkins-lib/pull/29
