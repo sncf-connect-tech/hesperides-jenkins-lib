@@ -92,6 +92,7 @@ ruleset {
 
     ruleset('rulesets/unnecessary.xml'){
         UnnecessaryReturnKeyword(enabled:false)
+        UnnecessaryGetter(enabled:false) // Car on préfère isEmpty() à empty
         UnnecessarySetter(enabled:false)
     }
 
