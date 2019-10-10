@@ -1,0 +1,7 @@
+@startuml
+interface HTTPRequester {
+    performRequest(uri, method, body, authHeader, accept, contentType)
+}
+HTTPRequester <|- JenkinsHTTRequester
+HTTPRequester <|- HTTPBuilderRequester
+@enduml

@@ -1,0 +1,107 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'codenarc'
+apply plugin: 'maven'
+
+// Workaround for error: java.lang.NoClassDefFoundError: groovy/text/SimpleTemplateEngine"
+plugins.withType(GroovyPlugin) {
+  dependencies {
+    codenarc 'org.codenarc:CodeNarc:1.4'
+  }
+}
+
+codenarc {
+    configFile = file('codenarc_rules.groovy')
+}
+// On autorise les erreurs de linter dans les tests:
+codenarcTest.ignoreFailures = true
+
+configurations {
+    ivy
+}
+
+dependencies {
+    ivy "org.apache.ivy:ivy:2.4.0"
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile 'com.cloudbees:groovy-cps:1.12'
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.2'
+    testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDirs = ['src', 'vars']
+        }
+    }
+    test {
+        groovy {
+            srcDirs = ['test']
+        }
+    }
+}
+
+test {
+    testLogging {
+        showStandardStreams = true
+    }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+jar {
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it).matching{exclude{it.path.contains('META-INF')}} }
+    }
+}
+
+def env = System.env
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.version = '1.1.16'
+            pom.artifactId = 'hesperides-jenkins-lib'
+            pom.groupId = 'com.vsct.dt.hesperides'
+
+            def nexusUrl = env.get('NEXUS_URL')
+            if (nexusUrl && nexusUrl[0] == '"') {
+                nexusUrl = nexusUrl[1..-2] // in case Windows
+            }
+            def nexusUser = env.get('NEXUS_USER')
+            if (nexusUser && nexusUser[0] == '"') {
+                nexusUser = nexusUser[1..-2] // in case Windows
+            }
+            def nexusPassword = env.get('NEXUS_PASSWORD')
+            if (nexusPassword && nexusPassword[0] == '"') {
+                nexusPassword = nexusPassword[1..-2] // in case Windows
+            }
+            repository(url: nexusUrl) {
+                authentication(userName: nexusUser, password: nexusPassword)
+            }
+        }
+    }
+}
+
+test.doFirst {
+    if (!env.HESPERIDES_HOST) {
+        throw new GradleException('The environment variables $HESPERIDES_HOST is required')
+    }
+    systemProperty 'HESPERIDES_HOST', env.HESPERIDES_HOST
+    systemProperty 'HESPERIDES_PORT', env.HESPERIDES_PORT ?: '80'
+    systemProperty 'HESPERIDES_AUTH', env.HESPERIDES_AUTH
+}
+
+tasks.withType(GroovyCompile) {
+    groovyClasspath += configurations.ivy
+}

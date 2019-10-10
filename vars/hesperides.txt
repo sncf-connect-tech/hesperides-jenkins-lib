@@ -1,0 +1,245 @@
+<section>
+    <h1>Applications &amp; platforms</h1>
+
+    <section>
+        <h1>hesperides.getPlatformInfo</h1>
+        <code>GET /rest/applications/$app/platforms/$platform</code>
+        <br>
+        Example:
+        <pre><code class="language-groovy">
+        echo hesperides.getPlatformInfo(app: 'CSC', platform: 'USN1')
+        </code></pre>
+    </section>
+
+    <section>
+        <h1>hesperides.createPlatform</h1>
+        Create a new application platform, with a 1st version, and optionally some modules
+        <br>
+        Example:
+        <pre><code class="language-groovy">
+        hesperides.createPlatform app:'ABC' platform:'USN1' version:'1.0', isProduction:true,
+                                  fromApplication:'DEF', fromPlatform:'PRD2', copyPropertiesForUpgradedModules:false
+        hesperides.createPlatform app:'ABC' platform:'USN1' version:'0.0', modules: [
+            [
+              id: 0,
+              name: 'toto',
+              version: '0.0',
+              path: '#GROUP',
+              instances: [
+                [
+                  name: 'TATA',
+                  key_values: [
+                    [
+                      value: 'prop',
+                      name: 42
+                    ]
+                  ]
+                ]
+              ],
+              propertiesPath: '#GROUP#toto#0.0#WORKINGCOPY',
+              working_copy: true
+            }
+          ]
+        </code></pre>
+    </section>
+
+    <section>
+        <h1>hesperides.setPlatformVersion</h1>
+        Change a plateform version.
+        <br>
+        Example:
+        <pre><code class="language-groovy">
+        hesperides.setPlatformVersion app:'CSC', platform:'USN2', checkCurrentVersion:'1-18-SNAPSHOT',
+                                      newVersion:'1.24-SNAPSHOT', copyPropertiesForUpgradedModules:false
+        </code></pre>
+    </section>
+</section>
+
+<section>
+    <h1>Modules</h1>
+
+    <section>
+        <h1>hesperides.getModuleVersions</h1>
+        Retrieve the versions of a module.
+        <br>
+        Example:
+        <pre><code class="language-groovy">
+        hesperides.getModuleVersions moduleName: 'toto'
+        </code></pre>
+    </section>
+
+    <section>
+        <h1>hesperides.releaseModule</h1>
+        Release one or several modules from their working copies.
+        <br>
+        Example:
+        <pre><code class="language-groovy">
+        hesperides.releaseModule moduleName: 'toto', workingcopyVersion: '1.0-SNAPSHOT' releaseVersion: '1.0'
+        </code></pre>
+    </section>
+
+    <section>
+        <h1>hesperides.deleteModule</h1><code>
+        DELETE /rest/modules/$module/$version/$moduleType
+        <br>
+        Example:
+        <pre><code class="language-groovy">
+        deleteModule version: 'toto', version: '1.0', moduleType: 'workingcopy'
+        </code></pre>
+    </section>
+
+    <section>
+        <h1>hesperides.setPlatformModuleVersion</h1><code>
+        Change the version of one module on a plateform.
+        <br>
+        Example:
+        <pre><code class="language-groovy">
+        setPlatformModuleVersion app:'CSC', platform:'USN2', moduleName:'csc-engine-api', checkCurrentVersion:'1-18-SNAPSHOT',
+                                 newVersion:'1.24-SNAPSHOT', isWorkingCopy: true, path: '#LOGIC#PATH',
+                                 copyPropertiesForUpgradedModules: false
+        </code></pre>
+    </section>
+
+    <section>
+        <h1>hesperides.setPlatformModulesVersion</h1><code>
+        Change the version of all modules on a plateform. Same parameters as <code>setPlatformModuleVersion</code> without the need for <code>moduleName</code>.
+        <br>
+        Example:
+        <pre><code class="language-groovy">
+        setPlatformModulesVersion app:'CSC', platform:'USN2', newVersion:'1.24-SNAPSHOT'
+        </code></pre>
+    </section>
+</section>
+
+<section>
+    <h1>Templates &amp; properties</h1>
+
+    <section>
+        <h1>hesperides.upsertTemplate</h1>
+        Upsert (create or update) a template on a given workingcopy module. Existing template for a module version is replaced.
+
+        <br>
+        Example:
+        <pre><code class="language-groovy">
+        upsertTemplate moduleName: 'corporate-client-aggregator', moduleVersion: '1.1.10',
+                       location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: '{keycloakUrl: {{keycloak.url}}}',
+                       title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
+        </code></pre>
+    </section>
+
+    <section>
+        <h1>hesperides.createTemplate</h1>
+        Create a new template on a given workingcopy module for a specific version.
+
+        <br>
+        Example:
+        <pre><code class="language-groovy">
+        createTemplate moduleName: 'toto', moduleVersion: '0.1.0',
+                       location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: 'keycloakUrl: {{keycloak.url}}',
+                       title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
+        </code></pre>
+    </section>
+
+    <section>
+        <h1>hesperides.updateTemplate</h1>
+        Update a template on a given module for a specific version.
+
+        <br>
+        Example:
+        <pre><code class="language-groovy">
+        updateTemplate moduleName: 'toto', moduleVersion: '0.1.0',
+                       location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: 'keycloakUrl: {{keycloak.url}}',
+                       title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
+        </code></pre>
+    </section>
+
+    <section>
+        <h1>hesperides.upsertFromDescriptor</h1>
+        Upsert (create or update) one or several workingcopy module(s) and their templates from a file descriptor.
+        Any previously existing templates are deleted beforehand.
+        If 'title' field isn't set, the 'filename' is used instead.
+
+        <br>
+        Example jenkinsfile code :
+        <pre><code class="language-groovy">
+        upsertFromDescriptor descriptorPath: './hesperides-descriptor.json', moduleVersion: '1.1.10'
+        </code></pre>
+        Examble descriptor file :
+        <pre><code class="language-json">
+        {
+          "csc-engine-api": {
+            "engine-api/src/main/resources-dev/template-application-prod.yml": {
+              "title": "application-prod.yml",
+              "filename": "application-prod.yml",
+              "location": "/appl/{{userwas}}/properties"
+            },
+            "engine-api/src/main/resources-dev/template-logback.properties": {
+              "title": "logback.properties",
+              "filename": "logback.properties",
+              "location": "/appl/{{userwas}}/properties"
+            }
+          },
+          "csc-engine-core": {
+            "engine-core/src/main/resources-dev/template-application-core-prod.yml": {
+              "title": "application-core-prod.yml",
+              "filename": "application-core-prod.yml",
+              "location": "/appl/{{userwas}}/properties",
+              "filePerms": {"user": {"read": true, "write": true}, "group": {"read": true}, "other": {"read": true}}
+            }
+          }
+        }
+        </code></pre>
+    </section>
+
+    <section>
+        <h1>hesperides.updateProperties</h1>
+        Change instance/module/global properties on a given Hesperides platform, from a JSON file listing deltas.
+        Existing properties are not altered. The properties can also be defined by their path.
+
+        <br>
+        Example JSON deltas file:
+        <pre><code class="language-json">
+        {
+          "csc-engine-api": {
+            "api_log_level": "DEBUG",
+            "engine.config.products_types": "HOTEL,ARTICLE,IDAVIS,VOITURE,IDCAB,OUICAR",
+            "iterable_properties": {
+              "clients.configuration": [
+                {
+                  "clientId": "new_home-MonVoyage",
+                  "authorizedProducts": "\"ARTICLE\", \"IDCAB\""
+                }
+              ]
+            }
+          },
+          "another-module#INSTANCE_NAME": {},
+          "another-third-module": {
+            "polymorphistic_property": "a default value on the platform"
+          },
+          "path:#anotherLogicGroup#another-third-module": {
+            "polymorphistic_property": "an overriden value for a specific path"
+          },
+          "GLOBAL": {}
+        }
+        </code></pre>
+
+        <br>
+        Example:
+        <pre><code class="language-groovy">
+        updateProperties app: 'CSC', platform: 'USN1', jsonPropertyUpdates: "$env.WORKSPACE/hesperides_changes/CSC-USN1.json", commitMsg: 'Test'
+        </code></pre>
+    </section>
+
+    <section>
+           <h1>hesperides.updatePropertiesForPlatform</h1>
+               Update properties for given module path.
+               Usually, before using this method, retrieve properties to update with getModulePropertiesForPlatform(...) and properties_path from chosen module
+           <br>
+               Example:
+           <pre><code class="language-groovy">
+               hesperides.updatePropertiesForPlatform(app: 'APP', platform: "MyPlatform",
+                                                      modulePropertiesPath: "APP#MyPlatform#myModule", commitMsg: 'MyCommitMsg',
+                                                      properties: myJsonPropertiesRetreivedFromGetAPI, platformVid: platformVid, auth: auth)
+           </code></pre>
+    </section>
+</section>
