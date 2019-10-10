@@ -14,7 +14,7 @@ It provides some _high level_ features over the bare HTTP REST API:
 - `upsertFromDescriptor`: upsert (create or update) one or several workingcopy module(s) and their templates from a file descriptor
 
 This project is actively maintained.
-A detailed releases changelog is available here: <CHANGELOG.md>
+A detailed releases changelog is available here: [CHANGELOG.md](CHANGELOG.md)
 
 A documentation for the exposed Groovy functions is available here: <https://voyages-sncf-technologies.github.io/hesperides-jenkins-lib/>
 

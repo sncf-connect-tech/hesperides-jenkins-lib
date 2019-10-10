@@ -1,14 +1,19 @@
 language: python
 python: "3.6"
-install: pip install pre-commit
+install:
+- pip install pre-commit
+# Installing a more recent version than the one in the distro:
+- wget https://github.com/htacg/tidy-html5/releases/download/5.4.0/tidy-5.4.0-64bit.deb
+- sudo dpkg -i --force-overwrite tidy-5.4.0-64bit.deb
 script:
 - pre-commit run --all-files
 - cat docs/header.html vars/hesperides.txt docs/footer.html > index.html
+- tidy -quiet -modify -config docs/htmltidy.conf index.html
 deploy:
   - provider: pages
     skip-cleanup: true
     github-token: $GITHUB_TOKEN  # Set in travis-ci.org dashboard, marked secure, named "TravisCI for hesperides-jenkins-lib" and associated with user Lucas-C
     keep-history: true
     on:
-      branch: host_docs_on_github_pages  # TODO: master
+      branch: master
     target-branch: gh-pages

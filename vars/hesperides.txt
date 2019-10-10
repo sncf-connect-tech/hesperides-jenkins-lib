@@ -1,8 +1,8 @@
 <section>
-    <h1>Applications &amp; platforms</h1>
+    <h2>Applications &amp; platforms</h2>
 
     <section>
-        <h1>hesperides.getPlatformInfo</h1>
+        <h2>hesperides.getPlatformInfo</h2>
         <code>GET /rest/applications/$app/platforms/$platform</code>
         <br>
         Example:
@@ -12,7 +12,7 @@
     </section>
 
     <section>
-        <h1>hesperides.createPlatform</h1>
+        <h2>hesperides.createPlatform</h2>
         Create a new application platform, with a 1st version, and optionally some modules
         <br>
         Example:
@@ -44,7 +44,7 @@
     </section>
 
     <section>
-        <h1>hesperides.setPlatformVersion</h1>
+        <h2>hesperides.setPlatformVersion</h2>
         Change a plateform version.
         <br>
         Example:
@@ -56,10 +56,10 @@
 </section>
 
 <section>
-    <h1>Modules</h1>
+    <h2>Modules</h2>
 
     <section>
-        <h1>hesperides.getModuleVersions</h1>
+        <h2>hesperides.getModuleVersions</h2>
         Retrieve the versions of a module.
         <br>
         Example:
@@ -69,7 +69,7 @@
     </section>
 
     <section>
-        <h1>hesperides.releaseModule</h1>
+        <h2>hesperides.releaseModule</h2>
         Release one or several modules from their working copies.
         <br>
         Example:
@@ -79,7 +79,7 @@
     </section>
 
     <section>
-        <h1>hesperides.deleteModule</h1><code>
+        <h2>hesperides.deleteModule</h2>
         DELETE /rest/modules/$module/$version/$moduleType
         <br>
         Example:
@@ -89,7 +89,7 @@
     </section>
 
     <section>
-        <h1>hesperides.setPlatformModuleVersion</h1><code>
+        <h2>hesperides.setPlatformModuleVersion</h2>
         Change the version of one module on a plateform.
         <br>
         Example:
@@ -101,7 +101,7 @@
     </section>
 
     <section>
-        <h1>hesperides.setPlatformModulesVersion</h1><code>
+        <h2>hesperides.setPlatformModulesVersion</h2>
         Change the version of all modules on a plateform. Same parameters as <code>setPlatformModuleVersion</code> without the need for <code>moduleName</code>.
         <br>
         Example:
@@ -112,10 +112,10 @@
 </section>
 
 <section>
-    <h1>Templates &amp; properties</h1>
+    <h2>Templates &amp; properties</h2>
 
     <section>
-        <h1>hesperides.upsertTemplate</h1>
+        <h2>hesperides.upsertTemplate</h2>
         Upsert (create or update) a template on a given workingcopy module. Existing template for a module version is replaced.
 
         <br>
@@ -128,7 +128,7 @@
     </section>
 
     <section>
-        <h1>hesperides.createTemplate</h1>
+        <h2>hesperides.createTemplate</h2>
         Create a new template on a given workingcopy module for a specific version.
 
         <br>
@@ -141,7 +141,7 @@
     </section>
 
     <section>
-        <h1>hesperides.updateTemplate</h1>
+        <h2>hesperides.updateTemplate</h2>
         Update a template on a given module for a specific version.
 
         <br>
@@ -154,7 +154,7 @@
     </section>
 
     <section>
-        <h1>hesperides.upsertFromDescriptor</h1>
+        <h2>hesperides.upsertFromDescriptor</h2>
         Upsert (create or update) one or several workingcopy module(s) and their templates from a file descriptor.
         Any previously existing templates are deleted beforehand.
         If 'title' field isn't set, the 'filename' is used instead.
@@ -192,7 +192,7 @@
     </section>
 
     <section>
-        <h1>hesperides.updateProperties</h1>
+        <h2>hesperides.updateProperties</h2>
         Change instance/module/global properties on a given Hesperides platform, from a JSON file listing deltas.
         Existing properties are not altered. The properties can also be defined by their path.
 
@@ -231,7 +231,7 @@
     </section>
 
     <section>
-           <h1>hesperides.updatePropertiesForPlatform</h1>
+           <h2>hesperides.updatePropertiesForPlatform</h2>
                Update properties for given module path.
                Usually, before using this method, retrieve properties to update with getModulePropertiesForPlatform(...) and properties_path from chosen module
            <br>
