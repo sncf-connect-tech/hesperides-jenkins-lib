@@ -125,7 +125,7 @@ class Hesperides implements Serializable {
                 version_id: 0,
         ]
         def response = httpRequest(method: 'POST',
-                path: "/rest/applications/${args.app}/platforms",
+                path: "/rest/applications",
                 query: [
                         application_name : args.app,
                         from_application: args.fromApplication,

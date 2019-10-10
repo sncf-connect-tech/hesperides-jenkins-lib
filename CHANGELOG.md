@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased] - 2019-XX-YY
+### Fixed
+- `createPlatform`: using `POST /applications` instead of deprecated `POST /applications/$APP/platforms`
 
 ## [1.1.18] - 2019-10-08
 ### Fixed
