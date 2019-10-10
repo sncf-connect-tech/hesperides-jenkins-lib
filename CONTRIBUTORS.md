@@ -10,3 +10,7 @@ Many thanks to the following people for their contributions to this project !
 - Jérémy Rechet
 - Benjamin René
 - Nordwin Hoff
+- Bruno Modeste
+- Thomas L'Hostis
+- Yann Soliman
+- Antoine Gassot

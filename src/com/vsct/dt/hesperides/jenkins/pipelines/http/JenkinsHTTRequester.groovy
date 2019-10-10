@@ -46,9 +46,13 @@ class JenkinsHTTRequester implements Serializable {
                                               validResponseCodes: '100:600'
 
         steps.echo 'Response header Set-Cookie = ' + tryPrettyPrintJSON(response.headers['Set-Cookie'])
+        ['Deprecation', 'Sunset', 'Link'].findAll { header -> response.headers.getAt(header) }
+                                         .each { header ->
+            logWarn header + ': ' + response.headers.getAt(header)
+        }
 
         if (!(response.status in [200, 201, 202, 203, 204, 205, 206])) {
-            this.steps.echo COLOR_RED + tryPrettyPrintJSON(tryParseJSON(response.content)) + COLOR_END
+            logWarn tryPrettyPrintJSON(tryParseJSON(response.content))
             throw new HttpException(response.status, 'HTTP error')
         }
 
@@ -56,6 +60,14 @@ class JenkinsHTTRequester implements Serializable {
             tryParseJSON response.content
         } else {
             response.content
+        }
+    }
+
+    def logWarn(String msg) {
+        if (this.steps.sh(script:'echo $TERM', returnStdout: true).trim()) { // means ansiColor plugin is enabled
+            this.steps.echo COLOR_RED + msg + COLOR_END
+        } else {
+            this.steps.echo msg
         }
     }
 
