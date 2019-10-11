@@ -1,2 +1,37 @@
+    <script>
+    // Adding a class on all <code> elements for PrismJS to highlight code
+    [].forEach.call(document.getElementsByTagName('code'), code => {
+        code.classList.add(code.textContent.trim().charAt(0) === '{' ? 'language-json' : 'language-groovy')
+    })
+    // Auto-generating a summary:
+    const ul = document.createElement('ul')
+    document.querySelectorAll('body > section').forEach(section => {
+        const h2 = section.getElementsByTagName('h2')[0]
+        const li = document.createElement('li')
+        const a = document.createElement('a')
+        h2.id = h2.textContent
+        a.textContent = h2.textContent
+        a.href = '#' + h2.id
+        li.append(a)
+        let subUl = null
+        section.querySelectorAll('section > section > h2').forEach(subH2 => {
+            if (!subUl) {
+                subUl = document.createElement('ul')
+                li.append(subUl)
+            }
+            const subLi = document.createElement('li')
+            const subA = document.createElement('a')
+            subH2.id = subH2.textContent
+            subA.textContent = subH2.textContent
+            subA.href = '#' + subH2.id
+            subLi.append(subA)
+            subUl.append(subLi)
+        })
+        ul.append(li)
+    })
+    document.body.children[0].prepend(ul)
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
   </body>
 </html>
