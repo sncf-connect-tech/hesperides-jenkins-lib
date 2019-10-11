@@ -355,8 +355,11 @@ class Hesperides implements Serializable {
         }
     }
 
-    def getModuleTemplateProperties(Map args) { required(args, ['moduleName', 'version']) // optional: isRelease
-        def releasePath = args.isRelease ? 'release' : 'workingcopy'
+    def getModuleTemplateProperties(Map args) { required(args, ['moduleName', 'version']) // optional: moduleType
+        if (args.isRelease) {
+            logWarn "Argument isRelease is deprecated, use moduleType instead"
+        }
+        def releasePath = (args.isRelease || args.moduleType) ? 'release' : 'workingcopy'
         httpRequest(path: "/rest/modules/${args.moduleName}/${args.version}/${releasePath}/model")
     }
 
@@ -588,14 +591,13 @@ class Hesperides implements Serializable {
 
 
 
-
     /******************************************************************************
 
      INSTANCES
 
      ******************************************************************************/
 
-    def getInstanceProperties(Map args) { required(args, ['app', 'platform', 'instance'])
+    def getInstanceProperties(Map args) { required(args, ['app', 'platform', 'moduleName', 'instance']) // optional: path
         def platformInfo = getPlatformInfo(args)
         def module = selectModule(modules: platformInfo.modules, moduleName: args.moduleName, path: args.path)
         listSelect(list: module.instances, key: 'name', value: args.instance)
@@ -649,6 +651,19 @@ class Hesperides implements Serializable {
             steps.echo msg
         } else {
             System.err.println msg
+        }
+    }
+
+    protected logWarn(String msg) {
+        if (steps) {
+            if (steps.sh(script:'echo $TERM', returnStdout: true).trim()) { // means ansiColor plugin is enabled
+                steps.echo COLOR_RED + msg + COLOR_END
+            } else {
+                steps.echo msg
+            }
+            steps.echo msg
+        } else {
+            System.err.println COLOR_RED + msg + COLOR_END
         }
     }
 

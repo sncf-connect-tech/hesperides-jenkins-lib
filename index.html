@@ -25,9 +25,17 @@
     <section>
         <h2>Applications & platforms</h2>
         <section>
+            <h2>hesperides.getAppInfo</h2>Example:
+            <pre><code>
+        import static groovy.json.JsonOutput.*
+        echo prettyPrint(toJson(hesperides.getAppInfo(app: 'HJL')))
+        </code></pre>
+        </section>
+        <section>
             <h2>hesperides.getPlatformInfo</h2>Example:
             <pre><code>
-        echo hesperides.getPlatformInfo(app: 'CSC', platform: 'USN1')
+        import static groovy.json.JsonOutput.*
+        echo prettyPrint(toJson(hesperides.getPlatformInfo(app: 'HJL', platform: 'USN1')))
         </code></pre>
         </section>
         <section>
@@ -60,21 +68,47 @@
         </code></pre>
         </section>
         <section>
+            <h2>hesperides.deletePlatform</h2>Example:
+            <pre><code>
+        hesperides.deletePlatform(app: 'HJL', platform: 'USN1')
+        </code></pre>
+        </section>
+        <section>
             <h2>hesperides.setPlatformVersion</h2>Change a plateform version.<br>
             Example:
             <pre><code>
-        hesperides.setPlatformVersion app:'CSC', platform:'USN2', checkCurrentVersion:'1-18-SNAPSHOT',
+        hesperides.setPlatformVersion app:'HJL', platform:'USN2', checkCurrentVersion:'1-18-SNAPSHOT',
                                       newVersion:'1.24-SNAPSHOT', copyPropertiesForUpgradedModules:false
         </code></pre>
         </section>
     </section>
     <section>
-        <h2>Modules</h2>
+        <h2>Modules & deployed modules</h2>
+        <section>
+            <h2>hesperides.getModule</h2>Example:
+            <pre><code>
+        import static groovy.json.JsonOutput.*
+        echo prettyPrint(toJson(hesperides.getModule(moduleName: 'toto', version: '1.0')))
+        </code></pre>
+        </section>
+        <section>
+            <h2>hesperides.doesModuleExist</h2>Example:
+            <pre><code>
+        echo hesperides.doesModuleExist(moduleName: 'toto', version: '1.0', moduleType: 'workingcopy')
+        </code></pre>
+        </section>
+        <section>
+            <h2>hesperides.createModule</h2>Example:
+            <pre><code>
+        hesperides.createModule(moduleName: 'toto', version: '1.0')
+        </code></pre>
+        </section>
         <section>
             <h2>hesperides.getModuleVersions</h2>Retrieve the versions of a module.<br>
             Example:
             <pre><code>
-        hesperides.getModuleVersions moduleName: 'toto'
+        import static groovy.json.JsonOutput.*
+        echo prettyPrint(toJson(hesperides.getModuleVersions(moduleName: 'toto')))
         </code></pre>
         </section>
         <section>
@@ -87,64 +121,77 @@
         <section>
             <h2>hesperides.deleteModule</h2>Example:
             <pre><code>
-        deleteModule version: 'toto', version: '1.0', moduleType: 'workingcopy'
+        hesperides.deleteModule version: 'toto', version: '1.0', moduleType: 'workingcopy'
+        </code></pre>
+        </section>
+        <section>
+            <h2>hesperides.putModuleOnPlatform</h2>Example:
+            <pre><code>
+        hesperides.putModuleOnPlatform moduleName: 'toto', moduleVersion: '1.0', isWorkingCopy: true
+                                       app: 'HJL', platform:'USN2', logicGroupPath: '#HJL#WAS'
         </code></pre>
         </section>
         <section>
             <h2>hesperides.setPlatformModuleVersion</h2>Change the version of one module on a plateform.<br>
             Example:
             <pre><code>
-        setPlatformModuleVersion app:'CSC', platform:'USN2', moduleName:'csc-engine-api', checkCurrentVersion:'1-18-SNAPSHOT',
-                                 newVersion:'1.24-SNAPSHOT', isWorkingCopy: true, path: '#LOGIC#PATH',
-                                 copyPropertiesForUpgradedModules: false
+        hesperides.setPlatformModuleVersion app:'HJL', platform:'USN2', moduleName:'hjl-engine-api', checkCurrentVersion:'1-18-SNAPSHOT',
+                                            newVersion:'1.24-SNAPSHOT', isWorkingCopy: true, path: '#LOGIC#PATH',
+                                            copyPropertiesForUpgradedModules: false
         </code></pre>
         </section>
         <section>
             <h2>hesperides.setPlatformModulesVersion</h2>Change the version of all modules on a plateform. Same parameters as <code>setPlatformModuleVersion</code> without the need for <code>moduleName</code>.<br>
             Example:
             <pre><code>
-        setPlatformModulesVersion app:'CSC', platform:'USN2', newVersion:'1.24-SNAPSHOT'
+        hesperides.setPlatformModulesVersion app:'HJL', platform:'USN2', newVersion:'1.24-SNAPSHOT'
         </code></pre>
         </section>
     </section>
     <section>
-        <h2>Templates & properties</h2>
-        <section>
-            <h2>hesperides.upsertTemplate</h2>Upsert (create or update) a template on a given workingcopy module. Existing template for a module version is replaced.<br>
-            Example:
-            <pre><code>
-        upsertTemplate moduleName: 'corporate-client-aggregator', moduleVersion: '1.1.10',
-                       location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: '{keycloakUrl: {{keycloak.url}}}',
-                       title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
-        </code></pre>
-        </section>
+        <h2>Templates</h2>
         <section>
             <h2>hesperides.createTemplate</h2>Create a new template on a given workingcopy module for a specific version.<br>
             Example:
             <pre><code>
-        createTemplate moduleName: 'toto', moduleVersion: '0.1.0',
-                       location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: 'keycloakUrl: {{keycloak.url}}',
-                       title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
+        hesperides.createTemplate moduleName: 'toto', moduleVersion: '0.1.0',
+                                  location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: 'keycloakUrl: {{keycloak.url}}',
+                                  title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
+        </code></pre>
+        </section>
+        <section>
+            <h2>hesperides.deleteTemplate</h2>Example:
+            <pre><code>
+        hesperides.deleteTemplate moduleName: 'toto', moduleVersion: '0.1.0', templateName: 'app.conf'
+        </code></pre>
+        </section>
+        <section>
+            <h2>hesperides.upsertTemplate</h2>Upsert (create or update) a template on a given workingcopy module. Existing template for a module version is replaced.<br>
+            Example:
+            <pre><code>
+        hesperides.upsertTemplate moduleName: 'corporate-client-aggregator', moduleVersion: '1.1.10',
+                                  location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: '{keycloakUrl: {{keycloak.url}}}',
+                                  title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
         </code></pre>
         </section>
         <section>
             <h2>hesperides.updateTemplate</h2>Update a template on a given module for a specific version.<br>
             Example:
             <pre><code>
-        updateTemplate moduleName: 'toto', moduleVersion: '0.1.0',
-                       location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: 'keycloakUrl: {{keycloak.url}}',
-                       title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
+        hesperides.updateTemplate moduleName: 'toto', moduleVersion: '0.1.0',
+                                  location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: 'keycloakUrl: {{keycloak.url}}',
+                                  title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
         </code></pre>
         </section>
         <section>
             <h2>hesperides.upsertFromDescriptor</h2>Upsert (create or update) one or several workingcopy module(s) and their templates from a file descriptor. Any previously existing templates are deleted beforehand. If 'title' field isn't set, the 'filename' is used instead.<br>
             Example jenkinsfile code :
             <pre><code>
-        upsertFromDescriptor descriptorPath: './hesperides-descriptor.json', moduleVersion: '1.1.10'
+        hesperides.upsertFromDescriptor descriptorPath: './hesperides-descriptor.json', moduleVersion: '1.1.10'
         </code></pre>Examble descriptor file :
             <pre><code class="language-json">
         {
-          "csc-engine-api": {
+          "hjl-engine-api": {
             "engine-api/src/main/resources-dev/template-application-prod.yml": {
               "title": "application-prod.yml",
               "filename": "application-prod.yml",
@@ -156,7 +203,7 @@
               "location": "/appl/{{userwas}}/properties"
             }
           },
-          "csc-engine-core": {
+          "HJL-engine-core": {
             "engine-core/src/main/resources-dev/template-application-core-prod.yml": {
               "title": "application-core-prod.yml",
               "filename": "application-core-prod.yml",
@@ -168,11 +215,42 @@
         </code></pre>
         </section>
         <section>
+            <h2>hesperides.getTemplates</h2>Example:
+            <pre><code>
+        import static groovy.json.JsonOutput.*
+        echo prettyPrint(toJson(hesperides.getTemplates(moduleName: 'toto', version: '1.0', moduleType: 'workingcopy')))
+        </code></pre>
+        </section>
+        <section>
+            <h2>hesperides.getTemplate</h2>Example:
+            <pre><code>
+        import static groovy.json.JsonOutput.*
+        echo prettyPrint(toJson(hesperides.getTemplate(moduleName: 'toto', version: '1.0', moduleType: 'workingcopy', filename: 'app.conf')))
+        </code></pre>
+        </section>
+        <section>
+            <h2>hesperides.getModulePropertiesForPlatform</h2>Example:
+            <pre><code>
+        import static groovy.json.JsonOutput.*
+        echo prettyPrint(toJson(hesperides.getModuleTemplateProperties(moduleName: 'toto', version: '1.0', moduleType: 'workingcopy')))
+        </code></pre>
+        </section>
+    </section>
+    <section>
+        <h2>Properties</h2>
+        <section>
+            <h2>hesperides.getModulePropertiesForPlatform</h2>Example:
+            <pre><code>
+        import static groovy.json.JsonOutput.*
+        echo prettyPrint(toJson(hesperides.getModulePropertiesForPlatform(app: 'HJL', platform: 'USN1', modulePropertiesPath: '#HJL#WAS#toto#1.0#WORKINGCOPY')))
+        </code></pre>
+        </section>
+        <section>
             <h2>hesperides.updateProperties</h2>Change instance/module/global properties on a given Hesperides platform, from a JSON file listing deltas. Existing properties are not altered. The properties can also be defined by their path.<br>
             Example JSON deltas file:
             <pre><code class="language-json">
         {
-          "csc-engine-api": {
+          "hjl-engine-api": {
             "api_log_level": "DEBUG",
             "engine.config.products_types": "HOTEL,ARTICLE,IDAVIS,VOITURE,IDCAB,OUICAR",
             "iterable_properties": {
@@ -196,16 +274,45 @@
         </code></pre><br>
             Example:
             <pre><code>
-        updateProperties app: 'CSC', platform: 'USN1', jsonPropertyUpdates: "$env.WORKSPACE/hesperides_changes/CSC-USN1.json", commitMsg: 'Test'
+        hesperides.updateProperties app: 'HJL', platform: 'USN1', jsonPropertyUpdates: "$env.WORKSPACE/hesperides_changes/HJL-USN1.json", commitMsg: 'Test'
         </code></pre>
         </section>
         <section>
             <h2>hesperides.updatePropertiesForPlatform</h2>Update properties for given module path. Usually, before using this method, retrieve properties to update with getModulePropertiesForPlatform(...) and properties_path from chosen module<br>
             Example:
             <pre><code>
-       hesperides.updatePropertiesForPlatform(app: 'APP', platform: "MyPlatform",
-                                              modulePropertiesPath: "APP#MyPlatform#myModule", commitMsg: 'MyCommitMsg',
+       hesperides.updatePropertiesForPlatform(app: 'APP', platform: 'PTF',
+                                              modulePropertiesPath: '#APP#PTF#module#1.0#WORKINGCOPY', commitMsg: 'MyCommitMsg',
                                               properties: myJsonPropertiesRetreivedFromGetAPI, platformVid: platformVid, auth: auth)
+       </code></pre>
+        </section>
+    </section>
+    <section>
+        <h2>Instances</h2>
+        <section>
+            <h2>hesperides.getInstanceProperties</h2>Example:
+            <pre><code>
+       import static groovy.json.JsonOutput.*
+        echo prettyPrint(toJson(hesperides.getInstanceProperties(app: 'APP', platform: 'PTF', moduleName: 'toto', instance: 'APPPTFI1')))
+       </code></pre>
+        </section>
+        <section>
+            <h2>hesperides.createInstance</h2>Example:
+            <pre><code>
+       hesperides.createInstance(app: 'APP', platform: 'PTF', moduleName: 'toto', instance: 'APPPTFI1')
+       </code></pre>
+        </section>
+        <section>
+            <h2>hesperides.deleteInstance</h2>Example:
+            <pre><code>
+       hesperides.deleteInstance(app: 'APP', platform: 'PTF', moduleName: 'toto', instance: 'APPPTFI1')
+       </code></pre>
+        </section>
+        <section>
+            <h2>hesperides.getInstanceFiles</h2>Example:
+            <pre><code>
+       import static groovy.json.JsonOutput.*
+        echo prettyPrint(toJson(hesperides.getInstanceFiles(app: 'APP', platform: 'PTF', moduleName: 'toto', instance: 'APPPTFI1')))
        </code></pre>
         </section>
     </section>
