@@ -6,9 +6,7 @@
     <title>Documentation of hesperides-jenkins-lib</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism.min.css" rel="stylesheet">
     <style>
-    html {
-    background-color:#fefefe
-    }
+    html { background-color:#fefefe; }
     body {
     font-family: Open Sans,Arial;
     color: #454545;
@@ -17,29 +15,25 @@
     max-width: 80rem;
     padding: 1em;
     line-height: 1.4;
-    text-align: justify
+    text-align: justify;
     }
-    h2 {
-    margin-top: 3rem;
-    }
+    h2 { margin-top: 3rem; }
+    body > section > h2 { font-size: 2.5rem; }
     </style>
 </head>
 <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/prism.min.js"></script> 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
     <section>
         <h2>Applications & platforms</h2>
         <section>
-            <h2>hesperides.getPlatformInfo</h2><code>GET /rest/applications/$app/platforms/$platform</code><br>
-            Example:
-            <pre><code class="language-groovy">
+            <h2>hesperides.getPlatformInfo</h2>Example:
+            <pre><code>
         echo hesperides.getPlatformInfo(app: 'CSC', platform: 'USN1')
         </code></pre>
         </section>
         <section>
             <h2>hesperides.createPlatform</h2>Create a new application platform, with a 1st version, and optionally some modules<br>
             Example:
-            <pre><code class="language-groovy">
+            <pre><code>
         hesperides.createPlatform app:'ABC' platform:'USN1' version:'1.0', isProduction:true,
                                   fromApplication:'DEF', fromPlatform:'PRD2', copyPropertiesForUpgradedModules:false
         hesperides.createPlatform app:'ABC' platform:'USN1' version:'0.0', modules: [
@@ -68,7 +62,7 @@
         <section>
             <h2>hesperides.setPlatformVersion</h2>Change a plateform version.<br>
             Example:
-            <pre><code class="language-groovy">
+            <pre><code>
         hesperides.setPlatformVersion app:'CSC', platform:'USN2', checkCurrentVersion:'1-18-SNAPSHOT',
                                       newVersion:'1.24-SNAPSHOT', copyPropertiesForUpgradedModules:false
         </code></pre>
@@ -79,28 +73,27 @@
         <section>
             <h2>hesperides.getModuleVersions</h2>Retrieve the versions of a module.<br>
             Example:
-            <pre><code class="language-groovy">
+            <pre><code>
         hesperides.getModuleVersions moduleName: 'toto'
         </code></pre>
         </section>
         <section>
             <h2>hesperides.releaseModule</h2>Release one or several modules from their working copies.<br>
             Example:
-            <pre><code class="language-groovy">
+            <pre><code>
         hesperides.releaseModule moduleName: 'toto', workingcopyVersion: '1.0-SNAPSHOT' releaseVersion: '1.0'
         </code></pre>
         </section>
         <section>
-            <h2>hesperides.deleteModule</h2>DELETE /rest/modules/$module/$version/$moduleType<br>
-            Example:
-            <pre><code class="language-groovy">
+            <h2>hesperides.deleteModule</h2>Example:
+            <pre><code>
         deleteModule version: 'toto', version: '1.0', moduleType: 'workingcopy'
         </code></pre>
         </section>
         <section>
             <h2>hesperides.setPlatformModuleVersion</h2>Change the version of one module on a plateform.<br>
             Example:
-            <pre><code class="language-groovy">
+            <pre><code>
         setPlatformModuleVersion app:'CSC', platform:'USN2', moduleName:'csc-engine-api', checkCurrentVersion:'1-18-SNAPSHOT',
                                  newVersion:'1.24-SNAPSHOT', isWorkingCopy: true, path: '#LOGIC#PATH',
                                  copyPropertiesForUpgradedModules: false
@@ -109,7 +102,7 @@
         <section>
             <h2>hesperides.setPlatformModulesVersion</h2>Change the version of all modules on a plateform. Same parameters as <code>setPlatformModuleVersion</code> without the need for <code>moduleName</code>.<br>
             Example:
-            <pre><code class="language-groovy">
+            <pre><code>
         setPlatformModulesVersion app:'CSC', platform:'USN2', newVersion:'1.24-SNAPSHOT'
         </code></pre>
         </section>
@@ -119,7 +112,7 @@
         <section>
             <h2>hesperides.upsertTemplate</h2>Upsert (create or update) a template on a given workingcopy module. Existing template for a module version is replaced.<br>
             Example:
-            <pre><code class="language-groovy">
+            <pre><code>
         upsertTemplate moduleName: 'corporate-client-aggregator', moduleVersion: '1.1.10',
                        location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: '{keycloakUrl: {{keycloak.url}}}',
                        title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
@@ -128,7 +121,7 @@
         <section>
             <h2>hesperides.createTemplate</h2>Create a new template on a given workingcopy module for a specific version.<br>
             Example:
-            <pre><code class="language-groovy">
+            <pre><code>
         createTemplate moduleName: 'toto', moduleVersion: '0.1.0',
                        location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: 'keycloakUrl: {{keycloak.url}}',
                        title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
@@ -137,7 +130,7 @@
         <section>
             <h2>hesperides.updateTemplate</h2>Update a template on a given module for a specific version.<br>
             Example:
-            <pre><code class="language-groovy">
+            <pre><code>
         updateTemplate moduleName: 'toto', moduleVersion: '0.1.0',
                        location: '/appl/{{username}}/properties/application.yml', filename: 'application.yml', content: 'keycloakUrl: {{keycloak.url}}',
                        title: 'BaseSpringBootConfig', filePerms: [user: [read: true, write: true], group: [read: true], other: [read: true]]
@@ -146,7 +139,7 @@
         <section>
             <h2>hesperides.upsertFromDescriptor</h2>Upsert (create or update) one or several workingcopy module(s) and their templates from a file descriptor. Any previously existing templates are deleted beforehand. If 'title' field isn't set, the 'filename' is used instead.<br>
             Example jenkinsfile code :
-            <pre><code class="language-groovy">
+            <pre><code>
         upsertFromDescriptor descriptorPath: './hesperides-descriptor.json', moduleVersion: '1.1.10'
         </code></pre>Examble descriptor file :
             <pre><code class="language-json">
@@ -202,19 +195,54 @@
         }
         </code></pre><br>
             Example:
-            <pre><code class="language-groovy">
+            <pre><code>
         updateProperties app: 'CSC', platform: 'USN1', jsonPropertyUpdates: "$env.WORKSPACE/hesperides_changes/CSC-USN1.json", commitMsg: 'Test'
         </code></pre>
         </section>
         <section>
             <h2>hesperides.updatePropertiesForPlatform</h2>Update properties for given module path. Usually, before using this method, retrieve properties to update with getModulePropertiesForPlatform(...) and properties_path from chosen module<br>
             Example:
-            <pre><code class="language-groovy">
-               hesperides.updatePropertiesForPlatform(app: 'APP', platform: "MyPlatform",
-                                                      modulePropertiesPath: "APP#MyPlatform#myModule", commitMsg: 'MyCommitMsg',
-                                                      properties: myJsonPropertiesRetreivedFromGetAPI, platformVid: platformVid, auth: auth)
-           </code></pre>
+            <pre><code>
+       hesperides.updatePropertiesForPlatform(app: 'APP', platform: "MyPlatform",
+                                              modulePropertiesPath: "APP#MyPlatform#myModule", commitMsg: 'MyCommitMsg',
+                                              properties: myJsonPropertiesRetreivedFromGetAPI, platformVid: platformVid, auth: auth)
+       </code></pre>
         </section>
     </section>
+    <script>
+    // Adding a class on all <code> elements for PrismJS to highlight code
+    [].forEach.call(document.getElementsByTagName('code'), code => {
+        code.classList.add(code.textContent.trim().charAt(0) === '{' ? 'language-json' : 'language-groovy')
+    })
+    // Auto-generating a summary:
+    const ul = document.createElement('ul')
+    document.querySelectorAll('body > section').forEach(section => {
+        const h2 = section.getElementsByTagName('h2')[0]
+        const li = document.createElement('li')
+        const a = document.createElement('a')
+        h2.id = h2.textContent
+        a.textContent = h2.textContent
+        a.href = '#' + h2.id
+        li.append(a)
+        let subUl = null
+        section.querySelectorAll('section > section > h2').forEach(subH2 => {
+            if (!subUl) {
+                subUl = document.createElement('ul')
+                li.append(subUl)
+            }
+            const subLi = document.createElement('li')
+            const subA = document.createElement('a')
+            subH2.id = subH2.textContent
+            subA.textContent = subH2.textContent
+            subA.href = '#' + subH2.id
+            subLi.append(subA)
+            subUl.append(subLi)
+        })
+        ul.append(li)
+    })
+    document.body.children[0].prepend(ul)
+    </script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/prism.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>
