@@ -125,7 +125,7 @@ class Hesperides implements Serializable {
                 version_id: 0,
         ]
         def response = httpRequest(method: 'POST',
-                path: "/rest/applications",
+                path: '/rest/applications',
                 query: [
                         application_name : args.app,
                         from_application: args.fromApplication,
@@ -357,7 +357,7 @@ class Hesperides implements Serializable {
 
     def getModuleTemplateProperties(Map args) { required(args, ['moduleName', 'version']) // optional: moduleType
         if (args.isRelease) {
-            logWarn "Argument isRelease is deprecated, use moduleType instead"
+            logWarn 'Argument isRelease is deprecated, use moduleType instead'
         }
         def releasePath = (args.isRelease || args.moduleType) ? 'release' : 'workingcopy'
         httpRequest(path: "/rest/modules/${args.moduleName}/${args.version}/${releasePath}/model")
