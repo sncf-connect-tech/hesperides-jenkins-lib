@@ -221,13 +221,11 @@ java -jar plantuml.jar -tpng HTTPRequester.txt
 
 :bangbang: ⚠️ You may or may not be impacted by the issues in this list, depending on the Jenkins version you use  :bangbang:
 
-- it does not support tuples : https://issues.jenkins-ci.org/browse/JENKINS-38846
-- iterators are not supported : https://issues.jenkins-ci.org/browse/JENKINS-27421
 - `abstract` classes & `traits` do not work : cf. https://issues.jenkins-ci.org/browse/JENKINS-39329 & https://issues.jenkins-ci.org/browse/JENKINS-46145
-- invoking CPS-transformed methods from constructors : https://issues.jenkins-ci.org/browse/JENKINS-26313
 - static nested classes limitations : https://issues.jenkins-ci.org/browse/JENKINS-41896
 - use `JsonSlurperClassic` instead of `JsonSlurper` : http://stackoverflow.com/a/38439681/636849
 - assignment in `if` statements : https://issues.jenkins-ci.org/browse/JENKINS-41422
+- `.empty` is buggy, always uses `.isEmpty`: https://issues.jenkins-ci.org/browse/JENKINS-50863
 
 ## Other known issues
 
@@ -249,6 +247,13 @@ Rerunning a script with increased logging:
 Look for strings like "downloading https://jcenter.bintray.com/com/cloudbees/groovy-cps/1.12/groovy-cps-1.12.jar".
 
 To disable default groovy resolvers (like jcenter), you need to create a [`~/.groovy/grapeConfig.xml`](http://docs.groovy-lang.org/latest/html/documentation/grape.html#Grape-CustomizeIvysettings) file based on [the default one](https://github.com/apache/groovy/blob/master/src/resources/groovy/grape/defaultGrapeConfig.xml), then remove the resolver entries you don't want.
+
+
+# Releasing
+1. complete `CHANGELOG.md`
+2. if new methods have been added, ensure a piece of doc exists for them in `vars.hesperides.txt`
+3. edit `pom.version` in `build.gradle`
+4. `git commit` & `git tag`
 
 
 # Credits

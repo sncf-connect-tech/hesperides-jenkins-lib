@@ -46,9 +46,9 @@ class JenkinsHTTRequester implements Serializable {
                                               validResponseCodes: '100:600'
 
         steps.echo 'Response header Set-Cookie = ' + tryPrettyPrintJSON(response.headers['Set-Cookie'])
-        ['Deprecation', 'Sunset', 'Link'].findAll { header -> response.headers.getAt(header) }
+        ['Deprecation', 'Sunset', 'Link'].findAll { header -> response.headers[header] }
                                          .each { header ->
-            logWarn header + ': ' + response.headers.getAt(header)
+            logWarn header + ': ' + response.headers[header]
         }
 
         if (!(response.status in [200, 201, 202, 203, 204, 205, 206])) {

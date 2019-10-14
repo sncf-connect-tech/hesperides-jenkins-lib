@@ -54,9 +54,9 @@ class HTTPBuilderRequester implements Serializable {
             }
             body = args.body
             response.success = { resp, content ->
-                ['Deprecation', 'Sunset', 'Link'].findAll { header -> resp.headers.getAt(header) }
+                ['Deprecation', 'Sunset', 'Link'].findAll { header -> resp.headers[header] }
                                                  .each { header ->
-                    log COLOR_RED + header + ': ' + resp.headers.getAt(header) + COLOR_END
+                    log COLOR_RED + header + ': ' + resp.headers[header] + COLOR_END
                 }
                 if (content != null && args.accept != 'JSON') {
                     parsedResponse = inputStreamAsString(content)
