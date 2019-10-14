@@ -44,7 +44,10 @@ ruleset {
         DuplicateStringLiteral(enabled:false)
     }
 
-    ruleset('rulesets/enhanced.xml')
+    // Lucas 2019-10-14: disabled because they caused errors like this:
+    //   Compilation failed for [CustomCompilerPhaseSourceDecorator[SourceFile[...Hesperides.groovy]]]; org.codehaus.groovy.control.MultipleCompilationErrorsException: startup failed:
+    //   None: XX: unable to resolve class ...
+    //ruleset('rulesets/enhanced.xml')
 
     ruleset('rulesets/exceptions.xml') {
         ThrowRuntimeException(enabled:false)
