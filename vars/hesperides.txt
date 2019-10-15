@@ -339,6 +339,27 @@
                                               properties: myJsonPropertiesRetreivedFromGetAPI, platformVid: platformVid, auth: auth)
        </code></pre>
     </section>
+
+    <section>
+       <h2>hesperides.getDiffProperties</h2>
+           Allow the comparaison of properties between a platform or module with itself (minus 2 hours) or between 2 platforms ou 2 modules. This uses the REST API /properties/diff
+       <br>
+           Example:
+       <pre><code>
+           hesperides.getDiffProperties(
+               app: 'APP', 
+               platform: 'PTF', 
+               modulePropertiesPath: '#APP#PTF#module#1.0#WORKINGCOPY')
+           or 
+           hesperides.getDiffProperties(
+               app: 'APP', 
+               platform: 'PTF', 
+               modulePropertiesPath: '#APP#PTF#module#1.0#WORKINGCOPY', 
+               toApplication: APP2, 
+               toPlatform: PTF2, 
+               toModulePropertiesPath: '#APP#PTF2#module#1.0#WORKINGCOPY')
+       </code></pre>
+    </section>
 </section>
 
 <section>

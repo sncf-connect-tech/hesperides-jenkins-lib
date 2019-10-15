@@ -15,7 +15,6 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 package com.vsct.dt.hesperides.jenkins.pipelines
 
-
 import static groovy.json.JsonOutput.*
 
 import static com.vsct.dt.hesperides.jenkins.pipelines.LogUtils.*
@@ -410,6 +409,22 @@ class Hesperides implements Serializable {
             updatePathSpecificProperties(app: args.app, platform: args.platform, platformInfo: platformInfo, modulePropertyChanges: modulePropertyChanges, moduleName: it, commitMsg: args.commitMsg)
         }
         return platformInfo
+    }
+
+    // Method to get all the properties diff through Hesperides'API for a platform with itself or 2 platforms
+    def getDiffProperties(Map args) { required(args, ['app', 'platform', 'modulePropertiesPath']) // optional: instanceName, toApplication, toPlatform, toModulePropertiesPath, toInstanceName, timestampDate, compareStoredValues
+        return httpRequest(
+            path: "/rest/applications/${args.app}/platforms/${args.platform}/properties/diff",
+            query: [
+                path: args.modulePropertiesPath,
+                instance_name: args.instanceName, // null si non fourni
+                to_application: args.toApplication ?: args.app,
+                to_platform: args.toPlatform ?: args.platform,
+                to_path: args.toModulePropertiesPath ?: args.modulePropertiesPath,
+                to_instance_name: args.toInstanceName ?: args.instanceName,
+                compare_stored_values: args.compareStoredValues ?: false,
+                timestamp: (args.timestampDate != null) ? args.timestampDate.getDate() : null
+            ])
     }
 
     private updateModuleProperties(Map args) {
