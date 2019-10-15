@@ -217,6 +217,13 @@ def updatePropertiesForPlatform(Map args) {
             steps: this.steps).updatePropertiesForPlatform(args)
 }
 
+def getDiffProperties(Map args) {
+    new Hesperides(apiRootUrl: args.apiRootUrl,
+            auth: args.auth,
+            httpRequester: new JenkinsHTTRequester(this.steps),
+            steps: this.steps).getDiffProperties(args)
+}
+
 
 /******************************************************************************
 

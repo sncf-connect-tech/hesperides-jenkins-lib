@@ -47,6 +47,7 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
 
     static applicationName = 'app'
     static platformName = 'platform'
+    static platformName2 = 'platform2'
     static moduleName = 'module'
     static secondModuleName = 'moduletwo'
     static moduleVersion = '2.0.0.0'
@@ -515,8 +516,45 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
             hesperides.getInstanceProperties(app: applicationName, platform: platformName, moduleName: moduleName, instance: 'TOTO') == null
     }
 
+    def "Can compare a platform with itself"() {
+        then:
+            propertiesDiff = hesperides.getDiffProperties(
+                app: applicationName,
+                platform: platformName,
+                modulePropertiesPath: "#${logicGroupName}#${subLogicGroup}#${moduleName}#${moduleVersion}#WORKINGCOPY",
+            )
+        then:
+            propertiesDiff == [
+                only_left: [],
+                only_right: [],
+                common: [],
+                differing: [],
+            ]
+    }
+
+    def "Can compare 2 platforms between each other"() {
+        setup:
+            hesperides.createPlatform(app: applicationName, platform: platformName2, version: '1.0.0.0')
+            hesperides.putModuleOnPlatform(app: applicationName,
+                platform: platformName2,
+                moduleName: moduleName,
+                moduleVersion: moduleVersion,
+                isWorkingCopy: true,
+                logicGroupPath: "#${logicGroupName}#${subLogicGroup}")
+        when:
+            propertiesDiff = hesperides.getDiffProperties(
+                app: applicationName,
+                platform: platformName,
+                modulePropertiesPath: "#${logicGroupName}#${subLogicGroup}#${moduleName}#${moduleVersion}#WORKINGCOPY",
+                toPlatform: platformName2,
+            )
+        then:
+            propertiesDiff != null
+        cleanup:
+            hesperides.deletePlatform(app: applicationName, platform: platformName2)
+    }
+
     def log(msg) {
         System.out.println msg
     }
-
 }
