@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.1.19] - 2019-10-16
 ### Added
-- `getDiffProperties` : Allow the comparaison of properties between a platform or module with itself (minus 2 hours) or between 2 platforms ou 2 modules. This uses the REST API /properties/diff
+- `getDiffProperties` : Allow the comparaison of properties between a platform or module with itself (minus 2 hours) or between 2 platforms ou 2 modules.
+This uses the REST API /properties/diff - thanks @JefffLD !
 ### Fixed
 - `createPlatform`: using `POST /applications` instead of deprecated `POST /applications/$APP/platforms`
 
