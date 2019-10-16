@@ -22,6 +22,7 @@
     * [Known issues with Jenkins Pipeline](#known-issues-with-jenkins-pipeline)
     * [Other known issues](#other-known-issues)
     * [Debugging Grapes resolution](#debugging-grapes-resolution)
+- [Releasing](#releasing)
 - [Credits](#credits)
 
 <!-- tocstop -->

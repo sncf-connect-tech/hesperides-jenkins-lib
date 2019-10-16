@@ -4,13 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased] - 2019-XX-YY
-### Fixed
-- `createPlatform`: using `POST /applications` instead of deprecated `POST /applications/$APP/platforms`
-
-## [1.1.19] - 2019-10-15
+## [1.1.19] - 2019-10-16
 ### Added
 - `getDiffProperties` : Allow the comparaison of properties between a platform or module with itself (minus 2 hours) or between 2 platforms ou 2 modules. This uses the REST API /properties/diff
+### Fixed
+- `createPlatform`: using `POST /applications` instead of deprecated `POST /applications/$APP/platforms`
 
 ## [1.1.18] - 2019-10-08
 ### Fixed
