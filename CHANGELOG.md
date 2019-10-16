@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - `createPlatform`: using `POST /applications` instead of deprecated `POST /applications/$APP/platforms`
 
+## [1.1.19] - 2019-10-15
+### Added
+- `getDiffProperties` : Allow the comparaison of properties between a platform or module with itself (minus 2 hours) or between 2 platforms ou 2 modules. This uses the REST API /properties/diff
+
 ## [1.1.18] - 2019-10-08
 ### Fixed
 - remove buggy uses of `.empty` in favour of `.isEmpty`, _cf._ [JENKINS-50863](https://issues.jenkins-ci.org/browse/JENKINS-50863)

@@ -14,3 +14,4 @@ Many thanks to the following people for their contributions to this project !
 - Thomas L'Hostis
 - Yann Soliman
 - Antoine Gassot
+- Jean-Francois Le Denmat
