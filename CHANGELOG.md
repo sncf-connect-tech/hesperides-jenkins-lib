@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.20] - 2019-11-13
+### Fixed
+- a bug introduced in v1.1.19 (due to commit `e451d06`) triggered a
+`MissingContextVariableException: Required context class hudson.FilePath is missing` error
+when the lib is used outside a `node {}` and a warning is raised.
+
 ## [1.1.19] - 2019-10-16
 ### Added
 - `getDiffProperties` : Allow the comparaison of properties between a platform or module with itself (minus 2 hours) or between 2 platforms / 2 modules.
