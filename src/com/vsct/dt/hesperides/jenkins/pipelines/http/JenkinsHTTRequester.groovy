@@ -35,7 +35,7 @@ class JenkinsHTTRequester implements Serializable {
 
     JenkinsHTTRequester(steps) {
         // cf. https://github.com/jenkinsci/ansicolor-plugin/issues/117 for context about why this:
-        def env = EnvironmentExpander.getEffectiveEnvironment(new EnvVars(), null, steps.getContext(EnvironmentExpander.class), null, null)
+        def env = EnvironmentExpander.getEffectiveEnvironment(new EnvVars(), null, steps.getContext(EnvironmentExpander), null, null)
         this.ansiColorEnabled = 'TERM' in env
         this.steps = steps
     }
