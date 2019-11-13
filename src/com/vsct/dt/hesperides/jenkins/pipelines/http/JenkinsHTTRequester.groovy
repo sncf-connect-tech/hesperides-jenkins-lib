@@ -21,14 +21,22 @@ import static com.vsct.dt.hesperides.jenkins.pipelines.LogUtils.*
 
 import groovy.json.JsonSlurperClassic
 
+import hudson.EnvVars
+
+import org.jenkinsci.plugins.workflow.steps.EnvironmentExpander
+
 
 class JenkinsHTTRequester implements Serializable {
 
     private static final long serialVersionUID = 1654684321891394621L
 
     Object steps
+    boolean ansiColorEnabled
 
     JenkinsHTTRequester(steps) {
+        // cf. https://github.com/jenkinsci/ansicolor-plugin/issues/117 for context about why this:
+        def env = EnvironmentExpander.getEffectiveEnvironment(new EnvVars(), null, steps.getContext(EnvironmentExpander.class), null, null)
+        this.ansiColorEnabled = 'TERM' in env
         this.steps = steps
     }
 
@@ -64,7 +72,7 @@ class JenkinsHTTRequester implements Serializable {
     }
 
     def logWarn(String msg) {
-        if (this.steps.sh(script:'echo $TERM', returnStdout: true).trim()) { // means ansiColor plugin is enabled
+        if (this.ansiColorEnabled) {
             this.steps.echo COLOR_RED + msg + COLOR_END
         } else {
             this.steps.echo msg
