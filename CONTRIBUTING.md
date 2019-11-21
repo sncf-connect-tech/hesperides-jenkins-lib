@@ -227,8 +227,7 @@ java -jar plantuml.jar -tpng HTTPRequester.txt
 - use `JsonSlurperClassic` instead of `JsonSlurper` : http://stackoverflow.com/a/38439681/636849
 - assignment in `if` statements : https://issues.jenkins-ci.org/browse/JENKINS-41422
 - `.empty` is buggy, always uses `.isEmpty`: https://issues.jenkins-ci.org/browse/JENKINS-50863
-- `List.sort()` does not return a list: https://issues.jenkins-ci.org/browse/JENKINS-44924
-- also: https://wiki.jenkins.io/display/JENKINS/Pipeline+CPS+method+mismatches
+- `List.sort()` does not work properly with a `Closure` parameter : it does not return a list and will not sort it. _cf._https://issues.jenkins-ci.org/browse/JENKINS-44924 & https://wiki.jenkins.io/display/JENKINS/Pipeline+CPS+method+mismatches
 
 ## Other known issues
 
