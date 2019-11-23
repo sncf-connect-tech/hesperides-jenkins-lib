@@ -40,3 +40,8 @@ repos:
         language: pygrep
         entry: \.empty
         files: \.groovy$
+    -   id: forbid-use-of-list-sort-with-closure
+        name: Never pass a closure to list.sort(), cf. https://issues.jenkins-ci.org/browse/JENKINS-44924
+        language: pygrep
+        entry: sort[^)]+\{
+        files: \.groovy$
