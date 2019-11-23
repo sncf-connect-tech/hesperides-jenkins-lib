@@ -229,6 +229,8 @@ java -jar plantuml.jar -tpng HTTPRequester.txt
 - `.empty` is buggy, always uses `.isEmpty`: https://issues.jenkins-ci.org/browse/JENKINS-50863
 - `List.sort()` does not work properly with a `Closure` parameter : it does not return a list and will not sort it. _cf._https://issues.jenkins-ci.org/browse/JENKINS-44924 & https://wiki.jenkins.io/display/JENKINS/Pipeline+CPS+method+mismatches
 
+Some of those "code smells" are detected by `git` _pre-commit_ hooks defined in [.pre-commit-config.yaml](../.pre-commit-config.yaml).
+
 ## Other known issues
 
 `javax.net.ssl.SSLException: java.lang.RuntimeException: Could not generate DH keypair` exception when using [http_request](https://wiki.jenkins-ci.org/display/JENKINS/HTTP+Request+Plugin) plugin : you need to run Jenkins with Java 8, a bug with Java 7 will prevent you from making HTTPS requests.
