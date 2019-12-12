@@ -71,6 +71,13 @@ def upsertFromDescriptor(Map args) {
             steps: this.steps).upsertFromDescriptor(args)
 }
 
+def doesModuleExist(Map args) {
+    new Hesperides(apiRootUrl: args.apiRootUrl,
+            auth: args.auth,
+            httpRequester: new JenkinsHTTRequester(this.steps),
+            steps: this.steps).doesModuleExist(args)
+}
+
 def getModule(Map args) {
     new Hesperides(apiRootUrl: args.apiRootUrl,
                    auth: args.auth,
