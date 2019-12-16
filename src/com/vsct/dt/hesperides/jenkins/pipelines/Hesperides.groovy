@@ -150,7 +150,15 @@ class Hesperides implements Serializable {
         updatePlatform(platformInfo: platformInfo, copyPropertiesForUpgradedModules: copyPropertiesForUpgradedModules)
     }
 
+    def cleanUnusedProperties(Map args) { required(args, ['app', 'platform']) //optional: properties_path
+        def propertiesPath = ''
 
+        if (args.properties_path) {
+            propertiesPath = "properties_path=${args.properties_path}"
+        }
+
+        httpRequest(method: 'DELETE', path: "/rest/applications/${args.app}/platforms/${args.platform}/properties/clean_unused_properties?${propertiesPath}")
+    }
 
     /******************************************************************************
 
