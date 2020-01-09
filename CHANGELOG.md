@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.?] - 2020-?-?
+### Fixed
+- a bug with `getDiffProperties`: the `timetampDate` paramater was not handled correctly
+
 ## [1.1.20] - 2019-11-13
 ### Fixed
 - a bug introduced in v1.1.19 (due to commit `e451d06`) triggered a
