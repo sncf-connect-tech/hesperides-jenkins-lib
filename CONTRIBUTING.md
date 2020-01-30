@@ -235,8 +235,6 @@ Some of those "code smells" are detected by `git` _pre-commit_ hooks defined in 
 
 `javax.net.ssl.SSLException: java.lang.RuntimeException: Could not generate DH keypair` exception when using [http_request](https://wiki.jenkins-ci.org/display/JENKINS/HTTP+Request+Plugin) plugin : you need to run Jenkins with Java 8, a bug with Java 7 will prevent you from making HTTPS requests.
 
-cf. http://vboard.vsct.fr/vblog/?p=561
-
 ## Debugging Grapes resolution
 
 Deleting an artifact in both Groovy & Maven caches, to test re-downloading (yes, Groovy will use Maven cache by default !) :
