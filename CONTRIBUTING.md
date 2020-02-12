@@ -125,6 +125,10 @@ Integration tests use a dockerized Hesperides instance.
     docker-compose build
     docker-compose run gradle-check
 
+To skip the CodeNarc linter and only execute tests:
+
+    docker-compose run gradle-check gradle test --debug --stacktrace
+
 To expose the `build/` directory generated, containing the tests reports:
 
     docker-compose run --volume ./build:/home/gradle/build gradle-check

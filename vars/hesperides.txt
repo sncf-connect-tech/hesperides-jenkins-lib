@@ -69,6 +69,16 @@
                                       newVersion:'1.24-SNAPSHOT', copyPropertiesForUpgradedModules:false
         </code></pre>
     </section>
+
+    <section>
+        <h2>hesperides.cleanUnusedProperties</h2>
+        Clean all unused properties on a platform. You can specify a component path (optional)
+        <br>
+        Example:
+        <pre><code>
+        hesperides.cleanUnusedProperties app:'HJL', platform:'USN2', propertiesPath:'#HJLMODULE#JAR#hjlcomponent#1.0.0.0#RELEASE'
+        </code></pre>
+    </section>
 </section>
 
 <section>

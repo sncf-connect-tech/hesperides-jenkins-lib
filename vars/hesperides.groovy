@@ -58,6 +58,13 @@ def setPlatformVersion(Map args) {
                    steps: this.steps).setPlatformVersion(args)
 }
 
+def cleanUnusedProperties(Map args) {
+    new Hesperides(apiRootUrl: args.apiRootUrl,
+                   auth: args.auth,
+                   httpRequester: new JenkinsHTTRequester(this.steps),
+                   steps: this.steps).cleanUnusedProperties(args)
+}
+
 
 /******************************************************************************
 

@@ -4,9 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.1.?] - 2020-?-?
+## [1.1.21] - 2020-02-12
+### Added
+- add cleanUnusedProperties - thanks @Poil2Q !
+### Changed
+- using `PUT` instead of `POST` to update properties, _cf._ https://github.com/voyages-sncf-technologies/hesperides/pull/703
+- using a `/files` suffix instead of a `/files` prefix, _cf._ https://github.com/voyages-sncf-technologies/hesperides/pull/760
 ### Fixed
-- a bug with `getDiffProperties`: the `timetampDate` paramater was not handled correctly
+- a bug with `getDiffProperties`: the `timetampDate` parameter was not handled correctly
 
 ## [1.1.20] - 2019-11-13
 ### Fixed
