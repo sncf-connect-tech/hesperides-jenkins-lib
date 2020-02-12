@@ -150,7 +150,11 @@ class Hesperides implements Serializable {
         updatePlatform(platformInfo: platformInfo, copyPropertiesForUpgradedModules: copyPropertiesForUpgradedModules)
     }
 
-
+    def cleanUnusedProperties(Map args) { required(args, ['app', 'platform']) //optional: propertiesPath
+        httpRequest(method: 'DELETE',
+                    path: "/rest/applications/${args.app}/platforms/${args.platform}/properties/clean_unused_properties",
+                    query: [properties_path: args.propertiesPath])
+    }
 
     /******************************************************************************
 
@@ -597,7 +601,7 @@ class Hesperides implements Serializable {
     private setPlatformProperties(Map args) { required(args, ['platformInfo', 'modulePropertiesPath', 'commitMsg', 'properties'])
         def app = args.platformInfo.application_name
         def platform = args.platformInfo.platform_name
-        httpRequest(method: 'POST',
+        httpRequest(method: 'PUT',
                 path: "/rest/applications/$app/platforms/$platform/properties",
                 query: [path: args.modulePropertiesPath, comment: args.commitMsg, platform_vid: args.platformInfo.version_id],
                 body: toJson(args.properties))
@@ -644,7 +648,7 @@ class Hesperides implements Serializable {
     def getInstanceFiles(Map args) { required(args, ['app', 'platform', 'moduleName', 'instance'])
         def platformInfo = getPlatformInfo(args)
         def module = selectModule(modules: platformInfo.modules, moduleName: args.moduleName)
-        def instanceFiles = httpRequest(path: "/rest/files/applications/${args.app}/platforms/${args.platform}/${module.path}/${args.moduleName}/${module.version}/instances/${args.instance}/",
+        def instanceFiles = httpRequest(path: "/rest/applications/${args.app}/platforms/${args.platform}/${module.path}/${args.moduleName}/${module.version}/instances/${args.instance}/files/",
                 query: [isWorkingCopy: module.working_copy])
         def instanceFilesContents = [:]
         for (templateFile in instanceFiles) {
