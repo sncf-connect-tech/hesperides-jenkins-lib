@@ -556,6 +556,47 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
             hesperides.deletePlatform(app: applicationName, platform: platformName2)
     }
 
+    def "Can clean unused properties of a given module"() {
+        setup:
+            def platform = hesperides.getPlatformInfo(app: applicationName, platform: platformName)
+            def modulePropertiesPath = platform.modules[0].properties_path
+            def newProperties = [key_value_properties: [[
+                name: "myPropertyName",
+                value: "myPropertyValue"
+            ]]]
+            hesperides.updatePropertiesForPlatform(app: applicationName, platform: platformName,
+                                                   modulePropertiesPath: modulePropertiesPath,
+                                                   commitMsg: 'Test clean unused properties',
+                                                   properties: newProperties,
+                                                   platformVid: platform.version_id)
+        when:
+            hesperides.cleanUnusedProperties(app: applicationName, platform: platformName,
+                                             properties_path: modulePropertiesPath)
+        then:
+            hesperides.getModulePropertiesForPlatform(app: applicationName, platform: platformName,
+                                                      modulePropertiesPath: modulePropertiesPath).key_value_properties == []
+    }
+
+    def "Can clean unused properties of a whole platform"() {
+        setup:
+            def platform = hesperides.getPlatformInfo(app: applicationName, platform: platformName)
+            def modulePropertiesPath = platform.modules[0].properties_path
+            def newProperties = [key_value_properties: [[
+                name: "myPropertyName",
+                value: "myPropertyValue"
+            ]]]
+            hesperides.updatePropertiesForPlatform(app: applicationName, platform: platformName,
+                                                   modulePropertiesPath: modulePropertiesPath,
+                                                   commitMsg: 'Test clean unused properties',
+                                                   properties: newProperties,
+                                                   platformVid: platform.version_id)
+        when:
+            hesperides.cleanUnusedProperties(app: applicationName, platform: platformName)
+        then:
+            hesperides.getModulePropertiesForPlatform(app: applicationName, platform: platformName,
+                                                      modulePropertiesPath: modulePropertiesPath).key_value_properties == []
+    }
+
     def log(msg) {
         System.out.println msg
     }
