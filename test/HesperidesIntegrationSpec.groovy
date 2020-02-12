@@ -560,10 +560,13 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
         setup:
             def platform = hesperides.getPlatformInfo(app: applicationName, platform: platformName)
             def modulePropertiesPath = platform.modules[0].properties_path
-            def newProperties = [key_value_properties: [[
-                name: "myPropertyName",
-                value: "myPropertyValue"
-            ]]]
+            def newProperties = [
+                iterable_properties: [],
+                key_value_properties: [[
+                    name: "myPropertyName",
+                    value: "myPropertyValue"
+                ]]
+            ]
             hesperides.updatePropertiesForPlatform(app: applicationName, platform: platformName,
                                                    modulePropertiesPath: modulePropertiesPath,
                                                    commitMsg: 'Test clean unused properties',
@@ -581,10 +584,13 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
         setup:
             def platform = hesperides.getPlatformInfo(app: applicationName, platform: platformName)
             def modulePropertiesPath = platform.modules[0].properties_path
-            def newProperties = [key_value_properties: [[
-                name: "myPropertyName",
-                value: "myPropertyValue"
-            ]]]
+            def newProperties = [
+                iterable_properties: [],
+                key_value_properties: [[
+                    name: "myPropertyName",
+                    value: "myPropertyValue"
+                ]]
+            ]
             hesperides.updatePropertiesForPlatform(app: applicationName, platform: platformName,
                                                    modulePropertiesPath: modulePropertiesPath,
                                                    commitMsg: 'Test clean unused properties',

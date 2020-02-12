@@ -76,7 +76,7 @@
         <br>
         Example:
         <pre><code>
-        hesperides.cleanUnusedProperties app:'HJL', platform:'USN2', properties_path:'#HJLMODULE#JAR#hjlcomponent#1.0.0.0#RELEASE'
+        hesperides.cleanUnusedProperties app:'HJL', platform:'USN2', propertiesPath:'#HJLMODULE#JAR#hjlcomponent#1.0.0.0#RELEASE'
         </code></pre>
     </section>
 </section>
