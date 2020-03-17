@@ -603,7 +603,7 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
                                                       modulePropertiesPath: modulePropertiesPath).key_value_properties == []
     }
 
-    def "Create a module with good logicGroupPath"() {
+    def "Create a module with a logicGroupPath starting with a #"() {
         setup:
             hesperides.createPlatform(app: applicationName, platform: platformName2, version: '1.0.0.0')
             hesperides.putModuleOnPlatform(app: applicationName,
