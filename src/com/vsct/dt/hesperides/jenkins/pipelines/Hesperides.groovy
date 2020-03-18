@@ -208,7 +208,8 @@ class Hesperides implements Serializable {
 
     def putModuleOnPlatform(Map args) { required(args, ['app', 'platform', 'moduleName', 'moduleVersion', 'isWorkingCopy', 'logicGroupPath'])
         def platformInfo = getPlatformInfo(args)
-        def modulePropertiesPath = "#${args.logicGroupPath}#${args.moduleName}#${args.moduleVersion}#${args.isWorkingCopy ? 'WORKINGCOPY' : 'RELEASE'}"
+        def modulePropertiesPath = "#${args.logicGroupPath.replaceFirst('^#', '')}#${args.moduleName}#${args.moduleVersion}#${args.isWorkingCopy ? 'WORKINGCOPY' : 'RELEASE'}"
+        
         platformInfo.modules << [
                 name: args.moduleName,
                 version: args.moduleVersion,

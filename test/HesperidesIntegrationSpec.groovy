@@ -603,6 +603,30 @@ class HesperidesIntegrationSpec extends Specification implements Helper {
                                                       modulePropertiesPath: modulePropertiesPath).key_value_properties == []
     }
 
+    def "Create a module with a logicGroupPath starting with a #"() {
+        setup:
+            hesperides.createPlatform(app: applicationName, platform: platformName2, version: '1.0.0.0')
+            hesperides.putModuleOnPlatform(app: applicationName,
+                platform: platformName2,
+                moduleName: moduleName,
+                moduleVersion: moduleVersion,
+                isWorkingCopy: true,
+                logicGroupPath: "#${logicGroupName}#${subLogicGroup}"
+            )
+        when:
+            def platformInfo = hesperides.getPlatformInfo(app: applicationName, platform: platformName2)
+        then:
+            platformInfo['platform_name'] == platformName2
+            platformInfo['application_version'] == '1.0.0.0'
+            platformInfo['modules'][0]['name'] == moduleName
+            platformInfo['modules'][0]['version'] == moduleVersion
+            platformInfo['modules'][0]['working_copy'] == true
+            platformInfo['modules'][0]['path'] == "#${logicGroupName}#${subLogicGroup}"
+            platformInfo['modules'][0]['properties_path'] == "#${logicGroupName}#${subLogicGroup}#${moduleName}#${moduleVersion}#WORKINGCOPY"
+        cleanup:
+            hesperides.deletePlatform(app: applicationName, platform: platformName2)
+    }
+
     def log(msg) {
         System.out.println msg
     }
