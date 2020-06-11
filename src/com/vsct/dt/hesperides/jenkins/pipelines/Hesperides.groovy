@@ -209,7 +209,7 @@ class Hesperides implements Serializable {
     def putModuleOnPlatform(Map args) { required(args, ['app', 'platform', 'moduleName', 'moduleVersion', 'isWorkingCopy', 'logicGroupPath'])
         def platformInfo = getPlatformInfo(args)
         def modulePropertiesPath = "#${args.logicGroupPath.replaceFirst('^#', '')}#${args.moduleName}#${args.moduleVersion}#${args.isWorkingCopy ? 'WORKINGCOPY' : 'RELEASE'}"
-        
+
         platformInfo.modules << [
                 name: args.moduleName,
                 version: args.moduleVersion,
@@ -430,6 +430,105 @@ class Hesperides implements Serializable {
                 compare_stored_values: args.compareStoredValues ?: false,
                 timestamp: (args.timestampDate != null) ? args.timestampDate.getTime() : null
             ])
+    }
+
+    // Function to display differences from getDiff() with a diffType (common/differing/left/right)
+    // optional: instanceName, toApplication, toPlatform, toModulePropertiesPath, toInstanceName, timestampDate, compareStoredValues
+    def getDiffPropertiesAsString(Map args) { required(args, ['app', 'platform', 'modulePropertiesPath', 'diffType'])
+        def output = '' // Output variable
+        def propDiff = this.getDiffProperties(args) // get the answer back from the getDiffProperties's function call
+        // Count the total of item with diff.
+        def listSize = propDiff.get(args.diffType).size()
+        // Properties list which depend on the "param" value (only_left, only_right, common, differing)
+        def propList = propDiff.get(args.diffType).collect { it }
+        // LENGTH PROP : Check characters max to pad the column
+        def maxPropNameLength = propList.collect { it.name.length() }.max() ?: 0
+        def maxLeftFinalValueLength = propList.collect { it.left.finalValue.length() }.max() ?: 0
+        def maxRightFinalValueLength = propList.collect { it.right.finalValue.length() }.max() ?: 0
+
+        // DISPLAY : Variable for the column's display
+        def title = '     REPORT DIFF PROPERTIES     '
+        def colId = '   #   '
+        def colProperty = '     PROPERTIES     '
+        def colFinalLeftValue = '     FINAL LEFT VALUE     '
+        def colFinalRightValue = '     FINAL RIGHT VALUE     '
+        def noDifference = '     * * * * *   NO PROPERTIES ARE DIFFERING!   * * * * *     '
+
+/* **********************************************************************************************************
+                                                 DISPLAY
+   ********************************************************************************************************** */
+        // Display of the diff. total
+        output += '*********************************************************\n'
+        output += "      Total of items in the \"${args.diffType}\" section : ${listSize}\n"
+        output += '*********************************************************\n'
+
+
+        // Columns variables
+        def maxColumnContentLength = 80 // Max length for the value's column (char)
+        def colIdLength = colId.length()
+        def colPropertyLength = Math.min(Math.max(colProperty.length(), maxPropNameLength), maxColumnContentLength)
+        def colLeftValueLength = Math.min(Math.max(colFinalLeftValue.length(), maxLeftFinalValueLength), maxColumnContentLength)
+        def colRightValueLength = Math.min(Math.max(colFinalRightValue.length(), maxRightFinalValueLength), maxColumnContentLength)
+        def initialTotalLength = ( colIdLength + colPropertyLength + colLeftValueLength + colRightValueLength )
+
+        // Display variables
+        def firstLine = "  ${'='.padRight(initialTotalLength + 9, '=')}"
+        def fullTitle = title.center(initialTotalLength + 9)
+        def secondLine = "| ${'='.padRight(initialTotalLength + 9, '=')} |"
+
+        // Test if it is an empty array for the column's width
+        if ( propList == [] ) {
+            def empty = ' '.center(initialTotalLength + 9)
+            def noDiff = noDifference.center(initialTotalLength + 9)
+
+            // Empty display
+            output += "\n${firstLine}\n"
+            output += "| ${fullTitle} |\n"
+            output += "${secondLine}\n"
+            output += "| ${colId.center(colIdLength)} | ${colProperty.center(colPropertyLength)} | ${colFinalLeftValue.center(colLeftValueLength)} | ${colFinalRightValue.center(colRightValueLength)} |\n"
+            output += "${secondLine}\n"
+            output += "| ${empty} |\n"
+            output += "| ${noDiff} |\n"
+            output += "| ${empty} |\n"
+            output += "${firstLine}\n"
+        } else {
+            // Properties display
+            def propertyMap = [:] // Associative array
+            propList.each { it -> propertyMap[it.name] = [left: it.left, right: it.right] } // Associative array initialization
+            def propertiesASC = new ArrayList(propertyMap.keySet())
+            propertiesASC.sort() // Items sorted by name
+
+            // DISPLAY PROPERTIES ASC
+            output += "\n${firstLine}\n"
+            output += "| ${fullTitle} |\n"
+            output += "${secondLine}\n"
+            output += "| ${colId.center(colIdLength)} | ${colProperty.center(colPropertyLength)} | ${colFinalLeftValue.center(colLeftValueLength)} | ${colFinalRightValue.center(colRightValueLength)} |\n"
+            output += "${secondLine}\n"
+
+            propertiesASC.each { propName ->
+                def property = propertyMap[propName]
+                def leftFinalValue = property.left.finalValue
+                def rightFinalValue = property.right.finalValue
+                def displayedPropName = propName
+
+                if (propName.length() > maxColumnContentLength) {
+                    displayedPropName = propName.take(maxColumnContentLength - 5) + '(...)'
+                }
+
+                if (leftFinalValue.length() > maxColumnContentLength) {
+                    leftFinalValue = leftFinalValue.take(maxColumnContentLength - 5) + '(...)'
+                }
+
+                if (rightFinalValue.length() > maxColumnContentLength) {
+                    rightFinalValue = rightFinalValue.take(maxColumnContentLength - 5) + '(...)'
+                }
+
+                // Line pattern display
+                output += "| ${(propertiesASC.indexOf(displayedPropName) + 1).toString().center(colIdLength)} | ${propName.padRight(colPropertyLength)} | ${leftFinalValue.center(colLeftValueLength)} | ${rightFinalValue.center(colRightValueLength)} |\n"
+            }
+            output += "${secondLine}\n"
+        }
+        return output
     }
 
     private updateModuleProperties(Map args) {

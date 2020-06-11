@@ -234,25 +234,25 @@
         Examble descriptor file :
         <pre><code class="language-json">
         {
-          "hjl-engine-api": {
-            "engine-api/src/main/resources-dev/template-application-prod.yml": {
-              "title": "application-prod.yml",
-              "filename": "application-prod.yml",
-              "location": "/appl/{{userwas}}/properties"
-            },
+          "hjl-engine-api": {
+            "engine-api/src/main/resources-dev/template-application-prod.yml": {
+              "title": "application-prod.yml",
+              "filename": "application-prod.yml",
+              "location": "/appl/{{userwas}}/properties"
+            },
             "engine-api/src/main/resources-dev/template-logback.properties": {
               "title": "logback.properties",
               "filename": "logback.properties",
               "location": "/appl/{{userwas}}/properties"
-            }
-          },
-          "HJL-engine-core": {
-            "engine-core/src/main/resources-dev/template-application-core-prod.yml": {
-              "title": "application-core-prod.yml",
-              "filename": "application-core-prod.yml",
-              "location": "/appl/{{userwas}}/properties",
+              }
+          },
+          "HJL-engine-core": {
+            "engine-core/src/main/resources-dev/template-application-core-prod.yml": {
+              "title": "application-core-prod.yml",
+              "filename": "application-core-prod.yml",
+              "location": "/appl/{{userwas}}/properties",
               "filePerms": {"user": {"read": true, "write": true}, "group": {"read": true}, "other": {"read": true}}
-            }
+            }
           }
         }
         </code></pre>
@@ -352,7 +352,7 @@
 
     <section>
        <h2>hesperides.getDiffProperties</h2>
-           Allow the comparaison of properties between a platform or module with itself (minus 2 hours) or between 2 platforms ou 2 modules. This uses the REST API /properties/diff
+           Allow the comparison of properties between one platform or module with itself (minus 2 hours) or between 2 platforms or 2 modules. This uses the REST API /properties/diff
        <br>
            <b>NB : </b>For the "timestampDate" parameter (which is optional), you have to generate a Date object as parameter. <br>
            Example:
@@ -364,6 +364,32 @@
                toApplication: APP2, 
                toPlatform: PTF2, 
                toModulePropertiesPath: '#APP#PTF2#module#1.0#WORKINGCOPY')
+       </code></pre>
+    </section>
+
+    <section>
+       <h2>hesperides.getDiffPropertiesAsString</h2>
+           Build a text representation of the output of <a href="#hesperides.getDiffProperties"><code>getDiffProperties</code></a> as a 2 columns table 
+           showing the differences of properties values between 2 platforms or deployed modules.
+       <br>
+           Example:
+       <pre><code>
+           // Diff. between 2 versions of a same module at a different timestamp
+           hesperides.getDiffPropertiesAsString(
+               app: 'APP',
+               platform: 'PTF', 
+               modulePropertiesPath: '#APP#PTF#module#1.0#WORKINGCOPY',
+               diffType: 'differing')
+         OR
+           // Diff. between 2 versions of a same module on 2 differents platforms
+           hesperides.getDiffPropertiesAsString(
+               app: 'APP',
+               platform: 'PTF',
+               modulePropertiesPath: '#APP#PTF#module#1.0#WORKINGCOPY',
+               toApplication: APP2,
+               toPlatform: PTF2,
+               toModulePropertiesPath: '#APP#PTF2#module#1.0#WORKINGCOPY',
+               diffType: 'differing')
        </code></pre>
     </section>
 </section>
