@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.23] - 2020-06-11
+### Added
+- `getDiffPropertiesAsString` : like `getDiffProperties` but output text and has a parameter to select part of the output: only the "common", "only_left", "only_right" or "differing" field.
+Useful to send it by mail or display it in Jenkins console! - thanks @JefffLD !
+
 ## [1.1.22] - 2020-03-18
 ### Fixed
 - handling `logicGroupPath` starting with a `#` in `putModuleOnPlatform` - fix #42 (#43) - thanks @Poil2Q !
