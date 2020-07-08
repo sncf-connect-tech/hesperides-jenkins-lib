@@ -16,13 +16,12 @@
     * [Continuous integration](#continuous-integration)
         + [pre-commit hooks](#pre-commit-hooks)
     * [Code reviews](#code-reviews)
-    * [Release & upload to Nexus](#release--upload-to-nexus)
+    * [Releasing](#releasing)
 - [FAQ](#faq)
     * [HTTPRequester](#httprequester)
     * [Known issues with Jenkins Pipeline](#known-issues-with-jenkins-pipeline)
     * [Other known issues](#other-known-issues)
     * [Debugging Grapes resolution](#debugging-grapes-resolution)
-- [Releasing](#releasing)
 - [Credits](#credits)
 
 <!-- tocstop -->
@@ -193,12 +192,13 @@ Code reviewers should follow the [PR Checklist](#pr-checklist) and those guideli
 - [Sebastien Charrier advices](https://www.youtube.com/watch?v=6aQK6GoTbxM)
 
 
-## Release & upload to Nexus
+## Releasing
 
-1. `git tag` & `git push --tags`
-2. modifify the `build.gradle` according to this tag
-3. set the `NEXUS_URL` / `NEXUS_USER` / `NEXUS_PASSWORD` environment variables
-4. `gradle upload`
+1. complete the `CHANGELOG.md` file
+2. for any method addition / arguments change, ensure a piece of doc exists for them in `vars.hesperides.txt`
+3. bumb the `pom.version` in `build.gradle`
+4. `git commit` & `git tag` & `git push --tags`
+5. set the `ARTIFACT_REPO_URL` / `ARTIFACT_REPO_USERNAME` / `ARTIFACT_REPO_PASSWORD` environment variables & `gradle upload`
 
 
 # FAQ
@@ -253,13 +253,6 @@ Rerunning a script with increased logging:
 Look for strings like "downloading https://jcenter.bintray.com/com/cloudbees/groovy-cps/1.12/groovy-cps-1.12.jar".
 
 To disable default groovy resolvers (like jcenter), you need to create a [`~/.groovy/grapeConfig.xml`](http://docs.groovy-lang.org/latest/html/documentation/grape.html#Grape-CustomizeIvysettings) file based on [the default one](https://github.com/apache/groovy/blob/master/src/resources/groovy/grape/defaultGrapeConfig.xml), then remove the resolver entries you don't want.
-
-
-# Releasing
-1. complete `CHANGELOG.md`
-2. if new methods have been added, ensure a piece of doc exists for them in `vars.hesperides.txt`
-3. edit `pom.version` in `build.gradle`
-4. `git commit` & `git tag`
 
 
 # Credits
