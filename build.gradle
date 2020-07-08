@@ -76,24 +76,24 @@ def env = System.env
 uploadArchives {
     repositories {
         mavenDeployer {
-            pom.version = '1.1.23'
+            pom.version = '1.1.24'
             pom.artifactId = 'hesperides-jenkins-lib'
             pom.groupId = 'com.vsct.dt.hesperides'
 
-            def nexusUrl = env.get('NEXUS_URL')
-            if (nexusUrl && nexusUrl[0] == '"') {
-                nexusUrl = nexusUrl[1..-2] // in case Windows
+            def artifactRepoUrl = env.get('ARTIFACT_REPO_URL')
+            if (artifactRepoUrl && artifactRepoUrl[0] == '"') {
+                artifactRepoUrl = artifactRepoUrl[1..-2] // in case Windows
             }
-            def nexusUser = env.get('NEXUS_USER')
-            if (nexusUser && nexusUser[0] == '"') {
-                nexusUser = nexusUser[1..-2] // in case Windows
+            def artifactRepoUsername = env.get('ARTIFACT_REPO_USERNAME')
+            if (artifactRepoUsername && artifactRepoUsername[0] == '"') {
+                artifactRepoUsername = artifactRepoUsername[1..-2] // in case Windows
             }
-            def nexusPassword = env.get('NEXUS_PASSWORD')
-            if (nexusPassword && nexusPassword[0] == '"') {
-                nexusPassword = nexusPassword[1..-2] // in case Windows
+            def artifactRepoPassword = env.get('ARTIFACT_REPO_PASSWORD')
+            if (artifactRepoPassword && artifactRepoPassword[0] == '"') {
+                artifactRepoPassword = artifactRepoPassword[1..-2] // in case Windows
             }
-            repository(url: nexusUrl) {
-                authentication(userName: nexusUser, password: nexusPassword)
+            repository(url: artifactRepoUrl) {
+                authentication(userName: artifactRepoUsername, password: artifactRepoPassword)
             }
         }
     }

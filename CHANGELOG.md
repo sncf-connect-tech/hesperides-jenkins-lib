@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.24] - 2020-07-08
+### Fixed
+- `getDiffPropertiesAsString` could not be called globally due to a typo in `vars/hesperides.groovy`
+
 ## [1.1.23] - 2020-06-11
 ### Added
 - `getDiffPropertiesAsString` : like `getDiffProperties` but output text and has a parameter to select part of the output: only the "common", "only_left", "only_right" or "differing" field.
