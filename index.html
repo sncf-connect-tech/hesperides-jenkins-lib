@@ -288,23 +288,22 @@
             <h2>hesperides.updatePropertiesForPlatform</h2>Update properties for given module path. Usually, before using this method, retrieve properties to update with getModulePropertiesForPlatform(...) and properties_path from chosen module<br>
             Example:
             <pre><code>
-       hesperides.updatePropertiesForPlatform(app: 'APP', platform: 'PTF',
-                                              modulePropertiesPath: '#APP#PTF#module#1.0#WORKINGCOPY', commitMsg: 'MyCommitMsg',
-                                              properties: myJsonPropertiesRetreivedFromGetAPI, platformVid: platformVid, auth: auth)
-       </code></pre>
+        hesperides.updatePropertiesForPlatform(app: 'APP', platform: 'PTF',
+                                               modulePropertiesPath: '#APP#PTF#module#1.0#WORKINGCOPY', commitMsg: 'MyCommitMsg',
+                                               properties: myJsonPropertiesRetreivedFromGetAPI, platformVid: platformVid, auth: auth)
+        </code></pre>
         </section>
         <section>
             <h2>hesperides.getDiffProperties</h2>Allow the comparison of properties between one platform or module with itself (minus 2 hours) or between 2 platforms or 2 modules. This uses the REST API /properties/diff<br>
-            <b>NB :</b> For the "timestampDate" parameter (which is optional), you have to generate a Date object as parameter.<br>
+            <b>NB :</b> The optional <code>timestampDate</code> parameter must be of type <code>long</code> or <code>Date</code>.<br>
             Example:
             <pre><code>
-           hesperides.getDiffProperties(
-               app: 'APP', 
-               platform: 'PTF', 
-               modulePropertiesPath: '#APP#PTF#module#1.0#WORKINGCOPY', 
-               toApplication: APP2, 
-               toPlatform: PTF2, 
-               toModulePropertiesPath: '#APP#PTF2#module#1.0#WORKINGCOPY')
+        hesperides.getDiffProperties(app: 'APP',
+                                     platform: 'PTF', 
+                                     modulePropertiesPath: '#APP#PTF#module#1.0#WORKINGCOPY', 
+                                     toApplication: APP2, 
+                                     toPlatform: PTF2, 
+                                     toModulePropertiesPath: '#APP#PTF2#module#1.0#WORKINGCOPY')
        </code></pre>
         </section>
         <section>
