@@ -418,6 +418,10 @@ class Hesperides implements Serializable {
 
     // Method to get all the properties diff through Hesperides'API for a platform with itself or 2 platforms
     def getDiffProperties(Map args) { required(args, ['app', 'platform', 'modulePropertiesPath']) // optional: instanceName, toApplication, toPlatform, toModulePropertiesPath, toInstanceName, timestampDate, compareStoredValues
+        def timestamp = args.timestampDate
+        if (timestamp instanceof Date) { // Flexible: allow for a Date or a long
+            timestamp = timestamp.getTime()
+        }
         return httpRequest(
             path: "/rest/applications/${args.app}/platforms/${args.platform}/properties/diff",
             query: [
@@ -428,7 +432,7 @@ class Hesperides implements Serializable {
                 to_path: args.toModulePropertiesPath ?: args.modulePropertiesPath,
                 to_instance_name: args.toInstanceName ?: args.instanceName,
                 compare_stored_values: args.compareStoredValues ?: false,
-                timestamp: (args.timestampDate != null) ? args.timestampDate.getTime() : null
+                timestamp: "${timestamp}"
             ])
     }
 
@@ -454,9 +458,9 @@ class Hesperides implements Serializable {
         def colFinalRightValue = '     FINAL RIGHT VALUE     '
         def noDifference = '     * * * * *   NO PROPERTIES ARE DIFFERING!   * * * * *     '
 
-/* **********************************************************************************************************
+        /**********************************************************************
                                                  DISPLAY
-   ********************************************************************************************************** */
+        **********************************************************************/
         // Display of the diff. total
         output += '*********************************************************\n'
         output += "      Total of items in the \"${args.diffType}\" section : ${listSize}\n"
