@@ -419,8 +419,8 @@ class Hesperides implements Serializable {
     // Method to get all the properties diff through Hesperides'API for a platform with itself or 2 platforms
     def getDiffProperties(Map args) { required(args, ['app', 'platform', 'modulePropertiesPath']) // optional: instanceName, toApplication, toPlatform, toModulePropertiesPath, toInstanceName, timestampDate, compareStoredValues
         def timestamp = args.timestampDate
-        if (timestampDate instanceof Date) { // Flexible: allow for a Date or a long
-            timestamp = timestampDate.getTime()
+        if (timestamp instanceof Date) { // Flexible: allow for a Date or a long
+            timestamp = timestamp.getTime()
         }
         return httpRequest(
             path: "/rest/applications/${args.app}/platforms/${args.platform}/properties/diff",
