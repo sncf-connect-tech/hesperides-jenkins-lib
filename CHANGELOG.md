@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.25] - 2020-07-29
+### Added
+- `getDiffProperties` now allows its `timestampDate` parameter to also be of type `long`
+
 ## [1.1.24] - 2020-07-08
 ### Fixed
 - `getDiffPropertiesAsString` could not be called globally due to a typo in `vars/hesperides.groovy`
