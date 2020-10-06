@@ -753,7 +753,7 @@ class Hesperides implements Serializable {
         def platformInfo = getPlatformInfo(args)
         def module = selectModule(modules: platformInfo.modules, moduleName: args.moduleName)
         def instanceFiles = httpRequest(path: "/rest/applications/${args.app}/platforms/${args.platform}/${module.path}/${args.moduleName}/${module.version}/instances/${args.instance}/files/",
-                query: [isWorkingCopy: module.working_copy])
+                query: [isWorkingCopy: module.working_copy, simulate: true])
         def instanceFilesContents = [:]
         for (templateFile in instanceFiles) {
             instanceFilesContents[templateFile.location] = httpRequest(url: "$apiRootUrl$templateFile.url", textOutput: true, accept: 'TEXT')
