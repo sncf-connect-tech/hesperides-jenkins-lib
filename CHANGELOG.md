@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.26] - 2021-10-13
+### Changed
+- The lib does not attempt to resolve the default target endpoint, `hesperides`, anymore.
+  However it will now honor a `$HESPERIDES_URL` environment variable.
+
 ## [1.1.25] - 2020-07-29
 ### Added
 - `getDiffProperties` now allows its `timestampDate` parameter to also be of type `long`

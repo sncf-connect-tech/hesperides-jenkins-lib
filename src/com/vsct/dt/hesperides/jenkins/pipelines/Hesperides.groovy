@@ -57,12 +57,7 @@ class Hesperides implements Serializable {
 
     @NonCPS
     private static defaultApiRootUrl() {
-        def hostname = 'hesperides'
-        try { // we try to build a FQDN based on the Jenkins executor own domain name
-            def fqdn = InetAddress.getByName(hostname).canonicalHostName
-            hostname += '.' + fqdn.split('\\.', 2)[1]
-        } catch (UnknownHostException|SecurityException exception) {} // do nothing
-        return "https://${hostname}"
+        return "https://hesperides"
     }
 
 
