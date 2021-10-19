@@ -427,7 +427,7 @@ class Hesperides implements Serializable {
                 to_path: args.toModulePropertiesPath ?: args.modulePropertiesPath,
                 to_instance_name: args.toInstanceName ?: args.instanceName,
                 compare_stored_values: args.compareStoredValues ?: false,
-                timestamp: "${timestamp}"
+                timestamp: (timestamp != null) ? "${timestamp}" : null
             ])
     }
 
